@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+html,
+body {
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+  font-family: Roboto;
+  scroll-behavior: smooth;
+  scroll-padding-top: 100px;
+  scroll-padding-bottom: 100px;
+  background-color: #f1f1f1;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.6;
+  overflow-x: hidden;
+  font-size: clamp(0.9rem, 1vw, 1rem);
+}
+
+@font-face {
+  font-family: "CalSans";
+  src: url("../src/assets/fonts/CalSans-SemiBold.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("../src/assets/fonts/Roboto.tff") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Pacifico-Regular";
+  src: url("../src/assets/fonts/Pacifico-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+h1 {
+  font-size: clamp(1.25rem, 1.5vw, 3.5rem);
+  font-family: "CalSans";
+  padding-top: 5px;
+}
+h2 {
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  font-family: "CalSans";
+  margin: 10px 0px;
+}
+
+h3 {
+  font-size: clamp(0.75rem, 1.5vw, 1rem);
+  font-family: "CalSans";
+  margin: 10px 0px;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 80px;
+  gap: 10px;
+}

@@ -1,0 +1,70 @@
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.animated-border-container {
+  z-index: 1;
+}
+
+.animated-border {
+  border-radius: 20px;
+  padding: 8px 12px;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: grey;
+  background-color: white;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.animated-border::after,
+.animated-border::before {
+  background-image: conic-gradient(
+    from var(--angle),
+    #4ff034,
+    #ff0000,
+    #7030a0,
+    #ff0000,
+    #4ff034
+  );
+  content: "";
+  position: absolute;
+  height: calc(100% + 0.3 * 1.25em);
+  width: calc(100% + 0.3 * 1.25em);
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  z-index: -1;
+  border-radius: 20px;
+  animation: 4s spin linear infinite;
+}
+.animated-border::before {
+  filter: blur(0.2rem);
+  opacity: 0.5;
+  transition: all 0.3s ease-in-out;
+}
+
+.animated-border:hover {
+  color: black;
+  transition: all 0.3s ease-in-out;
+}
+
+.animated-border:hover::before {
+  opacity: 1;
+  transition: all 0.3s ease-in-out;
+}
+
+@keyframes spin {
+  from {
+    --angle: 0deg;
+  }
+  to {
+    --angle: 360deg;
+  }
+}
