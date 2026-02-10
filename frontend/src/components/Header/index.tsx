@@ -17,7 +17,7 @@ const Header = () => {
                     </ul>
                 </nav>
                 <div className="header-third-column">
-                    <AnimatedBorder text="Inscribirse" />
+                    <AnimatedBorder text="Iniciar Sesión" />
                 </div>
         </header>
     );

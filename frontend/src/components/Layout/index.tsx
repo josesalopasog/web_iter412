@@ -1,3 +1,4 @@
+import Hero from "../../pages/Hero";
 import Header from "../Header";
 
 const Layout =  () => {
@@ -5,7 +6,7 @@ const Layout =  () => {
         <>
             <Header />
             <main>
-
+                <Hero />
             </main>
         </>
     )

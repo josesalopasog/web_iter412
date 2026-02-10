@@ -1,0 +1,813 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Retiros Católicos para Jóvenes | Bogotá</title>
+    <style>
+      :root {
+        --header-h: 80px;
+        --max-w: 1200px;
+
+        --text: #1b1b1b;
+        --muted: #6b7280;
+        --bg: #ffffff;
+
+        --border: rgba(0, 0, 0, 0.08);
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+
+        --grad: linear-gradient(90deg, #00e5ff, #d200ff);
+        --grad-soft: linear-gradient(
+          135deg,
+          rgba(0, 229, 255, 0.18),
+          rgba(210, 0, 255, 0.18)
+        );
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+          Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        color: var(--text);
+        background: var(--bg);
+      }
+
+      /* ===== Header ===== */
+      header.site-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: var(--header-h);
+        z-index: 50;
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .header-inner {
+        height: 100%;
+        max-width: var(--max-w);
+        margin: 0 auto;
+        padding: 0 18px;
+        display: grid;
+        grid-template-columns: 180px 1fr 180px;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .header-first-column {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .header-logo {
+        width: 46px;
+        height: 46px;
+        object-fit: contain;
+      }
+
+      .brand {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.1;
+      }
+      .brand strong {
+        font-size: 14px;
+      }
+      .brand span {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .header-second-column {
+        display: flex;
+        justify-content: center;
+      }
+
+      .header-ul {
+        list-style: none;
+        display: flex;
+        gap: 22px;
+        margin: 0;
+        padding: 0;
+        align-items: center;
+        font-size: 13px;
+      }
+
+      .header-ul a {
+        text-decoration: none;
+        color: #777;
+        padding: 10px 2px;
+        position: relative;
+        transition: color 180ms ease;
+      }
+
+      .header-ul a:hover {
+        color: #111;
+      }
+
+      .header-ul a.active {
+        color: #111;
+      }
+
+      .header-ul a.active::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 4px;
+        height: 2px;
+        background: var(--grad);
+        border-radius: 999px;
+      }
+
+      .header-third-column {
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      /* ===== Animated Border Button ===== */
+      .animated-border-container {
+        padding: 2px;
+        border-radius: 999px;
+        background: conic-gradient(
+          from 180deg,
+          #00e5ff,
+          #d200ff,
+          #00e5ff
+        );
+        animation: spin 3s linear infinite;
+        display: inline-block;
+      }
+
+      .animated-border {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 999px;
+        padding: 10px 16px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+      }
+
+      .animated-border a {
+        text-decoration: none;
+        color: #111;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* ===== Layout / Sections ===== */
+      main {
+        padding-top: var(--header-h);
+      }
+
+      /* Hero full screen image */
+      .hero {
+        min-height: calc(100vh - var(--header-h));
+        position: relative;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.35),
+            rgba(0, 0, 0, 0.55)
+          ),
+          url("https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=2400&q=70");
+        background-size: cover;
+        background-position: center;
+        transform: scale(1.02);
+      }
+
+      .hero-content {
+        position: relative;
+        max-width: var(--max-w);
+        width: 100%;
+        padding: 0 18px;
+        color: #fff;
+        display: grid;
+        gap: 14px;
+      }
+
+      .hero-badge {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        width: fit-content;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        backdrop-filter: blur(8px);
+        font-size: 12px;
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-size: clamp(30px, 4vw, 54px);
+        letter-spacing: -0.02em;
+        line-height: 1.05;
+      }
+
+      .hero p {
+        margin: 0;
+        max-width: 680px;
+        font-size: clamp(14px, 1.6vw, 18px);
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 1.55;
+      }
+
+      .hero-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 6px;
+      }
+
+      .btn {
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff;
+        padding: 12px 16px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 13px;
+        backdrop-filter: blur(8px);
+        transition: transform 160ms ease, background 160ms ease,
+          border-color 160ms ease;
+      }
+      .btn:hover {
+        transform: translateY(-1px);
+        background: rgba(255, 255, 255, 0.16);
+        border-color: rgba(255, 255, 255, 0.4);
+      }
+
+      .btn.primary {
+        border: none;
+        background: var(--grad);
+        color: #111;
+      }
+
+      .scroll-hint {
+        position: absolute;
+        bottom: 22px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        user-select: none;
+      }
+      .scroll-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.85);
+        animation: bob 1.2s ease-in-out infinite;
+      }
+      @keyframes bob {
+        0%,
+        100% {
+          transform: translateY(0);
+          opacity: 0.7;
+        }
+        50% {
+          transform: translateY(-6px);
+          opacity: 1;
+        }
+      }
+
+      /* Sections */
+      section {
+        scroll-margin-top: calc(var(--header-h) + 14px);
+        padding: 72px 0;
+      }
+
+      .container {
+        max-width: var(--max-w);
+        margin: 0 auto;
+        padding: 0 18px;
+      }
+
+      .section-head {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 22px;
+      }
+
+      .kicker {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        background: var(--grad-soft);
+        border: 1px solid var(--border);
+        padding: 8px 10px;
+        border-radius: 999px;
+        width: fit-content;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 28px;
+        letter-spacing: -0.01em;
+      }
+
+      .sub {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.55;
+        max-width: 800px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 14px;
+      }
+
+      .card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        padding: 16px;
+      }
+
+      .card h3 {
+        margin: 0 0 6px 0;
+        font-size: 16px;
+      }
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.55;
+        font-size: 14px;
+      }
+
+      .span-4 {
+        grid-column: span 4;
+      }
+      .span-6 {
+        grid-column: span 6;
+      }
+      .span-8 {
+        grid-column: span 8;
+      }
+
+      .pill {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        padding: 8px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        color: #111;
+        font-size: 13px;
+        background: #fff;
+      }
+
+      .muted-note {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      /* Schedule table-ish */
+      .schedule {
+        display: grid;
+        gap: 10px;
+      }
+      .slot {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 12px 14px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        background: #fff;
+      }
+      .slot strong {
+        font-size: 14px;
+      }
+      .slot span {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      /* Footer */
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 26px 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      /* Responsive */
+      @media (max-width: 980px) {
+        .header-inner {
+          grid-template-columns: 1fr auto;
+          grid-template-areas:
+            "left right"
+            "nav nav";
+          height: auto;
+          padding: 10px 14px 12px;
+        }
+
+        header.site-header {
+          height: auto;
+        }
+
+        .header-first-column {
+          grid-area: left;
+        }
+
+        .header-third-column {
+          grid-area: right;
+        }
+
+        .header-second-column {
+          grid-area: nav;
+          justify-content: flex-start;
+          overflow-x: auto;
+          padding-top: 6px;
+        }
+
+        .header-ul {
+          gap: 14px;
+          padding-bottom: 6px;
+        }
+
+        main {
+          padding-top: 118px; /* header grows on mobile */
+        }
+
+        .span-4,
+        .span-6,
+        .span-8 {
+          grid-column: span 12;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ===== Header (basado en tu layout) ===== -->
+    <header className="site-header" class="site-header">
+      <div class="header-inner">
+        <div class="header-first-column">
+          <!-- Reemplaza por tu logo real -->
+          <img src="/logo.png" alt="Logo" class="header-logo" />
+          <div class="brand">
+            <strong>Retiros Jóvenes Bogotá</strong>
+            <span>Encuentro • Comunidad • Fe</span>
+          </div>
+        </div>
+
+        <nav class="header-second-column" aria-label="Navegación principal">
+          <ul class="header-ul">
+            <li><a class="nav-link active" href="#home">Inicio</a></li>
+            <li><a class="nav-link" href="#about">Quienes Somos</a></li>
+            <li><a class="nav-link" href="#location">Donde Estamos</a></li>
+            <li><a class="nav-link" href="#schedule">Cronograma</a></li>
+            <li><a class="nav-link" href="#contact">Contacto</a></li>
+          </ul>
+        </nav>
+
+        <div class="header-third-column">
+          <!-- Botón estilo AnimatedBorder -->
+          <div class="animated-border-container" aria-label="Inscribirse">
+            <div class="animated-border">
+              <a href="#contact">Inscribirse</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- ===== HERO full screen (imagen ocupa toda la pantalla) ===== -->
+      <section id="home" class="hero" aria-label="Inicio">
+        <div class="hero-content">
+          <div class="hero-badge">
+            <span>📍 Bogotá</span>
+            <span>•</span>
+            <span>Para jóvenes (16–28)</span>
+            <span>•</span>
+            <span>Próximo retiro: <strong>Marzo</strong></span>
+          </div>
+
+          <h1>Un retiro para volver al centro: Dios, tú y tu propósito.</h1>
+
+          <p>
+            Vive un fin de semana de oración, charlas, música, convivencia y
+            acompañamiento. Un espacio seguro para reconectar, sanar, y
+            encontrar comunidad.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn primary" href="#contact">Quiero inscribirme</a>
+            <a class="btn" href="#about">Conocer el retiro</a>
+            <a class="btn" href="#schedule">Ver cronograma</a>
+          </div>
+
+          <p class="muted-note">
+            Cupos limitados • Acompañamiento pastoral • Actividades guiadas
+          </p>
+        </div>
+
+        <div class="scroll-hint" aria-hidden="true">
+          <div class="scroll-dot"></div>
+          <span>Desliza para ver más</span>
+        </div>
+      </section>
+
+      <!-- ===== QUIENES SOMOS ===== -->
+      <section id="about" aria-label="Quienes Somos">
+        <div class="container">
+          <div class="section-head">
+            <div class="kicker">Quienes Somos</div>
+            <h2>Una comunidad joven que camina contigo</h2>
+            <p class="sub">
+              Organizamos retiros para jóvenes en Bogotá con enfoque en
+              crecimiento espiritual, vínculos sanos y servicio. Aquí nadie
+              llega “perfecto”: llegamos como somos.
+            </p>
+          </div>
+
+          <div class="grid">
+            <div class="card span-4">
+              <h3>🙏 Espiritualidad</h3>
+              <p>
+                Momentos de oración, adoración y espacios de silencio guiado para
+                escuchar a Dios.
+              </p>
+            </div>
+            <div class="card span-4">
+              <h3>🤝 Comunidad</h3>
+              <p>
+                Dinámicas, grupos pequeños y acompañamiento para que no camines
+                solo/a.
+              </p>
+            </div>
+            <div class="card span-4">
+              <h3>🌿 Renovación</h3>
+              <p>
+                Talleres prácticos sobre identidad, propósito, afectividad y
+                hábitos para tu día a día.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== DONDE ESTAMOS ===== -->
+      <section id="location" aria-label="Donde Estamos" style="background: #fafafa">
+        <div class="container">
+          <div class="section-head">
+            <div class="kicker">Donde Estamos</div>
+            <h2>Retiros en Bogotá y alrededores</h2>
+            <p class="sub">
+              Nos reunimos en casas de retiros y parroquias (según la fecha).
+              Compartimos ubicación exacta al confirmar tu inscripción.
+            </p>
+          </div>
+
+          <div class="grid">
+            <div class="card span-8">
+              <h3>📌 Zonas frecuentes</h3>
+              <p>
+                Usa esto como referencia (no es la ubicación final):
+              </p>
+              <div style="margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap">
+                <span class="pill">Chapinero</span>
+                <span class="pill">Teusaquillo</span>
+                <span class="pill">Suba</span>
+                <span class="pill">Usaquén</span>
+                <span class="pill">La Calera (algunos retiros)</span>
+              </div>
+              <p class="muted-note" style="margin-top: 10px">
+                * La ubicación exacta se confirma por WhatsApp / correo.
+              </p>
+            </div>
+
+            <div class="card span-4">
+              <h3>🧭 Requisitos</h3>
+              <p>
+                Ropa cómoda, cuaderno, biblia (opcional) y muchas ganas de vivir
+                la experiencia.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== CRONOGRAMA ===== -->
+      <section id="schedule" aria-label="Cronograma">
+        <div class="container">
+          <div class="section-head">
+            <div class="kicker">Cronograma</div>
+            <h2>Así se vive el retiro</h2>
+            <p class="sub">
+              Este es un ejemplo. Ajustamos horarios según el lugar y el grupo.
+            </p>
+          </div>
+
+          <div class="grid">
+            <div class="card span-6">
+              <h3>Viernes</h3>
+              <div class="schedule" style="margin-top: 12px">
+                <div class="slot">
+                  <strong>6:00 pm</strong><span>Registro y bienvenida</span>
+                </div>
+                <div class="slot">
+                  <strong>7:30 pm</strong><span>Charla + dinámica</span>
+                </div>
+                <div class="slot">
+                  <strong>9:00 pm</strong><span>Oración (inicio)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card span-6">
+              <h3>Sábado</h3>
+              <div class="schedule" style="margin-top: 12px">
+                <div class="slot">
+                  <strong>8:00 am</strong><span>Alabanza + tema</span>
+                </div>
+                <div class="slot">
+                  <strong>11:00 am</strong><span>Grupos pequeños</span>
+                </div>
+                <div class="slot">
+                  <strong>3:00 pm</strong><span>Taller práctico</span>
+                </div>
+                <div class="slot">
+                  <strong>7:00 pm</strong><span>Eucaristía / Adoración</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card span-12" style="grid-column: span 12">
+              <h3>Domingo</h3>
+              <div class="schedule" style="margin-top: 12px">
+                <div class="slot">
+                  <strong>9:00 am</strong><span>Reflexión final</span>
+                </div>
+                <div class="slot">
+                  <strong>11:30 am</strong><span>Cierre + compromisos</span>
+                </div>
+                <div class="slot">
+                  <strong>1:00 pm</strong><span>Despedida</span>
+                </div>
+              </div>
+              <p class="muted-note" style="margin-top: 10px">
+                Si quieres, también podemos enviarte el cronograma oficial del próximo retiro.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== CONTACTO ===== -->
+      <section id="contact" aria-label="Contacto" style="background: #fafafa">
+        <div class="container">
+          <div class="section-head">
+            <div class="kicker">Contacto</div>
+            <h2>Inscríbete o pide información</h2>
+            <p class="sub">
+              Déjanos tus datos y te contactamos con la info del próximo retiro.
+              (Este formulario es solo HTML; si quieres lo conectamos a tu backend o a Formspree).
+            </p>
+          </div>
+
+          <div class="grid">
+            <form class="card span-8" onsubmit="return false;">
+              <div style="display: grid; gap: 12px">
+                <div style="display: grid; gap: 6px">
+                  <label for="name" style="font-weight: 700; font-size: 13px">Nombre</label>
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    placeholder="Tu nombre"
+                    style="padding: 12px 12px; border-radius: 12px; border: 1px solid var(--border); outline: none"
+                  />
+                </div>
+
+                <div style="display: grid; gap: 6px">
+                  <label for="phone" style="font-weight: 700; font-size: 13px">WhatsApp</label>
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    placeholder="+57 3xx xxx xxxx"
+                    style="padding: 12px 12px; border-radius: 12px; border: 1px solid var(--border); outline: none"
+                  />
+                </div>
+
+                <div style="display: grid; gap: 6px">
+                  <label for="msg" style="font-weight: 700; font-size: 13px">Mensaje</label>
+                  <textarea
+                    id="msg"
+                    name="msg"
+                    rows="4"
+                    placeholder="Quiero inscribirme / Quiero más información..."
+                    style="padding: 12px 12px; border-radius: 12px; border: 1px solid var(--border); outline: none; resize: vertical"
+                  ></textarea>
+                </div>
+
+                <button
+                  type="submit"
+                  style="
+                    padding: 12px 14px;
+                    border-radius: 12px;
+                    border: none;
+                    background: var(--grad);
+                    font-weight: 800;
+                    cursor: pointer;
+                  "
+                >
+                  Enviar
+                </button>
+
+                <p class="muted-note">
+                  Al enviar aceptas que te contactemos con información del retiro (solo para este propósito).
+                </p>
+              </div>
+            </form>
+
+            <div class="card span-4">
+              <h3>📲 Canales</h3>
+              <p style="margin-bottom: 10px">
+                Escríbenos y te respondemos con fechas, lugar y costo.
+              </p>
+
+              <div style="display: grid; gap: 10px">
+                <div class="pill">WhatsApp: +57 300 000 0000</div>
+                <div class="pill">Correo: info@retirosbogota.com</div>
+                <div class="pill">Instagram: @retiros.jovenes.bogota</div>
+              </div>
+
+              <p class="muted-note" style="margin-top: 10px">
+                Reemplaza estos datos por los tuyos reales.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <div class="container">
+          © <span id="year"></span> Retiros Jóvenes Bogotá • Hecho con cariño
+        </div>
+      </footer>
+    </main>
+
+    <script>
+      // Año en footer
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      // Active link por scroll (simple)
+      const links = Array.from(document.querySelectorAll(".nav-link"));
+      const sections = links
+        .map((a) => document.querySelector(a.getAttribute("href")))
+        .filter(Boolean);
+
+      const setActive = () => {
+        const y = window.scrollY + 120; // margen por header
+        let idx = 0;
+        for (let i = 0; i < sections.length; i++) {
+          if (sections[i].offsetTop <= y) idx = i;
+        }
+        links.forEach((a) => a.classList.remove("active"));
+        if (links[idx]) links[idx].classList.add("active");
+      };
+
+      window.addEventListener("scroll", setActive, { passive: true });
+      window.addEventListener("load", setActive);
+    </script>
+  </body>
+</html>
