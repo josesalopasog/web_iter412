@@ -5,7 +5,7 @@ body {
   height: 100%;
   margin: 0px;
   padding: 0px;
-  font-family: Roboto;
+  font-family: "Roboto", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
   scroll-behavior: smooth;
   scroll-padding-top: 100px;
   scroll-padding-bottom: 100px;
@@ -23,21 +23,21 @@ body {
 
 @font-face {
   font-family: "CalSans";
-  src: url("../src/assets/fonts/CalSans-SemiBold.woff") format("woff");
+  src: url("/fonts/CalSans-SemiBold.woff") format("woff");
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Roboto";
-  src: url("../src/assets/fonts/Roboto.tff") format("truetype");
+  src: url("/fonts/Roboto.tff") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Pacifico-Regular";
-  src: url("../src/assets/fonts/Pacifico-Regular.ttf") format("truetype");
+  src: url("/fonts/Pacifico-Regular.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }

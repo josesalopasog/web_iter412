@@ -1,12 +1,15 @@
 import React from "react";
 
-type IconProps = React.SVGProps<SVGSVGElement>;
+type IconProps = React.SVGProps<SVGSVGElement> & { className?: string };
 
-export const ThreeBarsIcon: React.FC<IconProps> = (props) => (
+const cx = (...c: Array<string | undefined>) => c.filter(Boolean).join(" ");
+
+export const ThreeBarsIcon: React.FC<IconProps> = ({ className, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     fill="currentColor"
+    className={cx("w-7 h-7", className)}  // 👈 tamaño por defecto
     {...props}
   >
     <path
@@ -17,13 +20,14 @@ export const ThreeBarsIcon: React.FC<IconProps> = (props) => (
   </svg>
 );
 
-export const XMarkIcon: React.FC<IconProps> = (props) => (
+export const XMarkIcon: React.FC<IconProps> = ({ className, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"
     strokeWidth={1.5}
     stroke="currentColor"
+    className={cx("w-7 h-7", className)} // 👈 tamaño por defecto
     {...props}
   >
     <path
