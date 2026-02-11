@@ -1,4 +1,5 @@
 import About from "../../pages/About";
+import Contact from "../../pages/Contact";
 import Hero from "../../pages/Hero";
 import Location from "../../pages/Location";
 import Schedule from "../../pages/Schedule";
@@ -13,6 +14,7 @@ const Layout =  () => {
                 <About />
                 <Location />
                 <Schedule />
+                <Contact />
             </main>
         </>
     )
