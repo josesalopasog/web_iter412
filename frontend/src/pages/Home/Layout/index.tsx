@@ -1,10 +1,10 @@
-import About from "../../pages/About";
-import Contact from "../../pages/Contact";
-import Hero from "../../pages/Hero";
-import Location from "../../pages/Location";
-import Schedule from "../../pages/Schedule";
-import Footer from "../Footer";
-import Header from "../Header";
+import About from "../About";
+import Contact from "../Contact";
+import Hero from "../Hero";
+import Location from "../Location";
+import Schedule from "../Schedule";
+import Footer from "../../../components/Footer";
+import Header from "../../../components/Header";
 
 const Layout =  () => {
     return (
