@@ -1,6 +1,7 @@
 import About from "../../pages/About";
 import Hero from "../../pages/Hero";
 import Location from "../../pages/Location";
+import Schedule from "../../pages/Schedule";
 import Header from "../Header";
 
 const Layout =  () => {
@@ -11,6 +12,7 @@ const Layout =  () => {
                 <Hero />
                 <About />
                 <Location />
+                <Schedule />
             </main>
         </>
     )
