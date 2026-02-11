@@ -3,6 +3,7 @@ import Contact from "../../pages/Contact";
 import Hero from "../../pages/Hero";
 import Location from "../../pages/Location";
 import Schedule from "../../pages/Schedule";
+import Footer from "../Footer";
 import Header from "../Header";
 
 const Layout =  () => {
@@ -16,6 +17,7 @@ const Layout =  () => {
                 <Schedule />
                 <Contact />
             </main>
+            <Footer />
         </>
     )
 }
