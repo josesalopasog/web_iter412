@@ -1,0 +1,9 @@
+.three-bars-btn{
+    cursor: pointer;
+    transition: transform 0.1s; 
+}
+
+.three-bars-btn:hover{
+    transform: scale(1.1);
+    transition: transform 0.1s; 
+}

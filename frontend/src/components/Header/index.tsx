@@ -1,4 +1,5 @@
 import AnimatedBorder from "../AnimatedBorder";
+import DropdownMenuButton from "../DropdownMenuButton";
 import "./styles.css";
 
 const Header = () => {
@@ -19,6 +20,7 @@ const Header = () => {
                 </nav>
                 <div className="header-third-column">
                     <AnimatedBorder text="Iniciar Sesión" />
+                    <DropdownMenuButton className="header-menu-button"/>
                 </div>
         </header>
     );
