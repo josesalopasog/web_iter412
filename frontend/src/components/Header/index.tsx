@@ -9,11 +9,12 @@ const Header = () => {
                 </div>
                 <nav className="header-second-column">
                     <ul className="header-ul">
-                        <li><a href="#home">Inicio</a></li>
-                        <li><a href="#about">Quienes Somos</a></li>
-                        <li><a href="#location">Donde Estamos</a></li>
-                        <li><a href="#schedule">Cronograma</a></li>
-                        <li><a href="#contact">Contacto</a></li>
+                        <li><a href="/">Inicio</a></li>
+                        <li><a href="/#about">Quienes Somos</a></li>
+                        <li><a href="/#location">Donde Estamos</a></li>
+                        <li><a href="/#schedule">Cronograma</a></li>
+                        <li><a href="/register">Retiro</a></li>
+                        <li><a href="/#contact">Contacto</a></li>
                     </ul>
                 </nav>
                 <div className="header-third-column">

@@ -1,15 +1,35 @@
-import "./styles.css"
+import "./styles.css";
 
 type AnimatedBorderProps = {
   text: string;
+  href?: string;
+  isBlank?: boolean; 
 };
 
-const AnimatedBorder: React.FC<AnimatedBorderProps> = ({ text }) => {
+const AnimatedBorder: React.FC<AnimatedBorderProps> = ({
+  text,
+  href,
+  isBlank = false, 
+}) => {
+  const content = (
+    <div className="animated-border">
+      <p>{text}</p>
+    </div>
+  );
+
   return (
     <div className="animated-border-container">
-      <div className="animated-border">
-        <p>{text}</p>
-      </div>
+      {href ? (
+        <a
+          href={href}
+          target={isBlank ? "_blank" : "_self"}
+          rel={isBlank ? "noopener noreferrer" : undefined}
+        >
+          {content}
+        </a>
+      ) : (
+        content
+      )}
     </div>
   );
 };

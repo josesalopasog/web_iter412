@@ -1,4 +1,4 @@
-import ScheduleCalendar from "../../components/ScheduleCalendar";
+import ScheduleCalendar from "../../../components/ScheduleCalendar";
 import "./styles.css";
 
 const Schedule = () => {

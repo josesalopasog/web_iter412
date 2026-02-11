@@ -1,4 +1,4 @@
-import AnimatedBorder from "../../components/AnimatedBorder";
+import AnimatedBorder from "../../../components/AnimatedBorder";
 import "./styles.css";
 
 const Hero = () => {
@@ -11,7 +11,7 @@ const Hero = () => {
           espiritual, diversión y hermandad en nuestro proximo retiro.
         </p>
       </div>
-      <AnimatedBorder text="Inscríbete Ahora" />
+      <AnimatedBorder text="Inscríbete Ahora" href="/register" />
       <a
         className="hero-badge"
         href="https://maps.app.goo.gl/2ZUtXhdHfwwY4QnT7"

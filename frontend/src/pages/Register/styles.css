@@ -1,0 +1,156 @@
+#register {
+  padding: 20px 0;
+  margin-top: 80px;
+}
+
+.registerForm {
+  margin-top: 14px;
+  display: grid;
+  gap: 16px;
+}
+
+.formSection {
+  padding-top: 6px;
+  border-top: 1px solid #eef0f3;
+}
+
+.formTitle {
+  margin: 12px 0 10px;
+  font-size: 1.02rem;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 12px;
+}
+
+.formRow {
+  grid-column: span 6;
+  display: grid;
+  gap: 6px;
+}
+
+.formRowFull {
+  grid-column: 1 / -1;
+}
+
+.formLabel {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #222;
+}
+
+.req {
+  color: #dc2626;
+}
+
+.formInput,
+.formSelect,
+.formTextarea {
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  outline: none;
+  background: #fff;
+}
+
+.formTextarea {
+  resize: vertical;
+}
+
+.formInput:focus,
+.formSelect:focus,
+.formTextarea:focus {
+  border-color: #111;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.12);
+}
+
+.checkGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.checkRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.35;
+  color: #222;
+}
+
+.switchRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 30px;
+}
+
+.formActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.btnPrimary {
+  border: 1px solid #111;
+  background: #111;
+  color: #fff;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btnPrimary:hover {
+  background: #1f1f1f;
+  border-color: #1f1f1f;
+}
+
+.btnPrimary:disabled {
+  background: #e5e7eb;
+  border-color: #e5e7eb;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.btnGhost {
+  display: inline-block;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #111;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.btnGhost:hover {
+  background: #f3f4f6;
+}
+
+.formHint {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .formRow {
+    grid-column: 1 / -1;
+  }
+
+  .checkGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .switchRow {
+    padding-top: 0;
+  }
+}

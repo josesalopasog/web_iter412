@@ -1,5 +1,5 @@
-import instagram_logo from "../../assets/svg/Instagram.svg";
-import whatsapp_logo from "../../assets/svg/WhatsApp.svg";
+import instagram_logo from "../../../assets/svg/Instagram.svg";
+import whatsapp_logo from "../../../assets/svg/WhatsApp.svg";
 import { useMemo, useState } from "react";
 
 import "./styles.css";
