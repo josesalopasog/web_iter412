@@ -9,7 +9,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [isDropdownMenuOpen, setIsDropdownMenuOpen] = useState<boolean>(false);
 
   const toggleDropdownMenu = () => {
-    console.log("Toggling dropdown menu. Current state:", isDropdownMenuOpen);
     setIsDropdownMenuOpen((prev) => !prev);
   };
 
