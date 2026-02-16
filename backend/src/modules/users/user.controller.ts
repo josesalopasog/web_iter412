@@ -1,7 +1,7 @@
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { ApiError } from "../../utils/errors.js";
 import { User } from "./user.model.js";
-import { CreateUserFromFormDTO } from "./user.types.js";
+import { RegistrationSoldadosDTO } from "./user.types.js";
 
 import bcrypt from "bcryptjs";
 
@@ -11,7 +11,7 @@ const requireFields = (body: any, fields: string[]) => {
 };
 
 export const createUserFromForm = asyncHandler(async (req, res) => {
-    const body = req.body as Partial<CreateUserFromFormDTO>;
+    const body = req.body as Partial<RegistrationSoldadosDTO>;
 
     requireFields(body, [
         "password",
@@ -24,11 +24,8 @@ export const createUserFromForm = asyncHandler(async (req, res) => {
     const existing = await User.findOne({ email: body.email?.toLowerCase() });
     if (existing) throw new ApiError(409, "Email already registered");
 
-    const passwordHash = await bcrypt.hash(String(body.password), 12);
-
     const user = await User.create({
         email: String(body.email).toLowerCase(),
-        passwordHash,
 
         // por defecto SOLDADO, luego un admin lo cambia
         role: "SOLDADO",
