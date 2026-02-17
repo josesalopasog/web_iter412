@@ -1,34 +1,32 @@
-export const USER_ROLES = [
-  "SUPERADMIN",
-  "ADMIN",
-  "CM",
-  "LIDER",
-  "COORDINADOR",
-  "SERVIDOR",
-  "SOLDADO",
-] as const;
+// ============ Básicos ============
+export type YesNo = "" | "SI" | "NO";
 
+export type Gender = "" | "Mujer" | "Hombre";
 
-export type UserRole = (typeof USER_ROLES)[number];
-
-
-export type YesNo = "SI" | "NO";
-
-export type Gender = "MUJER" | "HOMBRE";
-
-export type DocumentType = "TI" | "CC" | "PAS" | "OTRO";
-
-export type Occupation =
-  | "ESTUDIANTE-COLEGIO"
-  | "ESTUDIANTE-SUPERIOR"
-  | "TRABAJADOR"
-  | "SIN OCUPACION"
+// ============ Documento ============
+export type DocumentType =
+  | ""
+  | "TARJETA_IDENTIDAD"
+  | "CEDULA_CIUDADANIA"
+  | "PASAPORTE"
   | "OTRO";
 
-export type ShirtSize = "S" | "M" | "L" | "OTRO";
+// ============ Ocupación ============
+export type Occupation =
+  | ""
+  | "ESTUDIANTE_COLEGIO"
+  | "ESTUDIANTE_EDUCACION_SUPERIOR"
+  | "TRABAJADOR"
+  | "SIN_OCUPACION"
+  | "OTRO";
 
-export type HearAbout = "CONOZCO_ALGUIEN" | "REDES" | "QR" | "OTRO";
+// ============ Comunidad ============
+export type HearAbout = "" | "CONOZCO_A_ALGUIEN" | "REDES_SOCIALES" | "QR" | "OTRO";
 
+// ============ Camiseta ============
+export type ShirtSize = "" | "S" | "M" | "L" | "OTRO";
+
+// ============ Restricciones ============
 export type Restriction =
   | "PROBLEMAS_DORMIR_SOLO"
   | "ALERGIAS"
@@ -37,6 +35,7 @@ export type Restriction =
   | "NINGUNA"
   | "OTRO";
 
+// ============ Sacramentos (valores backend) ============
 export type Sacrament =
   | "NINGUNO"
   | "BAUTISMO"
@@ -45,9 +44,11 @@ export type Sacrament =
   | "MATRIMONIO"
   | "ORDENACION";
 
-export type RegistrationSoldadosDTO = {
+// ============ Payload final hacia backend (SOLDADO) ============
+export type RegisterSoldadoPayload = {
+  // antes de comenzar
   gender: Gender;
-  // Data for the form 
+
   email: string;
   firstNames: string;
   lastNames: string;
@@ -100,4 +101,4 @@ export type RegistrationSoldadosDTO = {
 
   acceptTerms: boolean;
   acceptDataPolicy: boolean;
-}
+};

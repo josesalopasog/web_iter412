@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import type { SignOptions } from "jsonwebtoken";
 
-dotenv.config();
+dotenv.config({ path: "backend/.env" });
 
 export const env = {
     NODE_ENV: process.env.NODE_ENV ?? "development",
