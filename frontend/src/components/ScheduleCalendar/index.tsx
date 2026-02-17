@@ -5,7 +5,7 @@ import listPlugin from "@fullcalendar/list";
 import interactionPlugin from "@fullcalendar/interaction";
 
 import { SCHEDULE } from "../../data/schedule.data";
-import type { ScheduleEvent } from "../../types";
+import type { ScheduleEvent } from "../../types/types";
 import "./styles.css";
 
 const transformEvents = (events: ScheduleEvent[]) => {
