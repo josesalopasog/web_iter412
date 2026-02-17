@@ -60,7 +60,7 @@ export const useRegisterSoldadoForm = () => {
   const [emergencyRelation, setEmergencyRelation] = useState("");
   const [emergencyEmail, setEmergencyEmail] = useState("");
 
-  const [hearAbout, setHearAbout] = useState<HearAbout>("");
+  const [hearAbout, setHearAbout] = useState<HearAbout>("CONOZCO_A_ALGUIEN");
   const [hearAboutOther, setHearAboutOther] = useState("");
 
   const [invitedByCommunity, setInvitedByCommunity] = useState<YesNo>("NO");

@@ -1,4 +1,4 @@
-import type { SacramentEnum, ShirtSizeEnum } from "./types";
+import type { Sacrament, ShirtSize } from "./types";
 
 export const splitName = (name: string) => {
     const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -10,7 +10,7 @@ export const splitName = (name: string) => {
     };
 };
 
-export const mapSacrament = (s: string): SacramentEnum => {
+export const mapSacrament = (s: string): Sacrament => {
     const normalized = s.toLowerCase();
     if (normalized.includes("baut")) return "BAUTISMO";
     if (normalized.includes("primera")) return "PRIMERA_COMUNION";
@@ -19,7 +19,7 @@ export const mapSacrament = (s: string): SacramentEnum => {
     return "NINGUNO";
 };
 
-export const mapShirtSize = (size: string): ShirtSizeEnum => {
+export const mapShirtSize = (size: string): ShirtSize=> {
     const up = size.trim().toUpperCase();
     if (up === "S") return "S";
     if (up === "M") return "M";
