@@ -17,7 +17,7 @@ export const createApp = () => {
 
   app.use(
     cors({
-      origin: (origin, cb) => {
+      origin: (origin: string | undefined, cb: (err: Error | null, allow?: boolean) => void) => {
         if (!origin) return cb(null, true); // Postman / server-to-server
         if (allowedOrigins.includes(origin)) return cb(null, true);
         return cb(new Error(`CORS blocked for origin: ${origin}`));
