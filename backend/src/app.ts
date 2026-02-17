@@ -1,4 +1,4 @@
-import express from "express";
+import express, { type Request, type Response, type NextFunction } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import userRoutes from "./modules/users/user.routes.js";
@@ -38,7 +38,7 @@ export const createApp = () => {
 
   app.use((_req, res) => res.status(404).json({ message: "Not Found" }));
 
-  app.use((err: any, _req: any, res: any, _next: any) => {
+  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err?.statusCode || 500;
     res.status(status).json({
       message: err?.message || "Server error",
