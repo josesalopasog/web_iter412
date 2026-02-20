@@ -1,18 +1,20 @@
 import "./styles.css";
 
 type AnimatedBorderProps = {
+  className?: string;
   text: string;
   href?: string;
   isBlank?: boolean; 
 };
 
 const AnimatedBorder: React.FC<AnimatedBorderProps> = ({
+  className = "",
   text,
   href,
   isBlank = false, 
 }) => {
   const content = (
-    <div className="animated-border">
+    <div className={`animated-border ${className}`}>
       <p>{text}</p>
     </div>
   );

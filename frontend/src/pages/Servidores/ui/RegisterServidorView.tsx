@@ -9,25 +9,10 @@ import type {
   YesNo,
 } from "../form/types";
 
+import whatsapp_logo from "../../../assets/svg/WhatsApp.svg";
+import TermsAndConditions from "./TermsAndConditions";
+
 type Props = UseRegisterServidorFormReturn;
-
-const TERMS_TEXT = `
-El valor total del servicio es de $300.000
-Que puedes cancelar a través de los siguientes medios: 
-
-- Consignación o transferencias a las siguientes cuentas:
-Puedes cancelar por transferencia Nequi al número de los coordinares: 311-205-7072 José Salopaso / 313-610-6277 Ana Vargas. 
-
-    
-El diligenciamiento de este formulario no asegura la separación del cupo para la realización del retiro, para hacer este válido se debe realizar un abono mínimo de $100.000 (cien mil pesos colombianos) a más tardar el día 30 de marzo del 2026. Adicionalmente, a pesar de que se realice el abono, es indispensable la asistencia a las formaciones para poder servir dentro del retiro.
-
-Completados los cupos que se apartaron con abono, el número restante de inscritos quedará en lista de espera. Asimismo, se debe cancelar el valor total del retiro a más tardar el día 30 de abril del 2026.
-Quien no haya pagado el valor total del servicio antes del 30 de abril del 2026, no podría ingresar a la casa de retiros.
-
-Respecto de las devoluciones por cancelación del cupo de forma injustificada, la misma no aplica en razón de lo preceptuado en el Decreto 4705 del 2008.
-
-Exceptuando las eventualidades de fuerza mayor o caso fortuito tales como enfermedad o accidente por fenómenos naturales; de igual manera, se deberá aportar los debidos comprobantes que den veracidad de lo ocurrido.
-`;
 
 const DATA_POLICY_TEXT = `
 𝐏𝐨𝐥𝐢́𝐭𝐢𝐜𝐚 𝐝𝐞 𝐓𝐫𝐚𝐭𝐚𝐦𝐢𝐞𝐧𝐭𝐨 𝐝𝐞 𝐃𝐚𝐭𝐨𝐬: Con La expedición de la ley 1581 de 2012 y el Decreto 1377 de 2013, se desarrolla el principio constitucional que tienen todas las personas a conocer, actualizar y rectificar todo tipo de información recogida o que haya sido objeto de tratamiento de datos personales en bancos o bases de datos y en general, en archivos de entidades públicas y/o privadas. La Comunidad Iter 4.12, como Comunidad que almacena y recolecta datos personales, requiere obtener tu autorización para que de manera libre, previa, expresa, voluntaria y debidamente informada, le permitas recolectar, recaudar, almacenar, usar, circular, suprimir, procesar, compilar, intercambiar, dar tratamiento, actualizar y disponer de los datos que le serán solicitados en el formulario y que serán incorporados en distintas bases o bancos de datos o en repositorios electrónicos de todo tipo para el desarrollo de las funciones propias de la organización y para brindar información de sus actividades. Si no deseas que tus datos personales sean utilizados por la Comunidad, tengas alguna observación y/o comentario sobre el manejo de los mismos, consideres que se les dio un uso contrario al autorizado o al permitido por las leyes aplicables, o no quieras seguir recibiendo información relacionada con la organización y sus actividades, podrás revocar de manera parcial o total tu autorización de manera expresa e inequívoca, directa y por escrito, por correo electrónico; o de manera oral, o por cualquier medio o conducta inequívoca que permita concluir de forma razonable que se revoca tal autorización o consentimiento. Dichas comunicaciones podrán ser enviadas al correo electrónico 𝐢𝐭𝐞𝐫𝟒.𝟏𝟐𝐛𝐨𝐠𝐨𝐭𝐚@𝐠𝐦𝐚𝐢𝐥.𝐜𝐨𝐦 
@@ -167,10 +152,22 @@ export const RegisterServidorView: React.FC<Props> = ({
       <div className="container">
         <div className="section-head">
           <h2>Registro de Servidores</h2>
-          <h3>Diligencia tus datos para el proceso de servidores</h3>
+          <h3>Diligencia tus datos para servir en el próximo retiro</h3>
           <p className="sub">
-            Por favor completa todos los campos. Esta información se usará para
-            organización del retiro y asignaciones.
+            Querido servidor, el fin de semana del 1, 2 y 3 de mayo del 2026,
+            estaremos reunidos nuevamente en comunidad, llevando la palabra de
+            Dios y la alegría de ITER 4.12 a los jóvenes, mostrando el reinado
+            de Cristo y su iglesia. Diligencia el formulario y participa de esta
+            increíble experiencia en la Casa de Retiros, Centro de
+            Espiritualidad María Consolata (Carrera 24B No. 1D - 60, contiguo a
+            la Parroquia Nuestra Señora de la Consolata). El valor total del
+            retiro incluye la alimentación desde el día viernes en la noche
+            (cena), hasta el día domingo al mediodía (almuerzo). Por favor
+            completa todos los campos.
+          </p>
+          <p className="sub">
+            Esta información se usará para organización del retiro y
+            asignaciones.
           </p>
         </div>
 
@@ -438,7 +435,7 @@ export const RegisterServidorView: React.FC<Props> = ({
 
                   {needsShirt === "SI" && (
                     <>
-                      {/* ✅ Color MULTI */}
+                      
                       <div className="formRow formRowFull">
                         <span className="formLabel">
                           Color (puedes seleccionar varios){" "}
@@ -952,9 +949,23 @@ export const RegisterServidorView: React.FC<Props> = ({
           <div className="card span-4">
             <h3>ℹ️ Info</h3>
             <ul className="section-list">
+              <li>Precio del retiro:<strong> $300.000 COP</strong> </li>
               <li>Recuerda usar un correo real para futuras notificaciones.</li>
               <li>La contraseña debe tener mínimo 8 caracteres.</li>
-              <li>Si necesitas apoyo, escribe al equipo organizador.</li>
+              <li>
+                <span>Si necesitas apoyo o tienes algún problema con el formulario, puedes escribir a este numero:</span> 
+                <a
+                  className="pill"
+                  href="https://wa.me/573017201658"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img className="icon" src={whatsapp_logo} alt="WhatsApp" />
+                  <span>
+                    <strong>WhatsApp:</strong> 301-720-1658
+                  </span>
+                </a>
+              </li>
             </ul>
           </div>
         </div>
@@ -973,7 +984,9 @@ export const RegisterServidorView: React.FC<Props> = ({
                 ✕
               </button>
             </div>
-            <pre className="modalBody">{TERMS_TEXT}</pre>
+            <pre className="modalBody">
+              <TermsAndConditions />
+            </pre>
             <div className="modalActions">
               <button
                 type="button"

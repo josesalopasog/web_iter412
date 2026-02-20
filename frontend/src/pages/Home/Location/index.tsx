@@ -42,7 +42,7 @@ const Location = () => {
             <div className="card span-4">
               <h3>🧭 Requisitos para asistir a las reuniones</h3>
                 <ul className="section-list">
-                    <li>Consultar las fechas en el crongrama. Debajo aparecen las reuniones abiertas para jovenes. Hay reuniones que son de preparación para el retiro por lo que no todas son abiertas.</li>
+                    <li>Consultar las fechas en el cronograma. Debajo aparecen las reuniones abiertas para jovenes. Hay reuniones que son de preparación para el retiro por lo que no todas son abiertas.</li>
                     <li>Si es tu primera vez, te recomendamos asistir a una reunión abierta para jóvenes para conocer la comunidad y el ambiente de las reuniones.</li>
                     <li>Respetar a los miembros de la comunidad y traer un corazón abierto.</li>
                     <li>¿Y para hacer el retiro? Sigue deslizando más abajo para ver como puedes vivir la mejor experiencia de tu vida.</li>

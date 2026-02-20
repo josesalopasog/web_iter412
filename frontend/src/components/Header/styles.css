@@ -125,6 +125,10 @@ header:hover::before {
   width: clamp(28px, 5vw, 34px);
 }
 
+.login-button {
+  display: none;
+}
+
 @media (max-width: 900px) {
   .header-ul {
     display: none;

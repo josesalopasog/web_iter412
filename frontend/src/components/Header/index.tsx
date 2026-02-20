@@ -33,7 +33,7 @@ const Header = () => {
         </ul>
       </nav>
       <div className="header-third-column">
-        <AnimatedBorder text="Iniciar Sesión" />
+        <AnimatedBorder className="login-button" text="Iniciar Sesión" />
         <DropdownMenuButton className="header-menu-button" />
       </div>
     </header>
