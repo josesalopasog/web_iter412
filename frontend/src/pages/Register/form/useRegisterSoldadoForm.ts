@@ -14,46 +14,45 @@ import type {
 
 export const useRegisterSoldadoForm = () => {
   // --- state
-  const [gender, setGender] = useState<Gender>("");
+  const [gender, setGender] = useState<Gender>("Mujer");
+  const [isSurprise, setIsSurprise] = useState<YesNo>("NO");
 
   const [email, setEmail] = useState("");
   const [firstNames, setFirstNames] = useState("");
   const [lastNames, setLastNames] = useState("");
   const [preferredName, setPreferredName] = useState("");
 
-  const [documentType, setDocumentType] = useState<DocumentType>("");
+  const [documentType, setDocumentType] = useState<DocumentType>("TARJETA_IDENTIDAD");
   const [documentTypeOther, setDocumentTypeOther] = useState("");
   const [documentNumber, setDocumentNumber] = useState("");
 
   const [age, setAge] = useState("");
   const [birthDate, setBirthDate] = useState("");
 
+  const [phone, setPhone] = useState("");
+
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [neighborhood, setNeighborhood] = useState("");
 
-  const [phone, setPhone] = useState("");
-
   const [eps, setEps] = useState("");
   const [bloodType, setBloodType] = useState("");
-
-  const [practicesReligion, setPracticesReligion] = useState<YesNo>("NO");
-  const [whichReligion, setWhichReligion] = useState("");
-
-  const [occupation, setOccupation] = useState<Occupation>("TRABAJADOR");
-  const [occupationOther, setOccupationOther] = useState("");
-  const [occupationPlace, setOccupationPlace] = useState("");
-
-  const [sacraments, setSacraments] = useState<Sacrament[]>(["NINGUNO"]);
 
   const [restrictions, setRestrictions] = useState<Restriction[]>(["NINGUNA"]);
   const [restrictionsOther, setRestrictionsOther] = useState("");
   const [medicationsDetail, setMedicationsDetail] = useState("");
 
-  const [shirtSize, setShirtSize] = useState<ShirtSize>("M");
-  const [shirtSizeOther, setShirtSizeOther] = useState("");
+  const [practicesReligion, setPracticesReligion] = useState<YesNo>("NO");
+  const [whichReligion, setWhichReligion] = useState("");
 
-  const [isSurprise, setIsSurprise] = useState<YesNo>("NO");
+  const [sacraments, setSacraments] = useState<Sacrament[]>(["NINGUNO"]);
+
+  const [occupation, setOccupation] = useState<Occupation>("TRABAJADOR");
+  const [occupationOther, setOccupationOther] = useState("");
+  const [occupationPlace, setOccupationPlace] = useState("");
+  
+  const [shirtSize, setShirtSize] = useState<ShirtSize>("S");
+  const [shirtSizeOther, setShirtSizeOther] = useState("");
 
   const [emergencyName, setEmergencyName] = useState("");
   const [emergencyPhone, setEmergencyPhone] = useState("");
