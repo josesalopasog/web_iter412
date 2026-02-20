@@ -1,33 +1,31 @@
-import type { RegistrationServidorPayload, ShirtSize } from "./types";
+import type { RegistrationServidoresDTO } from "./types";
+import type { DocumentType, MerchItem, Service, ShirtColor, ShirtSize, YesNo } from "./types";
 
-
-
-export function buildServidorPayload(input: {
+type BuildArgs = {
   email: string;
-
-  fullName: string;
+  firstNames: string;
+  lastNames: string;
   preferredName: string;
   referralNamePhone: string;
 
-  documentType: RegistrationServidorPayload["documentType"];
+  documentType: DocumentType;
   documentTypeOther: string;
   documentNumber: string;
 
   city: string;
   birthDate: string;
-  age: string;
-
+  age: string; // viene del input
   phone: string;
 
   eps: string;
   bloodType: string;
 
-  needsShirt: RegistrationServidorPayload["needsShirt"];
-  shirtColor: RegistrationServidorPayload["shirtColor"];
-  shirtSize: RegistrationServidorPayload["shirtSize"];
+  needsShirt: YesNo;
+  shirtColors: ShirtColor[];
+  shirtSize: ShirtSize;
   shirtSizeOther: string;
 
-  merchItems: RegistrationServidorPayload["merchItems"];
+  merchItems: MerchItem[];
   merchSize: ShirtSize;
   merchSizeOther: string;
 
@@ -39,45 +37,70 @@ export function buildServidorPayload(input: {
   emergency2Phone: string;
   emergency2Relation: string;
 
-  services: RegistrationServidorPayload["services"];
-  lastService: RegistrationServidorPayload["lastService"];
+  services: Service[];
+  lastService: Service;
   serviceLeaderOf: string;
 
-  wentToOtherSedes: RegistrationServidorPayload["wentToOtherSedes"];
+  wentToOtherSedes: YesNo;
   otherSedesDetail: string;
 
   formationOther: string;
 
-  acceptTerms: RegistrationServidorPayload["acceptTerms"];
-  acceptDataPolicy: RegistrationServidorPayload["acceptDataPolicy"];
+  acceptTerms: boolean;
+  acceptDataPolicy: boolean;
 
   password: string;
-}): RegistrationServidorPayload {
+};
+
+export const buildServidorPayload = (a: BuildArgs): RegistrationServidoresDTO => {
   return {
-    ...input,
-    email: input.email.trim(),
-    fullName: input.fullName.trim(),
-    preferredName: input.preferredName.trim(),
-    referralNamePhone: input.referralNamePhone.trim(),
-    documentTypeOther: input.documentTypeOther.trim(),
-    documentNumber: input.documentNumber.trim(),
-    city: input.city.trim(),
-    birthDate: input.birthDate.trim(),
-    age: Number(input.age),
-    phone: input.phone.trim(),
-    eps: input.eps.trim(),
-    bloodType: input.bloodType.trim(),
-    shirtSizeOther: input.shirtSizeOther.trim(),
-    merchSizeOther: input.merchSizeOther.trim(),
-    emergency1Name: input.emergency1Name.trim(),
-    emergency1Phone: input.emergency1Phone.trim(),
-    emergency1Relation: input.emergency1Relation.trim(),
-    emergency2Name: input.emergency2Name.trim(),
-    emergency2Phone: input.emergency2Phone.trim(),
-    emergency2Relation: input.emergency2Relation.trim(),
-    serviceLeaderOf: input.serviceLeaderOf.trim(),
-    otherSedesDetail: input.otherSedesDetail.trim(),
-    formationOther: input.formationOther.trim(),
-    password: input.password,
+    email: a.email.trim().toLowerCase(),
+    firstNames: a.firstNames.trim(),
+    lastNames: a.lastNames.trim(),
+    preferredName: a.preferredName.trim(),
+    referralNamePhone: a.referralNamePhone.trim(),
+
+    documentType: a.documentType,
+    documentTypeOther: a.documentType === "OTRO" ? a.documentTypeOther.trim() : "",
+    documentNumber: a.documentNumber.trim(),
+
+    city: a.city.trim(),
+    birthDate: a.birthDate,
+    age: Number(a.age),
+    phone: a.phone.trim(),
+
+    eps: a.eps.trim(),
+    bloodType: a.bloodType.trim(),
+
+    needsShirt: a.needsShirt,
+    shirtColors: a.needsShirt === "SI" ? a.shirtColors : [],
+    shirtSize: a.needsShirt === "SI" ? a.shirtSize : "S",
+    shirtSizeOther: a.needsShirt === "SI" && a.shirtSize === "OTRO" ? a.shirtSizeOther.trim() : "",
+
+    merchItems: a.merchItems,
+    merchSize: a.merchSize,
+    merchSizeOther: a.merchSize === "OTRO" ? a.merchSizeOther.trim() : "",
+
+    emergency1Name: a.emergency1Name.trim(),
+    emergency1Phone: a.emergency1Phone.trim(),
+    emergency1Relation: a.emergency1Relation.trim(),
+
+    emergency2Name: a.emergency2Name.trim(),
+    emergency2Phone: a.emergency2Phone.trim(),
+    emergency2Relation: a.emergency2Relation.trim(),
+
+    services: a.services,
+    lastService: a.lastService,
+    serviceLeaderOf: a.serviceLeaderOf.trim(),
+
+    wentToOtherSedes: a.wentToOtherSedes,
+    otherSedesDetail: a.wentToOtherSedes === "SI" ? a.otherSedesDetail.trim() : "",
+
+    formationOther: a.formationOther.trim(),
+
+    acceptTerms: Boolean(a.acceptTerms),
+    acceptDataPolicy: Boolean(a.acceptDataPolicy),
+
+    password: a.password,
   };
-}
+};

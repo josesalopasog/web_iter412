@@ -1,0 +1,89 @@
+
+#register-servidores {
+  padding: 20px 0;
+  margin-top: 80px;
+}
+
+/* Links tipo botón para abrir modales */
+.linkBtn {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-weight: 700;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.linkBtn:hover {
+  opacity: 0.9;
+}
+
+/* ========= Modal ========= */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.modalCard {
+  width: min(780px, 96%);
+  border-radius: 18px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+}
+
+.modalHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.modalHead h3 {
+  margin: 0;
+}
+
+.modalClose {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 8px 10px;
+  border-radius: 12px;
+}
+
+.modalClose:hover {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.modalBody {
+  margin: 10px 0 0 0;
+  padding: 12px;
+  border-radius: 14px;
+  white-space: pre-wrap;
+  line-height: 1.6;
+  max-height: 55vh;
+  overflow: auto;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}

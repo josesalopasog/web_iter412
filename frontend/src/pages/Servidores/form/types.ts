@@ -1,75 +1,78 @@
 export type YesNo = "SI" | "NO";
-export type DocumentType = "CC" | "TI" | "PAS" | "OTRO";
-export type ShirtColor = "BLANCA" | "VERDE" | "AZUL";
+export type DocumentType = "TI" | "CC" | "PAS" | "OTRO";
 export type ShirtSize = "S" | "M" | "L" | "OTRO";
+export type ShirtColor = "BLANCA" | "VERDE" | "AZUL";
 
 export type MerchItem =
-    | "BUSO_CERRADO"
-    | "CHAQUETA_ABIERTA"
-    | "TULA"
-    | "GORRA"
-    | "CANGURO"
-    | "NINGUNA";
+  | "BUSO_CERRADO"
+  | "CHAQUETA_ABIERTA"
+  | "TULA"
+  | "GORRA"
+  | "CANGURO"
+  | "NINGUNA";
 
 export type Service =
-    | "COMEDOR"
-    | "LIDER_DE_MESA"
-    | "PALANCAS"
-    | "LOGISTICA"
-    | "SANTISIMO"
-    | "SONIDO_PALETERO_CAMPANERO"
-    | "COORDINADOR"
-    | "LIDER_DE_RETIRO"
-    | "NINGUNO";
+  | "COMEDOR"
+  | "LIDER_DE_MESA"
+  | "PALANCAS"
+  | "LOGISTICA"
+  | "SANTISIMO"
+  | "SONIDO_PALETERO_CAMPANERO"
+  | "COORDINADOR"
+  | "LIDER_DE_RETIRO"
+  | "NINGUNO";
 
-export type RegistrationServidorPayload = {
-    email: string;
+/**
+ * DTO que le mandas al backend para crear SERVIDOR
+ * (solo lo que estás usando en tu form; ajusta si tu backend pide más campos)
+ */
+export type RegistrationServidoresDTO = {
+  email: string;
+  firstNames: string;
+  lastNames: string;
+  preferredName: string;
+  referralNamePhone: string;
 
-    fullName: string;
-    preferredName: string;
-    referralNamePhone: string;
+  documentType: DocumentType;
+  documentTypeOther: string;
+  documentNumber: string;
 
-    documentType: DocumentType;
-    documentTypeOther: string;
-    documentNumber: string;
+  city: string;
+  birthDate: string; // yyyy-mm-dd
+  age: number;
+  phone: string;
 
-    city: string;
-    birthDate: string; // YYYY-MM-DD
-    age: number;
+  eps: string;
+  bloodType: string;
 
-    phone: string;
+  needsShirt: YesNo;
+  shirtColors: ShirtColor[]; 
+  shirtSize: ShirtSize;
+  shirtSizeOther: string;
 
-    eps: string;
-    bloodType: string;
+  merchItems: MerchItem[];
+  merchSize: ShirtSize;
+  merchSizeOther: string;
 
-    needsShirt: YesNo;
-    shirtColor: ShirtColor | "";
-    shirtSize: ShirtSize;
-    shirtSizeOther: string;
+  emergency1Name: string;
+  emergency1Phone: string;
+  emergency1Relation: string;
 
-    merchItems: MerchItem[];
-    merchSize: ShirtSize;
-    merchSizeOther: string;
+  emergency2Name: string;
+  emergency2Phone: string;
+  emergency2Relation: string;
 
-    emergency1Name: string;
-    emergency1Phone: string;
-    emergency1Relation: string;
+  services: Service[];
+  lastService: Service;
+  serviceLeaderOf: string;
 
-    emergency2Name: string;
-    emergency2Phone: string;
-    emergency2Relation: string;
+  wentToOtherSedes: YesNo;
+  otherSedesDetail: string;
 
-    services: Service[];
-    lastService: Service;
-    serviceLeaderOf: string;
+  formationOther: string;
 
-    wentToOtherSedes: YesNo;
-    otherSedesDetail: string;
+  acceptTerms: boolean;
+  acceptDataPolicy: boolean;
 
-    formationOther: string;
-
-    acceptTerms: YesNo;
-    acceptDataPolicy: YesNo;
-
-    password: string;
+  password: string;
 };

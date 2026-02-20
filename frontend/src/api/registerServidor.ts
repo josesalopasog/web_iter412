@@ -1,21 +1,18 @@
-import type { RegistrationServidorPayload } from "../pages/Servidores/form/types";
+import type { RegistrationServidoresDTO } from "../pages/Servidores/form/types";
 
-const API_URL = import.meta.env.VITE_API_URL as string;
+const API_URL = import.meta.env.VITE_API_URL;
 
-export async function registerServidor(payload: RegistrationServidorPayload) {
-    const res = await fetch(`${API_URL}/api/servidores`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "omit",
-        body: JSON.stringify(payload),
-    });
+export const registerServidor = async (payload: RegistrationServidoresDTO) => {
+  const res = await fetch(`${API_URL}/api/servidores/servidores`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
 
+  if (!res.ok) {
     const data = await res.json().catch(() => null);
+    throw new Error(data?.message ?? "Error registrando servidor");
+  }
 
-    if (!res.ok) {
-        const msg = data?.message || `Request failed (${res.status})`;
-        throw new Error(msg);
-    }
-
-    return data as { id: string; email: string; role: string; createdAt: string };
-}
+  return res.json() as Promise<{ id: string }>;
+};
