@@ -2,6 +2,7 @@ import express, { type Request, type Response, type NextFunction } from "express
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import userRoutes from "./modules/users/user.routes.js";
+import servidorRoutes from "./modules/servidores/servidor.routes.js";
 
 import { env } from "./config/env.js";
 ;
@@ -35,6 +36,7 @@ export const createApp = () => {
   });
 
   app.use("/api/users", userRoutes);
+  app.use("/api/servidores", servidorRoutes);
 
   app.use((_req, res) => res.status(404).json({ message: "Not Found" }));
 
