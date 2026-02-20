@@ -1,10 +1,8 @@
 export type YesNo = "SI" | "NO";
-
-export type DocumentType = "CC" | "TI" | "PAS" | "OTRO";
-
-export type ShirtColor = "BLANCA" | "VERDE" | "AZUL";
+export type DocumentType = "TI" | "CC" | "PAS" | "OTRO";
 
 export type ShirtSize = "S" | "M" | "L" | "OTRO";
+export type ShirtColor = "BLANCA" | "VERDE" | "AZUL";
 
 export type MerchItem =
   | "BUSO_CERRADO"
@@ -25,12 +23,11 @@ export type Service =
   | "LIDER_DE_RETIRO"
   | "NINGUNO";
 
-export type RegistrationServidorDTO = {
-  email: string;
+export type RegistrationServidoresDTO = {
 
+  email: string;
   firstNames: string;
   lastNames: string;
-
   preferredName: string;
   referralNamePhone: string;
 
@@ -39,22 +36,25 @@ export type RegistrationServidorDTO = {
   documentNumber: string;
 
   city: string;
-  birthDate: string; // YYYY-MM-DD
+  birthDate: string; // yyyy-mm-dd
   age: number;
   phone: string;
 
   eps: string;
   bloodType: string;
 
+  // Camiseta (multiselección)
   needsShirt: YesNo;
-  shirtColor: ShirtColor | "";
+  shirtColors: ShirtColor[];
   shirtSize: ShirtSize;
   shirtSizeOther: string;
 
+  // Merch
   merchItems: MerchItem[];
   merchSize: ShirtSize;
   merchSizeOther: string;
 
+  // Emergencias (2 contactos)
   emergency1Name: string;
   emergency1Phone: string;
   emergency1Relation: string;
@@ -63,17 +63,19 @@ export type RegistrationServidorDTO = {
   emergency2Phone: string;
   emergency2Relation: string;
 
+  // Servicio
   services: Service[];
   lastService: Service;
   serviceLeaderOf: string;
 
+  // Historial
   wentToOtherSedes: YesNo;
   otherSedesDetail: string;
 
   formationOther: string;
 
-  acceptTerms: YesNo;
-  acceptDataPolicy: YesNo;
+  acceptTerms: boolean;
+  acceptDataPolicy: boolean;
 
   password: string;
 };

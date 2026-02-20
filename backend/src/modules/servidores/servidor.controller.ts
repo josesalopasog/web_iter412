@@ -2,10 +2,12 @@ import bcrypt from "bcryptjs";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { ApiError } from "../../utils/errors.js";
 import { Servidor } from "./servidor.model.js";
-import type { RegistrationServidorDTO } from "./servidores.types.js";
+import type { RegistrationServidoresDTO } from "./servidores.types.js"
 
 const requireFields = (body: any, fields: string[]) => {
-  const missing = fields.filter((f) => body[f] === undefined || body[f] === null || body[f] === "");
+  const missing = fields.filter(
+    (f) => body[f] === undefined || body[f] === null || body[f] === ""
+  );
   if (missing.length) throw new ApiError(400, `Missing required fields: ${missing.join(", ")}`);
 };
 
@@ -15,118 +17,130 @@ const requireIf = (cond: boolean, body: any, fields: string[]) => {
 };
 
 export const createServidorFromForm = asyncHandler(async (req, res) => {
-  const body = req.body as Partial<RegistrationServidorDTO>;
+  const body = req.body as Partial<RegistrationServidoresDTO>;
 
   requireFields(body, [
     "email",
+    "password",
     "firstNames",
     "lastNames",
     "preferredName",
     "referralNamePhone",
+
     "documentType",
     "documentNumber",
+
     "city",
     "birthDate",
     "age",
     "phone",
+
     "eps",
     "bloodType",
+
     "needsShirt",
+    "shirtColors",
     "shirtSize",
+
     "merchItems",
     "merchSize",
+
     "emergency1Name",
     "emergency1Phone",
     "emergency1Relation",
+
     "emergency2Name",
     "emergency2Phone",
     "emergency2Relation",
+
     "services",
     "lastService",
     "serviceLeaderOf",
+
     "wentToOtherSedes",
     "formationOther",
+
     "acceptTerms",
     "acceptDataPolicy",
-    "password",
   ]);
+
+  if (typeof body.acceptTerms !== "boolean") throw new ApiError(400, "acceptTerms must be boolean");
+  if (typeof body.acceptDataPolicy !== "boolean") throw new ApiError(400, "acceptDataPolicy must be boolean");
+
+  if (!Array.isArray(body.services) || body.services.length === 0) {
+    throw new ApiError(400, "services must be a non-empty array");
+  }
+  if (!Array.isArray(body.merchItems)) {
+    throw new ApiError(400, "merchItems must be an array");
+  }
+  if (body.needsShirt === "SI") {
+    if (!Array.isArray(body.shirtColors) || body.shirtColors.length === 0) {
+      throw new ApiError(400, "shirtColors is required when needsShirt=SI");
+    }
+  } else {
+    body.shirtColors = [];
+  }
 
   requireIf(body.documentType === "OTRO", body, ["documentTypeOther"]);
   requireIf(body.shirtSize === "OTRO", body, ["shirtSizeOther"]);
   requireIf(body.merchSize === "OTRO", body, ["merchSizeOther"]);
   requireIf(body.wentToOtherSedes === "SI", body, ["otherSedesDetail"]);
 
-  // Camiseta
-  if (body.needsShirt === "NO") {
-    body.shirtColor = "";
-    body.shirtSize = body.shirtSize || "S";
-  } else {
-    requireFields(body, ["shirtColor"]);
+  if (typeof body.password !== "string" || body.password.length < 8) {
+    throw new ApiError(400, "password must be at least 8 characters");
   }
 
-  // Password policy mínima
-  const pwd = String(body.password ?? "");
-  if (pwd.length < 8) throw new ApiError(400, "Password must be at least 8 characters");
+  const existing = await Servidor.findOne({ email: String(body.email).toLowerCase() });
+  if (existing) throw new ApiError(409, "Email already registered");
 
-  const email = String(body.email).toLowerCase().trim();
-  const existing = await Servidor.findOne({ email });
-  if (existing) throw new ApiError(409, "Email already registered (servidores)");
-
-  const passwordHash = await bcrypt.hash(pwd, 10);
-
-  const docTypeOther = body.documentType === "OTRO" ? String(body.documentTypeOther ?? "").trim() : "";
-  const shirtSizeOther = body.shirtSize === "OTRO" ? String(body.shirtSizeOther ?? "").trim() : "";
-  const merchSizeOther = body.merchSize === "OTRO" ? String(body.merchSizeOther ?? "").trim() : "";
-  const otherSedesDetail = body.wentToOtherSedes === "SI" ? String(body.otherSedesDetail ?? "").trim() : "";
+  const passwordHash = await bcrypt.hash(body.password, 10);
 
   const servidor = await Servidor.create({
-    role: "SERVIDOR",
-    email,
+    email: String(body.email).toLowerCase(),
     passwordHash,
 
-    firstNames: String(body.firstNames).trim(),
-    lastNames: String(body.lastNames).trim(),
-
-    preferredName: String(body.preferredName).trim(),
-    referralNamePhone: String(body.referralNamePhone).trim(),
+    firstNames: body.firstNames,
+    lastNames: body.lastNames,
+    preferredName: body.preferredName,
+    referralNamePhone: body.referralNamePhone,
 
     documentType: body.documentType,
-    documentTypeOther: docTypeOther,
-    documentNumber: String(body.documentNumber).trim(),
+    documentTypeOther: body.documentType === "OTRO" ? body.documentTypeOther : "",
+    documentNumber: body.documentNumber,
 
-    city: String(body.city).trim(),
-    birthDate: String(body.birthDate).trim(),
+    city: body.city,
+    birthDate: body.birthDate,
     age: Number(body.age),
-    phone: String(body.phone).trim(),
+    phone: body.phone,
 
-    eps: String(body.eps).trim(),
-    bloodType: String(body.bloodType).trim(),
+    eps: body.eps,
+    bloodType: body.bloodType,
 
     needsShirt: body.needsShirt,
-    shirtColor: String(body.shirtColor ?? ""),
+    shirtColors: body.needsShirt === "SI" ? body.shirtColors : [],
     shirtSize: body.shirtSize,
-    shirtSizeOther,
+    shirtSizeOther: body.shirtSize === "OTRO" ? body.shirtSizeOther : "",
 
-    merchItems: Array.isArray(body.merchItems) ? body.merchItems : [],
+    merchItems: body.merchItems ?? [],
     merchSize: body.merchSize,
-    merchSizeOther,
+    merchSizeOther: body.merchSize === "OTRO" ? body.merchSizeOther : "",
 
-    emergency1Name: String(body.emergency1Name).trim(),
-    emergency1Phone: String(body.emergency1Phone).trim(),
-    emergency1Relation: String(body.emergency1Relation).trim(),
+    emergency1Name: body.emergency1Name,
+    emergency1Phone: body.emergency1Phone,
+    emergency1Relation: body.emergency1Relation,
 
-    emergency2Name: String(body.emergency2Name).trim(),
-    emergency2Phone: String(body.emergency2Phone).trim(),
-    emergency2Relation: String(body.emergency2Relation).trim(),
+    emergency2Name: body.emergency2Name,
+    emergency2Phone: body.emergency2Phone,
+    emergency2Relation: body.emergency2Relation,
 
-    services: Array.isArray(body.services) ? body.services : [],
+    services: body.services,
     lastService: body.lastService,
-    serviceLeaderOf: String(body.serviceLeaderOf).trim(),
+    serviceLeaderOf: body.serviceLeaderOf,
 
     wentToOtherSedes: body.wentToOtherSedes,
-    otherSedesDetail,
+    otherSedesDetail: body.wentToOtherSedes === "SI" ? body.otherSedesDetail : "",
 
-    formationOther: String(body.formationOther).trim(),
+    formationOther: body.formationOther,
 
     acceptTerms: body.acceptTerms,
     acceptDataPolicy: body.acceptDataPolicy,
@@ -135,7 +149,6 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
   res.status(201).json({
     id: servidor._id,
     email: servidor.email,
-    role: servidor.role,
     createdAt: servidor.createdAt,
   });
 });

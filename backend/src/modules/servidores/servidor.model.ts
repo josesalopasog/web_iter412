@@ -1,23 +1,23 @@
 import mongoose, { Schema } from "mongoose";
 
+export type ServidorDoc = mongoose.InferSchemaType<typeof ServidorSchema>;
+
 const ServidorSchema = new Schema(
   {
-    role: { type: String, default: "SERVIDOR", immutable: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     passwordHash: { type: String, required: true },
 
     firstNames: { type: String, required: true, trim: true },
     lastNames: { type: String, required: true, trim: true },
-
     preferredName: { type: String, required: true, trim: true },
     referralNamePhone: { type: String, required: true, trim: true },
 
     documentType: { type: String, required: true },
-    documentTypeOther: { type: String, required: true, trim: true },
+    documentTypeOther: { type: String, trim: true, default: "" },
     documentNumber: { type: String, required: true, trim: true },
 
     city: { type: String, required: true, trim: true },
-    birthDate: { type: String, required: true, trim: true },
+    birthDate: { type: String, required: true },
     age: { type: Number, required: true, min: 1 },
     phone: { type: String, required: true, trim: true },
 
@@ -25,13 +25,13 @@ const ServidorSchema = new Schema(
     bloodType: { type: String, required: true, trim: true },
 
     needsShirt: { type: String, required: true, enum: ["SI", "NO"] },
-    shirtColor: { type: String, required: true, default: "" },
+    shirtColors: { type: [String], required: true, default: [] }, 
     shirtSize: { type: String, required: true },
-    shirtSizeOther: { type: String, required: true, trim: true },
+    shirtSizeOther: { type: String, trim: true, default: "" },
 
     merchItems: { type: [String], required: true, default: [] },
     merchSize: { type: String, required: true },
-    merchSizeOther: { type: String, required: true, trim: true },
+    merchSizeOther: { type: String, trim: true, default: "" },
 
     emergency1Name: { type: String, required: true, trim: true },
     emergency1Phone: { type: String, required: true, trim: true },
@@ -46,14 +46,14 @@ const ServidorSchema = new Schema(
     serviceLeaderOf: { type: String, required: true, trim: true },
 
     wentToOtherSedes: { type: String, required: true, enum: ["SI", "NO"] },
-    otherSedesDetail: { type: String, required: true, trim: true },
+    otherSedesDetail: { type: String, trim: true, default: "" },
 
     formationOther: { type: String, required: true, trim: true },
 
-    acceptTerms: { type: String, required: true, enum: ["SI", "NO"] },
-    acceptDataPolicy: { type: String, required: true, enum: ["SI", "NO"] },
+    acceptTerms: { type: Boolean, required: true },
+    acceptDataPolicy: { type: Boolean, required: true },
   },
-  { timestamps: true }
+  { timestamps: true, collection: "servidores" }
 );
 
 export const Servidor = mongoose.model("Servidor", ServidorSchema);
