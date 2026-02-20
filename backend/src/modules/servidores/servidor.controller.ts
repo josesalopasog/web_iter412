@@ -19,7 +19,8 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
 
   requireFields(body, [
     "email",
-    "fullName",
+    "firstNames",
+    "lastNames",
     "preferredName",
     "referralNamePhone",
     "documentType",
@@ -55,6 +56,7 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
   requireIf(body.merchSize === "OTRO", body, ["merchSizeOther"]);
   requireIf(body.wentToOtherSedes === "SI", body, ["otherSedesDetail"]);
 
+  // Camiseta
   if (body.needsShirt === "NO") {
     body.shirtColor = "";
     body.shirtSize = body.shirtSize || "S";
@@ -62,11 +64,11 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
     requireFields(body, ["shirtColor"]);
   }
 
+  // Password policy mínima
   const pwd = String(body.password ?? "");
   if (pwd.length < 8) throw new ApiError(400, "Password must be at least 8 characters");
 
   const email = String(body.email).toLowerCase().trim();
-
   const existing = await Servidor.findOne({ email });
   if (existing) throw new ApiError(409, "Email already registered (servidores)");
 
@@ -82,7 +84,9 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
     email,
     passwordHash,
 
-    fullName: String(body.fullName).trim(),
+    firstNames: String(body.firstNames).trim(),
+    lastNames: String(body.lastNames).trim(),
+
     preferredName: String(body.preferredName).trim(),
     referralNamePhone: String(body.referralNamePhone).trim(),
 

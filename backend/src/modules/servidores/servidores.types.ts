@@ -28,7 +28,9 @@ export type Service =
 export type RegistrationServidorDTO = {
   email: string;
 
-  fullName: string;
+  firstNames: string;
+  lastNames: string;
+
   preferredName: string;
   referralNamePhone: string;
 
