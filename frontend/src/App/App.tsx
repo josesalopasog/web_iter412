@@ -11,7 +11,7 @@ import RegisterServidores from "../pages/Servidores";
 const AppRoutes = () => {
   const routes = [
     { path: "/", element: <Home /> },
-    { path: "/register", element: <Register /> },
+    { path: "/inscribirme", element: <Register /> },
     { path: "/servidores", element: <RegisterServidores /> },
   ];
 

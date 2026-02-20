@@ -1,11 +1,7 @@
 import express, { type Request, type Response, type NextFunction } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import userRoutes from "./modules/users/user.routes.js";
-import servidorRoutes from "./modules/servidores/servidor.routes.js";
-
-import { env } from "./config/env.js";
-;
+import usersRouter from "./modules/users/index.js";
 
 export const createApp = () => {
   const app = express();
@@ -18,8 +14,8 @@ export const createApp = () => {
 
   app.use(
     cors({
-      origin: (origin: string | undefined, cb: (err: Error | null, allow?: boolean) => void) => {
-        if (!origin) return cb(null, true); // Postman / server-to-server
+      origin: (origin, cb) => {
+        if (!origin) return cb(null, true);
         if (allowedOrigins.includes(origin)) return cb(null, true);
         return cb(new Error(`CORS blocked for origin: ${origin}`));
       },
@@ -31,20 +27,15 @@ export const createApp = () => {
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
 
-  app.get("/api/health", (_req, res) => {
-    res.json({ ok: true });
-  });
+  app.get("/api/health", (_req, res) => res.json({ ok: true }));
 
-  app.use("/api/users", userRoutes);
-  app.use("/api/servidores", servidorRoutes);
+  app.use("/api/users", usersRouter);
 
   app.use((_req, res) => res.status(404).json({ message: "Not Found" }));
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err?.statusCode || 500;
-    res.status(status).json({
-      message: err?.message || "Server error",
-    });
+  app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+    const message = err instanceof Error ? err.message : "Server error";
+    res.status(500).json({ message });
   });
 
   return app;

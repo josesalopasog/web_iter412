@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
-import { USER_ROLES } from "./user.types.js";
+import { USER_ROLES } from "./soldado.types.js";
 
-const UserSchema = new Schema(
+const SoldadoSchema = new Schema(
     {
         //Auth 
         gender: { type: String, required: true },
@@ -61,8 +61,8 @@ const UserSchema = new Schema(
         acceptTerms: { type: Boolean, required: true },
         acceptDataPolicy: { type: Boolean, required: true },
     },
-    { timestamps: true }
+    { timestamps: true, collection: "soldados" }
 );
 
 
-export const User = mongoose.model("User", UserSchema);
+export const Soldado = mongoose.model("Soldado", SoldadoSchema);

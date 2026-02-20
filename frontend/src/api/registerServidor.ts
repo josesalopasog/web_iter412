@@ -3,7 +3,7 @@ import type { RegistrationServidoresDTO } from "../pages/Servidores/form/types";
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const registerServidor = async (payload: RegistrationServidoresDTO) => {
-  const res = await fetch(`${API_URL}/api/servidores/servidores`, {
+  const res = await fetch(`${API_URL}/api/users/servidores`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),

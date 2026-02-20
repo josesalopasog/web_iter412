@@ -1,7 +1,7 @@
-import { asyncHandler } from "../../utils/asyncHandler.js";
-import { ApiError } from "../../utils/errors.js";
-import { User } from "./user.model.js";
-import type { RegistrationSoldadosDTO, YesNo } from "./user.types.js";
+import { asyncHandler } from "../../../utils/asyncHandler.js";
+import { ApiError } from "../../../utils/errors.js";
+import { Soldado } from "./soldado.model.js";
+import type { RegistrationSoldadosDTO, YesNo } from "./soldado.types.js";
 
 const isEmpty = (v: unknown) => {
   if (v === undefined || v === null) return true;
@@ -27,7 +27,7 @@ const requireTrue = (body: Record<string, unknown>, fields: string[]) => {
 
 const normalizeYesNo = (v: unknown): YesNo => (v === true || v === "SI" ? "SI" : "NO");
 
-export const createUserFromForm = asyncHandler(async (req, res) => {
+export const createSoldadoFromForm = asyncHandler(async (req, res) => {
   const body = req.body as Partial<RegistrationSoldadosDTO>;
 
   requireFields(body as any, [
@@ -71,10 +71,10 @@ export const createUserFromForm = asyncHandler(async (req, res) => {
   requireIf(body.invitedByCommunity === "SI", body as any, ["invitedByName"]);
   requireIf(body.practicesReligion === "SI", body as any, ["whichReligion"]);
 
-  const existing = await User.findOne({ email: body.email?.toLowerCase() });
+  const existing = await Soldado.findOne({ email: body.email?.toLowerCase() });
   if (existing) throw new ApiError(409, "Email already registered");
 
-  const user = await User.create({
+  const soldado = await Soldado.create({
     email: String(body.email).toLowerCase(),
     role: "SOLDADO",
 
@@ -133,9 +133,9 @@ export const createUserFromForm = asyncHandler(async (req, res) => {
   });
 
   res.status(201).json({
-    id: user._id,
-    email: user.email,
-    role: user.role,
-    createdAt: user.createdAt,
+    id: soldado._id,
+    email: soldado.email,
+    role: soldado.role,
+    createdAt: soldado.createdAt,
   });
 });

@@ -11,7 +11,7 @@ const Hero = () => {
           espiritual, diversión y hermandad en nuestro proximo retiro.
         </p>
       </div>
-      <AnimatedBorder text="Inscríbete Ahora" href="/register" />
+      <AnimatedBorder text="Inscríbete Ahora" href="/inscribirme" />
       <a
         className="hero-badge"
         href="https://maps.app.goo.gl/2ZUtXhdHfwwY4QnT7"

@@ -12,7 +12,7 @@ export type RegisterSoldadoResponse = {
 export const registerSoldado = async (
   payload: RegisterSoldadoPayload
 ): Promise<RegisterSoldadoResponse> => {
-  const res = await fetch(`${API_URL}/api/users/register`, {
+  const res = await fetch(`${API_URL}/api/users/soldados`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),

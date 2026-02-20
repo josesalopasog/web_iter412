@@ -1,3 +1,13 @@
+export const USER_ROLES = [
+  "SUPERADMIN",
+  "ADMIN",
+  "CM",
+  "LIDER",
+  "COORDINADOR",
+  "SERVIDOR",
+  "SOLDADO",
+] as const;
+
 export type YesNo = "SI" | "NO";
 export type DocumentType = "TI" | "CC" | "PAS" | "OTRO";
 

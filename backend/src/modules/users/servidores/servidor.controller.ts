@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
-import { asyncHandler } from "../../utils/asyncHandler.js";
-import { ApiError } from "../../utils/errors.js";
+import { asyncHandler } from "../../../utils/asyncHandler.js";
+import { ApiError } from "../../../utils/errors.js";
 import { Servidor } from "./servidor.model.js";
-import type { RegistrationServidoresDTO } from "./servidores.types.js"
+import type { RegistrationServidoresDTO } from "./servidor.types.js"
 
 const requireFields = (body: any, fields: string[]) => {
   const missing = fields.filter(
