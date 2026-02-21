@@ -30,6 +30,7 @@ export const RegisterServidorView: React.FC<Props> = ({
   documentNumber,
 
   city,
+  address,
   birthDate,
   age,
   phone,
@@ -49,9 +50,12 @@ export const RegisterServidorView: React.FC<Props> = ({
   emergency1Name,
   emergency1Phone,
   emergency1Relation,
+  emergency1Address,
+
   emergency2Name,
   emergency2Phone,
   emergency2Relation,
+  emergency2Address,
 
   services,
   lastService,
@@ -80,6 +84,7 @@ export const RegisterServidorView: React.FC<Props> = ({
   setDocumentNumber,
 
   setCity,
+  setAddress,
   setBirthDate,
   setAge,
   setPhone,
@@ -98,9 +103,12 @@ export const RegisterServidorView: React.FC<Props> = ({
   setEmergency1Name,
   setEmergency1Phone,
   setEmergency1Relation,
+  setEmergency1Address,
+
   setEmergency2Name,
   setEmergency2Phone,
   setEmergency2Relation,
+  setEmergency2Address,
 
   setLastService,
   setServiceLeaderOf,
@@ -331,7 +339,19 @@ export const RegisterServidorView: React.FC<Props> = ({
                       placeholder="Ej: Bogotá"
                     />
                   </div>
-
+                  <div className="formRow">
+                    <label className="formLabel" htmlFor="address">
+                      Dirección <span className="req">*</span>
+                    </label>
+                    <input
+                      id="address"
+                      className="formInput"
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                      placeholder="Dirección de residencia"
+                      required
+                    />
+                  </div>
                   <div className="formRow">
                     <label className="formLabel" htmlFor="birthDate">
                       Fecha de nacimiento <span className="req">*</span>
@@ -435,7 +455,6 @@ export const RegisterServidorView: React.FC<Props> = ({
 
                   {needsShirt === "SI" && (
                     <>
-                      
                       <div className="formRow formRowFull">
                         <span className="formLabel">
                           Color (puedes seleccionar varios){" "}
@@ -617,12 +636,26 @@ export const RegisterServidorView: React.FC<Props> = ({
                       required
                     />
                   </div>
+
+                  <div className="formRow">
+                    <label className="formLabel" htmlFor="emergency1Address">
+                      Dirección contacto <span className="req">*</span>
+                    </label>
+                    <input
+                      id="emergency1Address"
+                      className="formInput"
+                      value={emergency1Address}
+                      onChange={(e) => setEmergency1Address(e.target.value)}
+                      placeholder="Dirección del contacto"
+                      required
+                    />
+                  </div>
                 </div>
               </div>
 
               <div className="formSection">
                 <span className="formLabel">
-                  ¿Con qué otra persona podemos comuncarnos en caso de
+                  ¿Con qué otra persona podemos comunicarnos en caso de
                   emergencia?:{" "}
                 </span>
                 <div className="formGrid">
@@ -662,6 +695,19 @@ export const RegisterServidorView: React.FC<Props> = ({
                       className="formInput"
                       value={emergency2Relation}
                       onChange={(e) => setEmergency2Relation(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="formRow">
+                    <label className="formLabel" htmlFor="emergency2Address">
+                      Dirección contacto <span className="req">*</span>
+                    </label>
+                    <input
+                      id="emergency2Address"
+                      className="formInput"
+                      value={emergency2Address}
+                      onChange={(e) => setEmergency2Address(e.target.value)}
+                      placeholder="Dirección del contacto"
                       required
                     />
                   </div>
@@ -949,11 +995,16 @@ export const RegisterServidorView: React.FC<Props> = ({
           <div className="card span-4">
             <h3>ℹ️ Info</h3>
             <ul className="section-list">
-              <li>Precio del retiro:<strong> $300.000 COP</strong> </li>
+              <li>
+                Precio del retiro:<strong> $300.000 COP</strong>{" "}
+              </li>
               <li>Recuerda usar un correo real para futuras notificaciones.</li>
               <li>La contraseña debe tener mínimo 8 caracteres.</li>
               <li>
-                <span>Si necesitas apoyo o tienes algún problema con el formulario, puedes escribir a este numero:</span> 
+                <span>
+                  Si necesitas apoyo o tienes algún problema con el formulario,
+                  puedes escribir a este numero:
+                </span>
                 <a
                   className="pill"
                   href="https://wa.me/573017201658"

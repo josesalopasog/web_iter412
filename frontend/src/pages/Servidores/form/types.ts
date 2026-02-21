@@ -22,10 +22,6 @@ export type Service =
   | "LIDER_DE_RETIRO"
   | "NINGUNO";
 
-/**
- * DTO que le mandas al backend para crear SERVIDOR
- * (solo lo que estás usando en tu form; ajusta si tu backend pide más campos)
- */
 export type RegistrationServidoresDTO = {
   email: string;
   firstNames: string;
@@ -38,6 +34,7 @@ export type RegistrationServidoresDTO = {
   documentNumber: string;
 
   city: string;
+  address: string;
   birthDate: string; // yyyy-mm-dd
   age: number;
   phone: string;
@@ -57,10 +54,12 @@ export type RegistrationServidoresDTO = {
   emergency1Name: string;
   emergency1Phone: string;
   emergency1Relation: string;
+  emergency1Address: string;
 
   emergency2Name: string;
   emergency2Phone: string;
   emergency2Relation: string;
+  emergency2Address: string;
 
   services: Service[];
   lastService: Service;

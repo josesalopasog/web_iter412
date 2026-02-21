@@ -17,6 +17,7 @@ const ServidorSchema = new Schema(
     documentNumber: { type: String, required: true, trim: true },
 
     city: { type: String, required: true, trim: true },
+    address: { type: String, required: true, trim: true },
     birthDate: { type: String, required: true },
     age: { type: Number, required: true, min: 1 },
     phone: { type: String, required: true, trim: true },
@@ -36,10 +37,12 @@ const ServidorSchema = new Schema(
     emergency1Name: { type: String, required: true, trim: true },
     emergency1Phone: { type: String, required: true, trim: true },
     emergency1Relation: { type: String, required: true, trim: true },
+    emergency1Address: { type: String, required: true, trim: true },
 
     emergency2Name: { type: String, required: true, trim: true },
     emergency2Phone: { type: String, required: true, trim: true },
     emergency2Relation: { type: String, required: true, trim: true },
+    emergency2Address: { type: String, required: true, trim: true },
 
     services: { type: [String], required: true, default: [] },
     lastService: { type: String, required: true },

@@ -25,6 +25,7 @@ export const useRegisterServidorForm = () => {
 
   // contact
   const [city, setCity] = useState("");
+  const [address, setAddress] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [age, setAge] = useState("");
   const [phone, setPhone] = useState("");
@@ -60,10 +61,12 @@ export const useRegisterServidorForm = () => {
   const [emergency1Name, setEmergency1Name] = useState("");
   const [emergency1Phone, setEmergency1Phone] = useState("");
   const [emergency1Relation, setEmergency1Relation] = useState("");
+  const [emergency1Address, setEmergency1Address] = useState("");
 
   const [emergency2Name, setEmergency2Name] = useState("");
   const [emergency2Phone, setEmergency2Phone] = useState("");
   const [emergency2Relation, setEmergency2Relation] = useState("");
+  const [emergency2Address, setEmergency2Address] = useState("");
 
   // services
   const [services, setServices] = useState<Service[]>([]);
@@ -109,6 +112,7 @@ export const useRegisterServidorForm = () => {
     (documentType !== "OTRO" || documentTypeOther.trim()) &&
     documentNumber.trim() &&
     city.trim() &&
+    address.trim() &&
     birthDate.trim() &&
     age.trim() &&
     phone.trim() &&
@@ -117,9 +121,11 @@ export const useRegisterServidorForm = () => {
     emergency1Name.trim() &&
     emergency1Phone.trim() &&
     emergency1Relation.trim() &&
+    emergency1Address.trim() &&
     emergency2Name.trim() &&
     emergency2Phone.trim() &&
     emergency2Relation.trim() &&
+    emergency2Address.trim() &&
     services.length > 0 &&
     serviceLeaderOf.trim() &&
     formationOther.trim() &&
@@ -140,6 +146,7 @@ export const useRegisterServidorForm = () => {
         documentTypeOther,
         documentNumber,
         city,
+        address,
         birthDate,
         age,
         phone,
@@ -155,9 +162,11 @@ export const useRegisterServidorForm = () => {
         emergency1Name,
         emergency1Phone,
         emergency1Relation,
+        emergency1Address,
         emergency2Name,
         emergency2Phone,
         emergency2Relation,
+        emergency2Address,
         services,
         lastService,
         serviceLeaderOf,
@@ -178,6 +187,7 @@ export const useRegisterServidorForm = () => {
       documentTypeOther,
       documentNumber,
       city,
+      address,
       birthDate,
       age,
       phone,
@@ -193,9 +203,11 @@ export const useRegisterServidorForm = () => {
       emergency1Name,
       emergency1Phone,
       emergency1Relation,
+      emergency1Address,
       emergency2Name,
       emergency2Phone,
       emergency2Relation,
+      emergency2Address,
       services,
       lastService,
       serviceLeaderOf,
@@ -237,6 +249,7 @@ export const useRegisterServidorForm = () => {
     documentTypeOther,
     documentNumber,
     city,
+    address,
     birthDate,
     age,
     phone,
@@ -252,9 +265,11 @@ export const useRegisterServidorForm = () => {
     emergency1Name,
     emergency1Phone,
     emergency1Relation,
+    emergency1Address,
     emergency2Name,
     emergency2Phone,
     emergency2Relation,
+    emergency2Address,
     services,
     lastService,
     serviceLeaderOf,
@@ -276,6 +291,7 @@ export const useRegisterServidorForm = () => {
     setDocumentTypeOther,
     setDocumentNumber,
     setCity,
+    setAddress,
     setBirthDate,
     setAge,
     setPhone,
@@ -289,9 +305,11 @@ export const useRegisterServidorForm = () => {
     setEmergency1Name,
     setEmergency1Phone,
     setEmergency1Relation,
+    setEmergency1Address,
     setEmergency2Name,
     setEmergency2Phone,
     setEmergency2Relation,
+    setEmergency2Address,
     setLastService,
     setServiceLeaderOf,
     setWentToOtherSedes,

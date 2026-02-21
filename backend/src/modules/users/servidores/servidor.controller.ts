@@ -31,6 +31,7 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
     "documentNumber",
 
     "city",
+    "address",
     "birthDate",
     "age",
     "phone",
@@ -48,11 +49,13 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
     "emergency1Name",
     "emergency1Phone",
     "emergency1Relation",
+    "emergency1Address",
 
     "emergency2Name",
     "emergency2Phone",
     "emergency2Relation",
-
+    "emergency2Address",
+    
     "services",
     "lastService",
     "serviceLeaderOf",
@@ -109,6 +112,7 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
     documentNumber: body.documentNumber,
 
     city: body.city,
+    address: body.address,
     birthDate: body.birthDate,
     age: Number(body.age),
     phone: body.phone,
@@ -128,10 +132,12 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
     emergency1Name: body.emergency1Name,
     emergency1Phone: body.emergency1Phone,
     emergency1Relation: body.emergency1Relation,
+    emergency1Address: body.emergency1Address,
 
     emergency2Name: body.emergency2Name,
     emergency2Phone: body.emergency2Phone,
     emergency2Relation: body.emergency2Relation,
+    emergency2Address: body.emergency2Address,
 
     services: body.services,
     lastService: body.lastService,

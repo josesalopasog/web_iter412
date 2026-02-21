@@ -13,8 +13,9 @@ type BuildArgs = {
   documentNumber: string;
 
   city: string;
+  address: string;
   birthDate: string;
-  age: string; // viene del input
+  age: string; 
   phone: string;
 
   eps: string;
@@ -32,10 +33,12 @@ type BuildArgs = {
   emergency1Name: string;
   emergency1Phone: string;
   emergency1Relation: string;
+  emergency1Address: string;
 
   emergency2Name: string;
   emergency2Phone: string;
   emergency2Relation: string;
+  emergency2Address: string;
 
   services: Service[];
   lastService: Service;
@@ -65,6 +68,7 @@ export const buildServidorPayload = (a: BuildArgs): RegistrationServidoresDTO =>
     documentNumber: a.documentNumber.trim(),
 
     city: a.city.trim(),
+    address: a.address.trim(),
     birthDate: a.birthDate,
     age: Number(a.age),
     phone: a.phone.trim(),
@@ -84,10 +88,12 @@ export const buildServidorPayload = (a: BuildArgs): RegistrationServidoresDTO =>
     emergency1Name: a.emergency1Name.trim(),
     emergency1Phone: a.emergency1Phone.trim(),
     emergency1Relation: a.emergency1Relation.trim(),
+    emergency1Address: a.emergency1Address.trim(),
 
     emergency2Name: a.emergency2Name.trim(),
     emergency2Phone: a.emergency2Phone.trim(),
     emergency2Relation: a.emergency2Relation.trim(),
+    emergency2Address: a.emergency2Address.trim(),
 
     services: a.services,
     lastService: a.lastService,

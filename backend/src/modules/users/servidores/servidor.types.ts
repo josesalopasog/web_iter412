@@ -46,6 +46,7 @@ export type RegistrationServidoresDTO = {
   documentNumber: string;
 
   city: string;
+  address: string;
   birthDate: string; // yyyy-mm-dd
   age: number;
   phone: string;
@@ -68,10 +69,12 @@ export type RegistrationServidoresDTO = {
   emergency1Name: string;
   emergency1Phone: string;
   emergency1Relation: string;
+  emergency1Address: string;
 
   emergency2Name: string;
   emergency2Phone: string;
   emergency2Relation: string;
+  emergency2Address: string;
 
   // Servicio
   services: Service[];
