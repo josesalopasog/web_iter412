@@ -3,7 +3,7 @@ import * as path from "path";
 import QRCode from "qrcode";
 import sharp from "sharp";
 
-const QR_URL = "https://iter412.com/";
+const QR_URL = "https://iter412.com";
 
 // ajusta esta ruta a tu logo real
 const LOGO_PATH = path.resolve(process.cwd(), "public/logo-iter.png");

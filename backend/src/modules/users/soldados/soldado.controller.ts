@@ -1,5 +1,6 @@
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { ApiError } from "../../../utils/errors.js";
+import { sendRegistrationConfirmationEmail } from "../../../services/mailer.service.js";
 import { Soldado } from "./soldado.model.js";
 import type { RegistrationSoldadosDTO, YesNo } from "./soldado.types.js";
 
@@ -131,6 +132,8 @@ export const createSoldadoFromForm = asyncHandler(async (req, res) => {
     acceptTerms: Boolean(body.acceptTerms),
     acceptDataPolicy: Boolean(body.acceptDataPolicy),
   });
+
+  void sendRegistrationConfirmationEmail(soldado.email, soldado.preferredName, "SOLDADO");
 
   res.status(201).json({
     id: soldado._id,

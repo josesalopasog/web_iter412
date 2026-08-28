@@ -5,34 +5,31 @@ const About = () => {
     <section id="about" aria-label="Quienes Somos">
       <div className="container">
         <div className="section-head">
-          <h2>¿ Quienes Somos ?</h2>
-          <h3>Una comunidad de jóvenes católicos. </h3>
+          <h2>¿ Quiénes Somos ?</h2>
+          <h3>Jóvenes amigos adoradores y seguidores de Cristo. </h3>
           <p className="sub">
-            Organizamos retiros y reuniones semanales para jóvenes en Bogotá con enfoque en
-            crecimiento espiritual, vínculos sanos y servicio. 
+            Realizamos retiros de jóvenes para jóvenes. Un espacio para encontrarnos con Cristo y con nosotros mismos.
+            Somos un grupo de amigos con un amigo en común, Jesús. Y Él como buen amigo, nos reune y nos convoca semana a semana para seguir construyendo el Reino de los Cielos aqui en la Tierra.
           </p>
         </div>
 
         <div className="grid">
           <div className="card span-4">
-            <h3>💚 Espiritualidad</h3>
+            <h3>💚 Autenticidad</h3>
             <p>
-              Momentos de oración, adoración y espacios de silencio guiado para
-              escuchar a Dios.
+              Dios nos llama a ser plenamente nosostros mismos. Aquí sabemos que quien eres es más que suficiente para Dios.
             </p>
           </div>
           <div className="card span-4">
-            <h3>❤️ Comunidad</h3>
+            <h3>❤️ Servicio</h3>
             <p>
-              Dinámicas, grupos pequeños y acompañamiento para que no camines
-              solo/a.
+              Somos amados, amamos y amamos mucho. La entrega total es la más valiosa enseñanza que nos dejó Jesús. Si te gusta servir, atrévete a dejarte amar y amar con nosotros
             </p>
           </div>
           <div className="card span-4">
-            <h3>💜 Renovación</h3>
+            <h3>💜 Abrazo</h3>
             <p>
-              Talleres prácticos sobre identidad, propósito, afectividad y
-              hábitos para tu día a día.
+              En un abrazo, dos corazones se juntan. Cristo esta aquí para abrazarnos y acercar su corazón al nuestro, a lo que somos y a lo que tenemos, con heridas incluidas. Ven y recibe el abrazo de Jesús.
             </p>
           </div>
         </div>

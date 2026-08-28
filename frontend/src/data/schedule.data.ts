@@ -134,4 +134,29 @@ export const SCHEDULE: ScheduleEvent[] = [
         isOpen: true,
         description: "Domingo 3:00pm a 5:00pm.",
     },
+
+        {
+        id: "evt-eucaristia-cierre-mayo",
+        title: "DOCAT",
+        dateISO: "2026-08-22",
+        start: "15:00",
+        end: "17:00",
+        location: "Parroquia",
+        tag: "Otro",
+        isOpen: true,
+        description: "Domingo 3:00pm a 5:00pm.",
+    },
+
+     {
+        id: "evt-retiro-noviembre",
+        title: "❤️ XVI Retiro ITER 4.12 Bogotá",
+        dateISO: "2026-11-13",
+        start: "17:00",
+        endDateISO: "2026-11-15",
+        end: "15:00",
+        location: "Centro de Espiritualidad María Consolata",
+        tag: "Retiro",
+        isOpen: false,
+        description: "Inicio viernes 5:00pm. Finaliza domingo 3:00pm.",
+    },
 ];

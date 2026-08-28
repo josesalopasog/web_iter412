@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { ApiError } from "../../../utils/errors.js";
+import { sendRegistrationConfirmationEmail } from "../../../services/mailer.service.js";
 import { Servidor } from "./servidor.model.js";
 import type { RegistrationServidoresDTO } from "./servidor.types.js"
 
@@ -151,6 +152,8 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
     acceptTerms: body.acceptTerms,
     acceptDataPolicy: body.acceptDataPolicy,
   });
+
+  void sendRegistrationConfirmationEmail(servidor.email, servidor.preferredName, "SERVIDOR");
 
   res.status(201).json({
     id: servidor._id,

@@ -29,6 +29,13 @@ body {
 }
 
 @font-face {
+  font-family: "KBGobbleDay";
+  src: url("/fonts/KBGobbleDay.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
   font-family: "Roboto";
   src: url("/fonts/Roboto.tff") format("truetype");
   font-weight: normal;
@@ -42,9 +49,18 @@ body {
   font-style: normal;
 }
 
+@font-face {
+  font-family: "Inkfree";
+  src: url("/fonts/Inkfree.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
 h1 {
   font-size: clamp(1.25rem, 1.5vw, 3.5rem);
-  font-family: "CalSans";
+  font-family: "KBGobbleDay";
+  font-weight: 1000;
+  letter-spacing: 10px;
   padding-top: 5px;
 }
 h2 {

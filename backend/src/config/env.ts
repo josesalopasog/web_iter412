@@ -11,6 +11,9 @@ export const env = {
     
     CORS_ORIGIN: process.env.CORS_ORIGIN ?? "http://localhost:5173",
     FRONTEND_ORIGIN: process.env.FRONTEND_ORIGIN ?? "https://iter412.com",
+
+    RESEND_API_KEY: process.env.RESEND_API_KEY ?? "",
+    EMAIL_FROM: process.env.EMAIL_FROM ?? "ITER 412 <no-reply@iter412.com>",
 };
 
 export const assertEnv = () => {

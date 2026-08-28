@@ -133,8 +133,8 @@ export const RegisterView: React.FC<Props> = ({
           <h2>Inscripción al Retiro</h2>
           <h3>Completa tus datos para reservar tu cupo</h3>
           <p className="sub">
-            ¡Bienvenido/a! Dios te ha llamado para vivir el XV retiro de la
-            comunidad ITER 4.12 Bogotá los días 1,2 y 3 de mayo del 2026.
+            ¡Bienvenido/a! Dios te ha llamado para vivir el XVI retiro de la
+            comunidad ITER 4.12 Bogotá los días 13, 14 y 15 de noviembre del 2026.
           </p>
         </div>
 
@@ -844,13 +844,24 @@ export const RegisterView: React.FC<Props> = ({
                 </span>
                 <a
                   className="pill"
-                  href="https://wa.me/573017201658"
+                  href="https://wa.me/573196188804"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <img className="icon" src={whatsapp_logo} alt="WhatsApp" />
                   <span>
-                    <strong>WhatsApp:</strong> 301-720-1658
+                    <strong>WhatsApp:</strong> 319-618-8804
+                  </span>
+                </a>
+                                <a
+                  className="pill"
+                  href="https://wa.me/573195571763"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img className="icon" src={whatsapp_logo} alt="WhatsApp" />
+                  <span>
+                    <strong>WhatsApp:</strong> 319-557-1763
                   </span>
                 </a>
               </li>

@@ -13,13 +13,10 @@ const Header = () => {
       <nav className="header-second-column">
         <ul className="header-ul">
           <li>
-            <a href="/">Inicio</a>
+            <a href="/#about">Quiénes Somos</a>
           </li>
           <li>
-            <a href="/#about">Quienes Somos</a>
-          </li>
-          <li>
-            <a href="/#location">Donde Estamos</a>
+            <a href="/#location">Dónde Estamos</a>
           </li>
           <li>
             <a href="/#schedule">Cronograma</a>

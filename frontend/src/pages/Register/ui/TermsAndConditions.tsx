@@ -1,11 +1,11 @@
-const PHONE_NUMBER_H = "3017201658";
-const PHONE_NUMBER_M = "3136106277";
+const PHONE_NUMBER_H = "3195571763";
+const PHONE_NUMBER_M = "3196188804";
 const TOTAL_PRICE_COP = 435_000;
 const MIN_ADVANCE_COP = 100_000;
 
-const NEQUI_CONTACT_NAME_H = "Jose Salopaso - Coordinador XV Retiro";
-const NEQUI_CONTACT_NAME_M = "Ana Vargas - Coordinadora XV Retiro";
-const RETREAT_LABEL = "XV RETIRO ITER 4.12";
+const NEQUI_CONTACT_NAME_H = "Yostin Arteaga - Coordinador XVI Retiro";
+const NEQUI_CONTACT_NAME_M = "Karen Cruz - Coordinadora XVI Retiro";
+const RETREAT_LABEL = "XVI RETIRO ITER 4.12";
 
 function formatCOP(value: number) {
   return new Intl.NumberFormat("es-CO", {
@@ -29,10 +29,10 @@ export default function TermsAndConditions() {
 
       <p>
         El{" "}
-        <strong>XIV Retiro Espiritual de la Comunidad ITER 4.12 Bogotá</strong>,
+        <strong>XVI Retiro Espiritual de la Comunidad ITER 4.12 Bogotá</strong>,
         se llevará a cabo los días{" "}
-        <strong>viernes 01, 02 sábado y 03 Domingo</strong> de{" "}
-        <strong>mayo del 2026</strong>, en el Centro de Espiritualidad María
+        <strong>viernes 13, 14 sábado y 15 Domingo</strong> de{" "}
+        <strong>noviembre del 2026</strong>, en el Centro de Espiritualidad María
         Consolata (Carrera 24B #1D-60).
       </p>
 
@@ -53,9 +53,9 @@ export default function TermsAndConditions() {
         requerirá cancelar un <strong>adelanto mínimo</strong> de{" "}
         <strong>{minAdvanceText}</strong> o la totalidad del valor (
         <strong>{totalPriceText}</strong>), a más tardar el{" "}
-        <strong>día 30 de marzo del 2026</strong>. El valor restante, si es el
+        <strong>día 30 de septiembre del 2026</strong>. El valor restante, si es el
         caso, debe ser cancelado antes del{" "}
-        <strong>día 15 de abril del 2026</strong>.
+        <strong>día 30 de octubre del 2026</strong>.
       </p>
 
       <div className="terms__block">

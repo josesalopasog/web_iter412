@@ -150,7 +150,7 @@ const Contact = () => {
           >
             <img className="icon" src={whatsapp_logo} alt="WhatsApp" />
             <span>
-              <strong>WhatsApp:</strong> 301-720-1658
+              <strong>WhatsApp:</strong> 319-618-8804
             </span>
           </a>
                     <a
@@ -161,7 +161,7 @@ const Contact = () => {
           >
             <img className="icon" src={whatsapp_logo} alt="WhatsApp" />
             <span>
-              <strong>WhatsApp</strong> 313-610-6277
+              <strong>WhatsApp</strong> 318-443-8046
             </span>
           </a>
         </div>

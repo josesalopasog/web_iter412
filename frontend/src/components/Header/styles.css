@@ -80,9 +80,9 @@ header:hover::before {
 
 .header-ul {
   display: flex;
-  font-family: Roboto;
-  font-size: clamp(14px, 2vw, 16px);
-  font-weight: 500;
+  font-family: CalSans;
+  font-size: clamp(16px, 2vw, 18px);
+  font-weight: 1000;
   gap: clamp(10px, 2vw, 25px);
   color: #888;
 }
@@ -100,7 +100,7 @@ header:hover::before {
   left: 0;
   bottom: -17px;
   width: 100%;
-  height: 2px;
+  height: 4px;
   background: linear-gradient(
     90deg,
     #80ff00,

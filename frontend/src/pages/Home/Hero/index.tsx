@@ -5,13 +5,15 @@ const Hero = () => {
   return (
     <section id="home" className="hero" aria-label="Inicio">
       <div className="hero-content">
-        <h1>Iter 4.12 - ¡Por Dios y Para Dios!</h1>
+        <h1>ITER 4.12 - ¡Por Dios y Para Dios!</h1>
         <p>
-          Únete a nosotros en este viaje de crecimiento
-          espiritual, diversión y hermandad en nuestro proximo retiro.
+          Te invitamos a vivir el mejor fin de semana de tu vida. <br/>
+          Haz click en el botón de abajo e inscribete a nuestro retiro de jovenes. <br/>
+          ¡Dios te esta esperando!
+          
         </p>
       </div>
-      <AnimatedBorder text="Inscríbete Ahora" href="/inscribirme" />
+      <AnimatedBorder text="Quiero Inscribirme" href="/inscribirme" />
       <a
         className="hero-badge"
         href="https://maps.app.goo.gl/2ZUtXhdHfwwY4QnT7"

@@ -22,7 +22,6 @@ const DropdownMenu: React.FC = () => {
       aria-hidden={!isDropdownMenuOpen}
     >
       <ul>
-        <li><a href="/" onClick={toggleDropdownMenu}>Inicio</a></li>
         <li><a href="/#about" onClick={toggleDropdownMenu}>Quienes Somos</a></li>
         <li><a href="/#location" onClick={toggleDropdownMenu}>Donde Estamos</a></li>
         <li><a href="/#schedule" onClick={toggleDropdownMenu}>Cronograma</a></li>
