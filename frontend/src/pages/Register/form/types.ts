@@ -88,10 +88,15 @@ export type RegisterSoldadoPayload = {
 
   isSurprise: YesNo;
 
-  emergencyName: string;
+  emergencyFirstName: string;
+  emergencyLastName: string;
+  emergencyDocumentType: DocumentType;
+  emergencyDocumentTypeOther: string;
+  emergencyDocumentNumber: string;
   emergencyPhone: string;
   emergencyRelation: string;
   emergencyEmail: string;
+  emergencyAddress: string;
 
   hearAbout: HearAbout;
   hearAboutOther: string;

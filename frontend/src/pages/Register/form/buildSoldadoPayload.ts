@@ -52,10 +52,15 @@ type BuildArgs = {
 
   isSurprise: YesNo;
 
-  emergencyName: string;
+  emergencyFirstName: string;
+  emergencyLastName: string;
+  emergencyDocumentType: DocumentType;
+  emergencyDocumentTypeOther: string;
+  emergencyDocumentNumber: string;
   emergencyPhone: string;
   emergencyRelation: string;
   emergencyEmail: string;
+  emergencyAddress: string;
 
   hearAbout: HearAbout;
   hearAboutOther: string;
@@ -112,10 +117,15 @@ export const buildSoldadoPayload = (a: BuildArgs): RegisterSoldadoPayload => {
 
     isSurprise: a.isSurprise,
 
-    emergencyName: a.emergencyName.trim(),
+    emergencyFirstName: a.emergencyFirstName.trim(),
+    emergencyLastName: a.emergencyLastName.trim(),
+    emergencyDocumentType: a.emergencyDocumentType,
+    emergencyDocumentTypeOther: a.emergencyDocumentType === "OTRO" ? a.emergencyDocumentTypeOther.trim() : "",
+    emergencyDocumentNumber: a.emergencyDocumentNumber.trim(),
     emergencyPhone: a.emergencyPhone.trim(),
     emergencyRelation: a.emergencyRelation.trim(),
     emergencyEmail: a.emergencyEmail.trim(),
+    emergencyAddress: a.emergencyAddress.trim(),
 
     hearAbout: a.hearAbout,
     hearAboutOther: a.hearAbout === "OTRO" ? a.hearAboutOther.trim() : "",

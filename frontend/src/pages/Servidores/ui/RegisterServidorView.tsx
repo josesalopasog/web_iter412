@@ -162,7 +162,7 @@ export const RegisterServidorView: React.FC<Props> = ({
           <h2>Registro de Servidores</h2>
           <h3>Diligencia tus datos para servir en el próximo retiro</h3>
           <p className="sub">
-            Querido servidor, el fin de semana del 1, 2 y 3 de mayo del 2026,
+            Querido servidor, el fin de semana del 13, 14 y 15 de noviembre del 2026,
             estaremos reunidos nuevamente en comunidad, llevando la palabra de
             Dios y la alegría de ITER 4.12 a los jóvenes, mostrando el reinado
             de Cristo y su iglesia. Diligencia el formulario y participa de esta

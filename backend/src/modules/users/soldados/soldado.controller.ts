@@ -54,10 +54,14 @@ export const createSoldadoFromForm = asyncHandler(async (req, res) => {
     "restrictions",
     "shirtSize",
     "isSurprise",
-    "emergencyName",
+    "emergencyFirstName",
+    "emergencyLastName",
+    "emergencyDocumentType",
+    "emergencyDocumentNumber",
     "emergencyPhone",
     "emergencyRelation",
     "emergencyEmail",
+    "emergencyAddress",
     "hearAbout",
     "invitedByCommunity",
   ]);
@@ -65,6 +69,7 @@ export const createSoldadoFromForm = asyncHandler(async (req, res) => {
   requireTrue(body as any, ["acceptTerms", "acceptDataPolicy"]);
 
   requireIf(body.documentType === "OTRO", body as any, ["documentTypeOther"]);
+  requireIf(body.emergencyDocumentType === "OTRO", body as any, ["emergencyDocumentTypeOther"]);
   requireIf(body.occupation === "OTRO", body as any, ["occupationOther"]);
   requireIf(Array.isArray(body.restrictions) && body.restrictions.includes("TOMA_MEDICAMENTOS"), body as any, ["medicationsDetail"]);
   requireIf(body.shirtSize === "OTRO", body as any, ["shirtSizeOther"]);
@@ -118,10 +123,15 @@ export const createSoldadoFromForm = asyncHandler(async (req, res) => {
 
     isSurprise: normalizeYesNo(body.isSurprise),
 
-    emergencyName: body.emergencyName,
+    emergencyFirstName: body.emergencyFirstName,
+    emergencyLastName: body.emergencyLastName,
+    emergencyDocumentType: body.emergencyDocumentType,
+    emergencyDocumentTypeOther: body.emergencyDocumentTypeOther,
+    emergencyDocumentNumber: body.emergencyDocumentNumber,
     emergencyPhone: body.emergencyPhone,
     emergencyRelation: body.emergencyRelation,
     emergencyEmail: String(body.emergencyEmail).toLowerCase(),
+    emergencyAddress: body.emergencyAddress,
 
     hearAbout: body.hearAbout,
     hearAboutOther: body.hearAboutOther,

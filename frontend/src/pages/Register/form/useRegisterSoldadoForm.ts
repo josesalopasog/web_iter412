@@ -54,10 +54,15 @@ export const useRegisterSoldadoForm = () => {
   const [shirtSize, setShirtSize] = useState<ShirtSize>("S");
   const [shirtSizeOther, setShirtSizeOther] = useState("");
 
-  const [emergencyName, setEmergencyName] = useState("");
+  const [emergencyFirstName, setEmergencyFirstName] = useState("");
+  const [emergencyLastName, setEmergencyLastName] = useState("");
+  const [emergencyDocumentType, setEmergencyDocumentType] = useState<DocumentType>("TARJETA_IDENTIDAD");
+  const [emergencyDocumentTypeOther, setEmergencyDocumentTypeOther] = useState("");
+  const [emergencyDocumentNumber, setEmergencyDocumentNumber] = useState("");
   const [emergencyPhone, setEmergencyPhone] = useState("");
   const [emergencyRelation, setEmergencyRelation] = useState("");
   const [emergencyEmail, setEmergencyEmail] = useState("");
+  const [emergencyAddress, setEmergencyAddress] = useState("");
 
   const [hearAbout, setHearAbout] = useState<HearAbout>("CONOZCO_A_ALGUIEN");
   const [hearAboutOther, setHearAboutOther] = useState("");
@@ -113,10 +118,14 @@ export const useRegisterSoldadoForm = () => {
     eps.trim().length > 0 &&
     bloodType.trim().length > 0 &&
     occupationPlace.trim().length > 0 &&
-    emergencyName.trim().length > 0 &&
+    emergencyFirstName.trim().length > 0 &&
+    emergencyLastName.trim().length > 0 &&
+    emergencyDocumentType.trim().length > 0 &&
+    emergencyDocumentNumber.trim().length > 0 &&
     emergencyPhone.trim().length > 0 &&
     emergencyRelation.trim().length > 0 &&
     emergencyEmail.trim().length > 0 &&
+    emergencyAddress.trim().length > 0 &&
     acceptTerms === true &&
     acceptDataPolicy === true;
 
@@ -151,10 +160,15 @@ export const useRegisterSoldadoForm = () => {
         shirtSize,
         shirtSizeOther,
         isSurprise,
-        emergencyName,
+        emergencyFirstName,
+        emergencyLastName,
+        emergencyDocumentType,
+        emergencyDocumentTypeOther,
+        emergencyDocumentNumber,
         emergencyPhone,
         emergencyRelation,
         emergencyEmail,
+        emergencyAddress,
         hearAbout,
         hearAboutOther,
         invitedByCommunity,
@@ -191,10 +205,15 @@ export const useRegisterSoldadoForm = () => {
       shirtSize,
       shirtSizeOther,
       isSurprise,
-      emergencyName,
+      emergencyFirstName,
+      emergencyLastName,
+      emergencyDocumentType,
+      emergencyDocumentTypeOther,
+      emergencyDocumentNumber,
       emergencyPhone,
       emergencyRelation,
       emergencyEmail,
+      emergencyAddress,
       hearAbout,
       hearAboutOther,
       invitedByCommunity,
@@ -252,10 +271,15 @@ export const useRegisterSoldadoForm = () => {
     shirtSize,
     shirtSizeOther,
     isSurprise,
-    emergencyName,
+    emergencyFirstName,
+    emergencyLastName,
+    emergencyDocumentType,
+    emergencyDocumentTypeOther,
+    emergencyDocumentNumber,
     emergencyPhone,
     emergencyRelation,
     emergencyEmail,
+    emergencyAddress,
     hearAbout,
     hearAboutOther,
     invitedByCommunity,
@@ -292,10 +316,15 @@ export const useRegisterSoldadoForm = () => {
     setShirtSize,
     setShirtSizeOther,
     setIsSurprise,
-    setEmergencyName,
+    setEmergencyFirstName,
+    setEmergencyLastName,
+    setEmergencyDocumentType,
+    setEmergencyDocumentTypeOther,
+    setEmergencyDocumentNumber,
     setEmergencyPhone,
     setEmergencyRelation,
     setEmergencyEmail,
+    setEmergencyAddress,
     setHearAbout,
     setHearAboutOther,
     setInvitedByCommunity,

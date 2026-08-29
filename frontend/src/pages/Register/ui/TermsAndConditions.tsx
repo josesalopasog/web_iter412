@@ -7,6 +7,10 @@ const NEQUI_CONTACT_NAME_H = "Yostin Arteaga - Coordinador XVI Retiro";
 const NEQUI_CONTACT_NAME_M = "Karen Cruz - Coordinadora XVI Retiro";
 const RETREAT_LABEL = "XVI RETIRO ITER 4.12";
 
+const BANK_ACCOUNT_TYPE = "Cuenta corriente";
+const BANK_NAME = "Banco Caja Social";
+const BANK_ACCOUNT_NUMBER = "24072347779";
+
 function formatCOP(value: number) {
   return new Intl.NumberFormat("es-CO", {
     style: "currency",
@@ -51,15 +55,28 @@ export default function TermsAndConditions() {
         Es importante tener en cuenta que el diligenciamiento del formulario{" "}
         <strong>NO</strong> garantiza la reserva del cupo. Para su reserva, se
         requerirá cancelar un <strong>adelanto mínimo</strong> de{" "}
-        <strong>{minAdvanceText}</strong> o la totalidad del valor (
-        <strong>{totalPriceText}</strong>), a más tardar el{" "}
-        <strong>día 30 de septiembre del 2026</strong>. El valor restante, si es el
-        caso, debe ser cancelado antes del{" "}
-        <strong>día 30 de octubre del 2026</strong>.
+        <strong>{minAdvanceText}</strong> entre el{" "}
+        <strong>1 y el 15 de octubre del 2026</strong>. El valor restante, o
+        la totalidad del valor (<strong>{totalPriceText}</strong>) si se paga
+        de una sola vez, debe ser cancelado entre el{" "}
+        <strong>1 y el 7 de noviembre del 2026</strong>.
       </p>
 
       <div className="terms__block">
         <h3 className="terms__subtitle">Modalidades de pago:</h3>
+
+        <p>
+          <strong>Efectivo:</strong> puedes cancelar en efectivo directamente
+          con los coordinadores del retiro.
+        </p>
+        <br />
+
+        <p>
+          <strong>{BANK_ACCOUNT_TYPE}:</strong> {BANK_NAME}, cuenta de la
+          parroquia N.º <strong>{BANK_ACCOUNT_NUMBER}</strong>.
+        </p>
+        <br />
+
         <p>Para participantes hombres:</p>
         <br />
         <p>

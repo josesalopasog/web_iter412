@@ -48,7 +48,12 @@ export const RegisterView: React.FC<Props> = ({
   shirtSize,
   shirtSizeOther,
   isSurprise,
-  emergencyName,
+  emergencyFirstName,
+  emergencyLastName,
+  emergencyDocumentType,
+  emergencyDocumentTypeOther,
+  emergencyDocumentNumber,
+  emergencyAddress,
   emergencyPhone,
   emergencyRelation,
   emergencyEmail,
@@ -85,7 +90,12 @@ export const RegisterView: React.FC<Props> = ({
   setShirtSize,
   setShirtSizeOther,
   setIsSurprise,
-  setEmergencyName,
+  setEmergencyFirstName,
+  setEmergencyLastName,
+  setEmergencyDocumentType,
+  setEmergencyDocumentTypeOther,
+  setEmergencyDocumentNumber,
+  setEmergencyAddress,
   setEmergencyPhone,
   setEmergencyRelation,
   setEmergencyEmail,
@@ -125,6 +135,34 @@ export const RegisterView: React.FC<Props> = ({
     "RESTRICCION_ALIMENTICIA",
     "OTRO",
   ];
+
+  const missingFields: string[] = [];
+  if (!gender.trim()) missingFields.push("Género");
+  if (!email.trim()) missingFields.push("Correo electrónico");
+  if (!firstNames.trim()) missingFields.push("Nombres");
+  if (!lastNames.trim()) missingFields.push("Apellidos");
+  if (!preferredName.trim()) missingFields.push("¿Cómo te gusta que te digan?");
+  if (!documentType.trim()) missingFields.push("Tipo de documento");
+  if (!documentNumber.trim()) missingFields.push("Número de documento");
+  if (!age.trim()) missingFields.push("Edad");
+  if (!birthDate.trim()) missingFields.push("Fecha de nacimiento");
+  if (!address.trim()) missingFields.push("Dirección");
+  if (!city.trim()) missingFields.push("Ciudad");
+  if (!neighborhood.trim()) missingFields.push("Barrio");
+  if (!phone.trim()) missingFields.push("Celular/WhatsApp");
+  if (!eps.trim()) missingFields.push("EPS");
+  if (!bloodType.trim()) missingFields.push("Tipo de sangre");
+  if (!occupationPlace.trim()) missingFields.push("Lugar donde te desempeñas");
+  if (!emergencyFirstName.trim()) missingFields.push("Contacto de emergencia: nombres");
+  if (!emergencyLastName.trim()) missingFields.push("Contacto de emergencia: apellidos");
+  if (!emergencyDocumentType.trim()) missingFields.push("Contacto de emergencia: tipo de documento");
+  if (!emergencyDocumentNumber.trim()) missingFields.push("Contacto de emergencia: número de documento");
+  if (!emergencyPhone.trim()) missingFields.push("Contacto de emergencia: celular");
+  if (!emergencyRelation.trim()) missingFields.push("Contacto de emergencia: relación");
+  if (!emergencyEmail.trim()) missingFields.push("Contacto de emergencia: correo");
+  if (!emergencyAddress.trim()) missingFields.push("Contacto de emergencia: dirección");
+  if (!acceptTerms) missingFields.push("Aceptar términos y condiciones");
+  if (!acceptDataPolicy) missingFields.push("Aceptar política de tratamiento de datos");
 
   return (
     <section id="register" aria-label="Registro Retiro">
@@ -615,18 +653,81 @@ export const RegisterView: React.FC<Props> = ({
 
               {/* Emergencia */}
               <div className="formSection">
-                <h4 className="formTitle">Contacto de emergencia</h4>
+                <h3 className="formTitle">🦺  Contacto de emergencia </h3>
+                <h4 className="formTitle">Por favor poner una persona mayor de edad.</h4>
+                <h4></h4>
 
                 <div className="formGrid">
                   <div className="formRow">
-                    <label className="formLabel" htmlFor="emergencyName">
-                      Nombre completo <span className="req">*</span>
+                    <label className="formLabel" htmlFor="emergencyFirstName">
+                      Nombres <span className="req">*</span>
                     </label>
                     <input
-                      id="emergencyName"
+                      id="emergencyFirstName"
                       className="formInput"
-                      value={emergencyName}
-                      onChange={(e) => setEmergencyName(e.target.value)}
+                      value={emergencyFirstName}
+                      onChange={(e) => setEmergencyFirstName(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="formRow">
+                    <label className="formLabel" htmlFor="emergencyLastName">
+                      Apellidos <span className="req">*</span>
+                    </label>
+                    <input
+                      id="emergencyLastName"
+                      className="formInput"
+                      value={emergencyLastName}
+                      onChange={(e) => setEmergencyLastName(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="formRow">
+                    <label className="formLabel" htmlFor="emergencyDocumentType">
+                      Tipo de documento <span className="req">*</span>
+                    </label>
+                    <select
+                      id="emergencyDocumentType"
+                      className="formSelect"
+                      value={emergencyDocumentType}
+                      onChange={(e) =>
+                        setEmergencyDocumentType(e.target.value as DocumentType)
+                      }
+                      required
+                    >
+                      <option value="TI">Tarjeta de identidad</option>
+                      <option value="CC">Cédula de ciudadanía</option>
+                      <option value="PAS">Pasaporte</option>
+                      <option value="OTRO">Otro</option>
+                    </select>
+                  </div>
+
+                  {emergencyDocumentType === "OTRO" && (
+                    <div className="formRow">
+                      <label className="formLabel" htmlFor="emergencyDocumentTypeOther">
+                        ¿Cuál? <span className="req">*</span>
+                      </label>
+                      <input
+                        id="emergencyDocumentTypeOther"
+                        className="formInput"
+                        value={emergencyDocumentTypeOther}
+                        onChange={(e) => setEmergencyDocumentTypeOther(e.target.value)}
+                        required
+                      />
+                    </div>
+                  )}
+
+                  <div className="formRow">
+                    <label className="formLabel" htmlFor="emergencyDocumentNumber">
+                      Número de documento <span className="req">*</span>
+                    </label>
+                    <input
+                      id="emergencyDocumentNumber"
+                      className="formInput"
+                      value={emergencyDocumentNumber}
+                      onChange={(e) => setEmergencyDocumentNumber(e.target.value)}
                       required
                     />
                   </div>
@@ -640,6 +741,19 @@ export const RegisterView: React.FC<Props> = ({
                       className="formInput"
                       value={emergencyPhone}
                       onChange={(e) => setEmergencyPhone(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="formRow">
+                    <label className="formLabel" htmlFor="emergencyAddress">
+                      Dirección <span className="req">*</span>
+                    </label>
+                    <input
+                      id="emergencyAddress"
+                      className="formInput"
+                      value={emergencyAddress}
+                      onChange={(e) => setEmergencyAddress(e.target.value)}
                       required
                     />
                   </div>
@@ -800,6 +914,12 @@ export const RegisterView: React.FC<Props> = ({
                   </div>
                 </div>
               </div>
+
+              {!canSubmit && missingFields.length > 0 && (
+                <p className="formHint" style={{ color: "crimson" }}>
+                  Falta completar: {missingFields.join(", ")}.
+                </p>
+              )}
 
               <div className="formActions">
                 <button

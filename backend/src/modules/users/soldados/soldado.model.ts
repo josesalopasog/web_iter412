@@ -47,10 +47,15 @@ const SoldadoSchema = new Schema(
 
         isSurprise: { type: String, required: true, enum: ["SI", "NO"] },
 
-        emergencyName: { type: String, required: true, trim: true },
+        emergencyFirstName: { type: String, required: true, trim: true },
+        emergencyLastName: { type: String, required: true, trim: true },
+        emergencyDocumentType: { type: String, required: true },
+        emergencyDocumentTypeOther: { type: String, default: "", trim: true },
+        emergencyDocumentNumber: { type: String, required: true, trim: true },
         emergencyPhone: { type: String, required: true, trim: true },
         emergencyRelation: { type: String, required: true, trim: true },
         emergencyEmail: { type: String, required: true, lowercase: true, trim: true },
+        emergencyAddress: { type: String, required: true, trim: true },
 
         hearAbout: { type: String, required: true },
         hearAboutOther: { type: String, default: "", trim: true },
