@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import type { UseRegisterServidorFormReturn } from "../form/useRegisterServidorForm";
 import type {
   DocumentType,
@@ -47,15 +48,15 @@ export const RegisterServidorView: React.FC<Props> = ({
   merchSize,
   merchSizeOther,
 
-  emergency1Name,
-  emergency1Phone,
-  emergency1Relation,
-  emergency1Address,
-
-  emergency2Name,
-  emergency2Phone,
-  emergency2Relation,
-  emergency2Address,
+  emergencyFirstName,
+  emergencyLastName,
+  emergencyDocumentType,
+  emergencyDocumentTypeOther,
+  emergencyDocumentNumber,
+  emergencyPhone,
+  emergencyRelation,
+  emergencyEmail,
+  emergencyAddress,
 
   services,
   lastService,
@@ -100,15 +101,15 @@ export const RegisterServidorView: React.FC<Props> = ({
   setMerchSize,
   setMerchSizeOther,
 
-  setEmergency1Name,
-  setEmergency1Phone,
-  setEmergency1Relation,
-  setEmergency1Address,
-
-  setEmergency2Name,
-  setEmergency2Phone,
-  setEmergency2Relation,
-  setEmergency2Address,
+  setEmergencyFirstName,
+  setEmergencyLastName,
+  setEmergencyDocumentType,
+  setEmergencyDocumentTypeOther,
+  setEmergencyDocumentNumber,
+  setEmergencyPhone,
+  setEmergencyRelation,
+  setEmergencyEmail,
+  setEmergencyAddress,
 
   setLastService,
   setServiceLeaderOf,
@@ -129,12 +130,15 @@ export const RegisterServidorView: React.FC<Props> = ({
   toggleService,
   onSubmit,
   canSubmit,
+  merchNeedsSize,
 
   // status
   isLoading,
   successId,
+  registrationNumber,
   errorMsg,
 }) => {
+  const navigate = useNavigate();
   const [openTerms, setOpenTerms] = React.useState(false);
   const [openPolicy, setOpenPolicy] = React.useState(false);
 
@@ -555,7 +559,7 @@ export const RegisterServidorView: React.FC<Props> = ({
 
                   <div className="formRow">
                     <label className="formLabel" htmlFor="merchSize">
-                      Talla <span className="req">*</span>
+                      Talla {merchNeedsSize && <span className="req">*</span>}
                     </label>
                     <select
                       id="merchSize"
@@ -564,8 +568,9 @@ export const RegisterServidorView: React.FC<Props> = ({
                       onChange={(e) =>
                         setMerchSize(e.target.value as ShirtSize)
                       }
-                      required
+                      required={merchNeedsSize}
                     >
+                      <option value=""></option>
                       <option value="S">S</option>
                       <option value="M">M</option>
                       <option value="L">L</option>
@@ -590,124 +595,136 @@ export const RegisterServidorView: React.FC<Props> = ({
                 </div>
               </div>
 
-              {/* ===================== EMERGENCIAS ===================== */}
+              {/* ===================== EMERGENCIA ===================== */}
               <div className="formSection">
-                <h4 className="formTitle">Contactos de emergencia</h4>
-                <span className="formLabel">
-                  En caso de emergencia, comunicarse con:{" "}
-                </span>
+                <h3 className="formTitle">🦺  Contacto de emergencia </h3>
+                <h4 className="formTitle">Por favor poner una persona mayor de edad.</h4>
+
                 <div className="formGrid">
                   <div className="formRow">
-                    <label className="formLabel" htmlFor="emergency1Name">
-                      Nombre <span className="req">*</span>
+                    <label className="formLabel" htmlFor="emergencyFirstName">
+                      Nombres <span className="req">*</span>
                     </label>
                     <input
-                      id="emergency1Name"
+                      id="emergencyFirstName"
                       className="formInput"
-                      value={emergency1Name}
-                      onChange={(e) => setEmergency1Name(e.target.value)}
+                      value={emergencyFirstName}
+                      onChange={(e) => setEmergencyFirstName(e.target.value)}
                       required
                     />
                   </div>
 
                   <div className="formRow">
-                    <label className="formLabel" htmlFor="emergency1Phone">
+                    <label className="formLabel" htmlFor="emergencyLastName">
+                      Apellidos <span className="req">*</span>
+                    </label>
+                    <input
+                      id="emergencyLastName"
+                      className="formInput"
+                      value={emergencyLastName}
+                      onChange={(e) => setEmergencyLastName(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="formRow">
+                    <label className="formLabel" htmlFor="emergencyDocumentType">
+                      Tipo de documento <span className="req">*</span>
+                    </label>
+                    <select
+                      id="emergencyDocumentType"
+                      className="formSelect"
+                      value={emergencyDocumentType}
+                      onChange={(e) =>
+                        setEmergencyDocumentType(e.target.value as DocumentType)
+                      }
+                      required
+                    >
+                      <option value="TI">Tarjeta de identidad</option>
+                      <option value="CC">Cédula de ciudadanía</option>
+                      <option value="PAS">Pasaporte</option>
+                      <option value="OTRO">Otro</option>
+                    </select>
+                  </div>
+
+                  {emergencyDocumentType === "OTRO" && (
+                    <div className="formRow">
+                      <label className="formLabel" htmlFor="emergencyDocumentTypeOther">
+                        ¿Cuál? <span className="req">*</span>
+                      </label>
+                      <input
+                        id="emergencyDocumentTypeOther"
+                        className="formInput"
+                        value={emergencyDocumentTypeOther}
+                        onChange={(e) => setEmergencyDocumentTypeOther(e.target.value)}
+                        required
+                      />
+                    </div>
+                  )}
+
+                  <div className="formRow">
+                    <label className="formLabel" htmlFor="emergencyDocumentNumber">
+                      Número de documento <span className="req">*</span>
+                    </label>
+                    <input
+                      id="emergencyDocumentNumber"
+                      className="formInput"
+                      value={emergencyDocumentNumber}
+                      onChange={(e) => setEmergencyDocumentNumber(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="formRow">
+                    <label className="formLabel" htmlFor="emergencyPhone">
                       Celular <span className="req">*</span>
                     </label>
                     <input
-                      id="emergency1Phone"
+                      id="emergencyPhone"
                       className="formInput"
-                      value={emergency1Phone}
-                      onChange={(e) => setEmergency1Phone(e.target.value)}
+                      value={emergencyPhone}
+                      onChange={(e) => setEmergencyPhone(e.target.value)}
                       required
                       inputMode="tel"
                     />
                   </div>
 
                   <div className="formRow">
-                    <label className="formLabel" htmlFor="emergency1Relation">
+                    <label className="formLabel" htmlFor="emergencyAddress">
+                      Dirección <span className="req">*</span>
+                    </label>
+                    <input
+                      id="emergencyAddress"
+                      className="formInput"
+                      value={emergencyAddress}
+                      onChange={(e) => setEmergencyAddress(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="formRow">
+                    <label className="formLabel" htmlFor="emergencyRelation">
                       Relación <span className="req">*</span>
                     </label>
                     <input
-                      id="emergency1Relation"
+                      id="emergencyRelation"
                       className="formInput"
-                      value={emergency1Relation}
-                      onChange={(e) => setEmergency1Relation(e.target.value)}
+                      value={emergencyRelation}
+                      onChange={(e) => setEmergencyRelation(e.target.value)}
                       required
                     />
                   </div>
 
                   <div className="formRow">
-                    <label className="formLabel" htmlFor="emergency1Address">
-                      Dirección contacto <span className="req">*</span>
+                    <label className="formLabel" htmlFor="emergencyEmail">
+                      Correo <span className="req">*</span>
                     </label>
                     <input
-                      id="emergency1Address"
+                      id="emergencyEmail"
                       className="formInput"
-                      value={emergency1Address}
-                      onChange={(e) => setEmergency1Address(e.target.value)}
-                      placeholder="Dirección del contacto"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="formSection">
-                <span className="formLabel">
-                  ¿Con qué otra persona podemos comunicarnos en caso de
-                  emergencia?:{" "}
-                </span>
-                <div className="formGrid">
-                  <div className="formRow">
-                    <label className="formLabel" htmlFor="emergency2Name">
-                      Nombre <span className="req">*</span>
-                    </label>
-                    <input
-                      id="emergency2Name"
-                      className="formInput"
-                      value={emergency2Name}
-                      onChange={(e) => setEmergency2Name(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <div className="formRow">
-                    <label className="formLabel" htmlFor="emergency2Phone">
-                      Celular <span className="req">*</span>
-                    </label>
-                    <input
-                      id="emergency2Phone"
-                      className="formInput"
-                      value={emergency2Phone}
-                      onChange={(e) => setEmergency2Phone(e.target.value)}
-                      required
-                      inputMode="tel"
-                    />
-                  </div>
-
-                  <div className="formRow">
-                    <label className="formLabel" htmlFor="emergency2Relation">
-                      Relación <span className="req">*</span>
-                    </label>
-                    <input
-                      id="emergency2Relation"
-                      className="formInput"
-                      value={emergency2Relation}
-                      onChange={(e) => setEmergency2Relation(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="formRow">
-                    <label className="formLabel" htmlFor="emergency2Address">
-                      Dirección contacto <span className="req">*</span>
-                    </label>
-                    <input
-                      id="emergency2Address"
-                      className="formInput"
-                      value={emergency2Address}
-                      onChange={(e) => setEmergency2Address(e.target.value)}
-                      placeholder="Dirección del contacto"
+                      type="email"
+                      value={emergencyEmail}
+                      onChange={(e) => setEmergencyEmail(e.target.value)}
                       required
                     />
                   </div>
@@ -979,12 +996,6 @@ export const RegisterServidorView: React.FC<Props> = ({
                 </p>
               )}
 
-              {successId && (
-                <p className="formHint" style={{ color: "green" }}>
-                  ✅ Registro exitoso. ID: <strong>{successId}</strong>
-                </p>
-              )}
-
               <p className="formHint">
                 Campos obligatorios: todos. Asegúrate de diligenciar cada
                 sección.
@@ -1021,6 +1032,59 @@ export const RegisterServidorView: React.FC<Props> = ({
           </div>
         </div>
       </div>
+      {/* =============== MODAL REGISTRO EXITOSO =============== */}
+      {successId && (
+        <div className="modalOverlay successOverlay" role="dialog" aria-modal="true">
+          <div className="modalCard successCard">
+            <div className="modalHead">
+              <h3>🎉 ¡Felicitaciones!</h3>
+              <button
+                type="button"
+                className="modalClose"
+                onClick={() => navigate("/")}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modalBody" style={{ whiteSpace: "normal" }}>
+              <p>
+                Tu inscripción ha sido registrada con éxito. Estamos felices
+                y te esperamos en nuestro próximo <strong>XVI Retiro de ITER 4.12</strong>.
+              </p>
+              <p>
+                Para más información, comunícate con uno de nuestros
+                coordinadores:
+              </p>
+              <p>
+                <strong>Karen Cruz</strong> (Coordinadora): 319-618-8804
+                <br />
+                <strong>Yostin Arteaga</strong> (Coordinador): 319-557-1763
+              </p>
+              <p className="successNumber">
+                Tu número de registro es:
+                <strong>{registrationNumber}</strong>
+              </p>
+            </div>
+            <div className="modalActions successActions">
+              <button
+                type="button"
+                className="btnGhost"
+                onClick={() => navigate("/")}
+              >
+                Volver
+              </button>
+              <button
+                type="button"
+                className="btnPrimary"
+                onClick={() => window.location.reload()}
+              >
+                Continuar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* =============== MODAL TÉRMINOS =============== */}
       {openTerms && (
         <div className="modalOverlay" role="dialog" aria-modal="true">

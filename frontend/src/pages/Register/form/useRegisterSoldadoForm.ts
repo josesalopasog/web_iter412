@@ -76,6 +76,7 @@ export const useRegisterSoldadoForm = () => {
   // status
   const [isLoading, setIsLoading] = useState(false);
   const [successId, setSuccessId] = useState<string | null>(null);
+  const [registrationNumber, setRegistrationNumber] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // helpers
@@ -229,11 +230,13 @@ export const useRegisterSoldadoForm = () => {
 
     setErrorMsg(null);
     setSuccessId(null);
+    setRegistrationNumber(null);
 
     try {
       setIsLoading(true);
       const result = await registerSoldado(payload);
       setSuccessId(result.id);
+      setRegistrationNumber(result.registrationNumber);
     } catch (error: unknown) {
       setErrorMsg(error instanceof Error ? error.message : "Error inesperado");
     } finally {
@@ -341,6 +344,7 @@ export const useRegisterSoldadoForm = () => {
     // status
     isLoading,
     successId,
+    registrationNumber,
     errorMsg,
   };
 };

@@ -14,5 +14,5 @@ export const registerServidor = async (payload: RegistrationServidoresDTO) => {
     throw new Error(data?.message ?? "Error registrando servidor");
   }
 
-  return res.json() as Promise<{ id: string }>;
+  return res.json() as Promise<{ id: string; registrationNumber: string }>;
 };

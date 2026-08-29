@@ -5,6 +5,8 @@ import { sendRegistrationConfirmationEmail } from "../../../services/mailer.serv
 import { Servidor } from "./servidor.model.js";
 import type { RegistrationServidoresDTO } from "./servidor.types.js"
 
+const formatRegistrationNumber = (n: number) => String(n).padStart(3, "0");
+
 const requireFields = (body: any, fields: string[]) => {
   const missing = fields.filter(
     (f) => body[f] === undefined || body[f] === null || body[f] === ""
@@ -45,18 +47,16 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
     "shirtSize",
 
     "merchItems",
-    "merchSize",
 
-    "emergency1Name",
-    "emergency1Phone",
-    "emergency1Relation",
-    "emergency1Address",
+    "emergencyFirstName",
+    "emergencyLastName",
+    "emergencyDocumentType",
+    "emergencyDocumentNumber",
+    "emergencyPhone",
+    "emergencyRelation",
+    "emergencyEmail",
+    "emergencyAddress",
 
-    "emergency2Name",
-    "emergency2Phone",
-    "emergency2Relation",
-    "emergency2Address",
-    
     "services",
     "lastService",
     "serviceLeaderOf",
@@ -85,8 +85,12 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
     body.shirtColors = [];
   }
 
+  const merchNeedsSize = Array.isArray(body.merchItems) && body.merchItems.some((i) => i !== "NINGUNA");
+
   requireIf(body.documentType === "OTRO", body, ["documentTypeOther"]);
+  requireIf(body.emergencyDocumentType === "OTRO", body, ["emergencyDocumentTypeOther"]);
   requireIf(body.shirtSize === "OTRO", body, ["shirtSizeOther"]);
+  requireIf(merchNeedsSize, body, ["merchSize"]);
   requireIf(body.merchSize === "OTRO", body, ["merchSizeOther"]);
   requireIf(body.wentToOtherSedes === "SI", body, ["otherSedesDetail"]);
 
@@ -99,7 +103,11 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
 
   const passwordHash = await bcrypt.hash(body.password, 10);
 
+  const registrationNumber = (await Servidor.countDocuments()) + 1;
+
   const servidor = await Servidor.create({
+    registrationNumber,
+
     email: String(body.email).toLowerCase(),
     passwordHash,
 
@@ -127,18 +135,18 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
     shirtSizeOther: body.shirtSize === "OTRO" ? body.shirtSizeOther : "",
 
     merchItems: body.merchItems ?? [],
-    merchSize: body.merchSize,
+    merchSize: body.merchSize ?? "",
     merchSizeOther: body.merchSize === "OTRO" ? body.merchSizeOther : "",
 
-    emergency1Name: body.emergency1Name,
-    emergency1Phone: body.emergency1Phone,
-    emergency1Relation: body.emergency1Relation,
-    emergency1Address: body.emergency1Address,
-
-    emergency2Name: body.emergency2Name,
-    emergency2Phone: body.emergency2Phone,
-    emergency2Relation: body.emergency2Relation,
-    emergency2Address: body.emergency2Address,
+    emergencyFirstName: body.emergencyFirstName,
+    emergencyLastName: body.emergencyLastName,
+    emergencyDocumentType: body.emergencyDocumentType,
+    emergencyDocumentTypeOther: body.emergencyDocumentType === "OTRO" ? body.emergencyDocumentTypeOther : "",
+    emergencyDocumentNumber: body.emergencyDocumentNumber,
+    emergencyPhone: body.emergencyPhone,
+    emergencyRelation: body.emergencyRelation,
+    emergencyEmail: String(body.emergencyEmail).toLowerCase(),
+    emergencyAddress: body.emergencyAddress,
 
     services: body.services,
     lastService: body.lastService,
@@ -157,6 +165,7 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
 
   res.status(201).json({
     id: servidor._id,
+    registrationNumber: formatRegistrationNumber(registrationNumber),
     email: servidor.email,
     createdAt: servidor.createdAt,
   });

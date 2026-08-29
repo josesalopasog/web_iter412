@@ -48,7 +48,7 @@ export const useRegisterServidorForm = () => {
 
   // merch
   const [merchItems, setMerchItems] = useState<MerchItem[]>([]);
-  const [merchSize, setMerchSize] = useState<ShirtSize>("S");
+  const [merchSize, setMerchSize] = useState<ShirtSize>("");
   const [merchSizeOther, setMerchSizeOther] = useState("");
 
   const toggleMerchItem = (value: MerchItem) => {
@@ -58,15 +58,15 @@ export const useRegisterServidorForm = () => {
   };
 
   // emergency
-  const [emergency1Name, setEmergency1Name] = useState("");
-  const [emergency1Phone, setEmergency1Phone] = useState("");
-  const [emergency1Relation, setEmergency1Relation] = useState("");
-  const [emergency1Address, setEmergency1Address] = useState("");
-
-  const [emergency2Name, setEmergency2Name] = useState("");
-  const [emergency2Phone, setEmergency2Phone] = useState("");
-  const [emergency2Relation, setEmergency2Relation] = useState("");
-  const [emergency2Address, setEmergency2Address] = useState("");
+  const [emergencyFirstName, setEmergencyFirstName] = useState("");
+  const [emergencyLastName, setEmergencyLastName] = useState("");
+  const [emergencyDocumentType, setEmergencyDocumentType] = useState<DocumentType>("CC");
+  const [emergencyDocumentTypeOther, setEmergencyDocumentTypeOther] = useState("");
+  const [emergencyDocumentNumber, setEmergencyDocumentNumber] = useState("");
+  const [emergencyPhone, setEmergencyPhone] = useState("");
+  const [emergencyRelation, setEmergencyRelation] = useState("");
+  const [emergencyEmail, setEmergencyEmail] = useState("");
+  const [emergencyAddress, setEmergencyAddress] = useState("");
 
   // services
   const [services, setServices] = useState<Service[]>([]);
@@ -97,10 +97,15 @@ export const useRegisterServidorForm = () => {
   // status
   const [isLoading, setIsLoading] = useState(false);
   const [successId, setSuccessId] = useState<string | null>(null);
+  const [registrationNumber, setRegistrationNumber] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const passwordOk = password.length >= 8 && password === confirmPassword;
   const shirtOk = needsShirt === "NO" || (needsShirt === "SI" && shirtColors.length > 0);
+  const merchNeedsSize = merchItems.some((item) => item !== "NINGUNA");
+  const merchSizeOk =
+    !merchNeedsSize ||
+    (merchSize.trim() !== "" && (merchSize !== "OTRO" || merchSizeOther.trim() !== ""));
 
   const canSubmit =
     email.trim() &&
@@ -118,21 +123,23 @@ export const useRegisterServidorForm = () => {
     phone.trim() &&
     eps.trim() &&
     bloodType.trim() &&
-    emergency1Name.trim() &&
-    emergency1Phone.trim() &&
-    emergency1Relation.trim() &&
-    emergency1Address.trim() &&
-    emergency2Name.trim() &&
-    emergency2Phone.trim() &&
-    emergency2Relation.trim() &&
-    emergency2Address.trim() &&
+    emergencyFirstName.trim() &&
+    emergencyLastName.trim() &&
+    emergencyDocumentType &&
+    (emergencyDocumentType !== "OTRO" || emergencyDocumentTypeOther.trim()) &&
+    emergencyDocumentNumber.trim() &&
+    emergencyPhone.trim() &&
+    emergencyRelation.trim() &&
+    emergencyEmail.trim() &&
+    emergencyAddress.trim() &&
     services.length > 0 &&
     serviceLeaderOf.trim() &&
     formationOther.trim() &&
     acceptTerms &&
     acceptDataPolicy &&
     passwordOk &&
-    shirtOk;
+    shirtOk &&
+    merchSizeOk;
 
   const payload = useMemo(
     () =>
@@ -159,14 +166,15 @@ export const useRegisterServidorForm = () => {
         merchItems,
         merchSize,
         merchSizeOther,
-        emergency1Name,
-        emergency1Phone,
-        emergency1Relation,
-        emergency1Address,
-        emergency2Name,
-        emergency2Phone,
-        emergency2Relation,
-        emergency2Address,
+        emergencyFirstName,
+        emergencyLastName,
+        emergencyDocumentType,
+        emergencyDocumentTypeOther,
+        emergencyDocumentNumber,
+        emergencyPhone,
+        emergencyRelation,
+        emergencyEmail,
+        emergencyAddress,
         services,
         lastService,
         serviceLeaderOf,
@@ -200,14 +208,15 @@ export const useRegisterServidorForm = () => {
       merchItems,
       merchSize,
       merchSizeOther,
-      emergency1Name,
-      emergency1Phone,
-      emergency1Relation,
-      emergency1Address,
-      emergency2Name,
-      emergency2Phone,
-      emergency2Relation,
-      emergency2Address,
+      emergencyFirstName,
+      emergencyLastName,
+      emergencyDocumentType,
+      emergencyDocumentTypeOther,
+      emergencyDocumentNumber,
+      emergencyPhone,
+      emergencyRelation,
+      emergencyEmail,
+      emergencyAddress,
       services,
       lastService,
       serviceLeaderOf,
@@ -226,11 +235,13 @@ export const useRegisterServidorForm = () => {
 
     setErrorMsg(null);
     setSuccessId(null);
+    setRegistrationNumber(null);
 
     try {
       setIsLoading(true);
       const result = await registerServidor(payload);
       setSuccessId(result.id);
+      setRegistrationNumber(result.registrationNumber);
     } catch (error: unknown) {
       setErrorMsg(error instanceof Error ? error.message : "Error inesperado");
     } finally {
@@ -262,14 +273,15 @@ export const useRegisterServidorForm = () => {
     merchItems,
     merchSize,
     merchSizeOther,
-    emergency1Name,
-    emergency1Phone,
-    emergency1Relation,
-    emergency1Address,
-    emergency2Name,
-    emergency2Phone,
-    emergency2Relation,
-    emergency2Address,
+    emergencyFirstName,
+    emergencyLastName,
+    emergencyDocumentType,
+    emergencyDocumentTypeOther,
+    emergencyDocumentNumber,
+    emergencyPhone,
+    emergencyRelation,
+    emergencyEmail,
+    emergencyAddress,
     services,
     lastService,
     serviceLeaderOf,
@@ -302,14 +314,15 @@ export const useRegisterServidorForm = () => {
     setShirtSizeOther,
     setMerchSize,
     setMerchSizeOther,
-    setEmergency1Name,
-    setEmergency1Phone,
-    setEmergency1Relation,
-    setEmergency1Address,
-    setEmergency2Name,
-    setEmergency2Phone,
-    setEmergency2Relation,
-    setEmergency2Address,
+    setEmergencyFirstName,
+    setEmergencyLastName,
+    setEmergencyDocumentType,
+    setEmergencyDocumentTypeOther,
+    setEmergencyDocumentNumber,
+    setEmergencyPhone,
+    setEmergencyRelation,
+    setEmergencyEmail,
+    setEmergencyAddress,
     setLastService,
     setServiceLeaderOf,
     setWentToOtherSedes,
@@ -325,11 +338,13 @@ export const useRegisterServidorForm = () => {
     toggleMerchItem,
     toggleService,
     canSubmit,
+    merchNeedsSize,
     onSubmit,
 
     // status
     isLoading,
     successId,
+    registrationNumber,
     errorMsg,
   };
 };

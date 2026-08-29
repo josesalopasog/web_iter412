@@ -65,16 +65,16 @@ export type RegistrationServidoresDTO = {
   merchSize: ShirtSize;
   merchSizeOther: string;
 
-  // Emergencias (2 contactos)
-  emergency1Name: string;
-  emergency1Phone: string;
-  emergency1Relation: string;
-  emergency1Address: string;
-
-  emergency2Name: string;
-  emergency2Phone: string;
-  emergency2Relation: string;
-  emergency2Address: string;
+  // Emergencia
+  emergencyFirstName: string;
+  emergencyLastName: string;
+  emergencyDocumentType: DocumentType;
+  emergencyDocumentTypeOther: string;
+  emergencyDocumentNumber: string;
+  emergencyPhone: string;
+  emergencyRelation: string;
+  emergencyEmail: string;
+  emergencyAddress: string;
 
   // Servicio
   services: Service[];

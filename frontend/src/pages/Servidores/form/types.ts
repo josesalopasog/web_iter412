@@ -1,6 +1,6 @@
 export type YesNo = "SI" | "NO";
 export type DocumentType = "TI" | "CC" | "PAS" | "OTRO";
-export type ShirtSize = "S" | "M" | "L" | "OTRO";
+export type ShirtSize = "" | "S" | "M" | "L" | "OTRO";
 export type ShirtColor = "BLANCA" | "VERDE" | "AZUL";
 
 export type MerchItem =
@@ -51,15 +51,15 @@ export type RegistrationServidoresDTO = {
   merchSize: ShirtSize;
   merchSizeOther: string;
 
-  emergency1Name: string;
-  emergency1Phone: string;
-  emergency1Relation: string;
-  emergency1Address: string;
-
-  emergency2Name: string;
-  emergency2Phone: string;
-  emergency2Relation: string;
-  emergency2Address: string;
+  emergencyFirstName: string;
+  emergencyLastName: string;
+  emergencyDocumentType: DocumentType;
+  emergencyDocumentTypeOther: string;
+  emergencyDocumentNumber: string;
+  emergencyPhone: string;
+  emergencyRelation: string;
+  emergencyEmail: string;
+  emergencyAddress: string;
 
   services: Service[];
   lastService: Service;

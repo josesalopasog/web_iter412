@@ -4,6 +4,8 @@ export type ServidorDoc = mongoose.InferSchemaType<typeof ServidorSchema>;
 
 const ServidorSchema = new Schema(
   {
+    registrationNumber: { type: Number, required: true, unique: true },
+
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     passwordHash: { type: String, required: true },
 
@@ -31,18 +33,18 @@ const ServidorSchema = new Schema(
     shirtSizeOther: { type: String, trim: true, default: "" },
 
     merchItems: { type: [String], required: true, default: [] },
-    merchSize: { type: String, required: true },
+    merchSize: { type: String, default: "" },
     merchSizeOther: { type: String, trim: true, default: "" },
 
-    emergency1Name: { type: String, required: true, trim: true },
-    emergency1Phone: { type: String, required: true, trim: true },
-    emergency1Relation: { type: String, required: true, trim: true },
-    emergency1Address: { type: String, required: true, trim: true },
-
-    emergency2Name: { type: String, required: true, trim: true },
-    emergency2Phone: { type: String, required: true, trim: true },
-    emergency2Relation: { type: String, required: true, trim: true },
-    emergency2Address: { type: String, required: true, trim: true },
+    emergencyFirstName: { type: String, required: true, trim: true },
+    emergencyLastName: { type: String, required: true, trim: true },
+    emergencyDocumentType: { type: String, required: true },
+    emergencyDocumentTypeOther: { type: String, trim: true, default: "" },
+    emergencyDocumentNumber: { type: String, required: true, trim: true },
+    emergencyPhone: { type: String, required: true, trim: true },
+    emergencyRelation: { type: String, required: true, trim: true },
+    emergencyEmail: { type: String, required: true, lowercase: true, trim: true },
+    emergencyAddress: { type: String, required: true, trim: true },
 
     services: { type: [String], required: true, default: [] },
     lastService: { type: String, required: true },

@@ -4,6 +4,8 @@ import { sendRegistrationConfirmationEmail } from "../../../services/mailer.serv
 import { Soldado } from "./soldado.model.js";
 import type { RegistrationSoldadosDTO, YesNo } from "./soldado.types.js";
 
+const formatRegistrationNumber = (n: number) => String(n).padStart(3, "0");
+
 const isEmpty = (v: unknown) => {
   if (v === undefined || v === null) return true;
   if (typeof v === "string" && v.trim() === "") return true;
@@ -80,7 +82,11 @@ export const createSoldadoFromForm = asyncHandler(async (req, res) => {
   const existing = await Soldado.findOne({ email: body.email?.toLowerCase() });
   if (existing) throw new ApiError(409, "Email already registered");
 
+  const registrationNumber = (await Soldado.countDocuments()) + 1;
+
   const soldado = await Soldado.create({
+    registrationNumber,
+
     email: String(body.email).toLowerCase(),
     role: "SOLDADO",
 
@@ -147,6 +153,7 @@ export const createSoldadoFromForm = asyncHandler(async (req, res) => {
 
   res.status(201).json({
     id: soldado._id,
+    registrationNumber: formatRegistrationNumber(registrationNumber),
     email: soldado.email,
     role: soldado.role,
     createdAt: soldado.createdAt,

@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import type { UseRegisterSoldadoFormReturn } from "../form/useRegisterSoldadoForm";
 import type {
   Gender,
@@ -113,8 +114,10 @@ export const RegisterView: React.FC<Props> = ({
 
   isLoading,
   successId,
+  registrationNumber,
   errorMsg,
 }) => {
+  const navigate = useNavigate();
   const [openTerms, setOpenTerms] = React.useState(false);
   const [openPolicy, setOpenPolicy] = React.useState(false);
 
@@ -452,7 +455,7 @@ export const RegisterView: React.FC<Props> = ({
                             checked={restrictions.includes(r)}
                             onChange={() => toggleRestriction(r)}
                           />
-                          <span>{r}</span>
+                          <span>{r.replaceAll("_", " ")}</span>
                         </label>
                       ))}
                     </div>
@@ -541,7 +544,7 @@ export const RegisterView: React.FC<Props> = ({
                             checked={sacraments.includes(s)}
                             onChange={() => toggleSacrament(s)}
                           />
-                          <span>{s}</span>
+                          <span>{s.replaceAll("_", " ")}</span>
                         </label>
                       ))}
                     </div>
@@ -936,11 +939,6 @@ export const RegisterView: React.FC<Props> = ({
                   {errorMsg}
                 </p>
               )}
-              {successId && (
-                <p className="formHint" style={{ color: "green" }}>
-                  ✅ Registro exitoso. ID: <strong>{successId}</strong>
-                </p>
-              )}
             </form>
           </div>
 
@@ -989,6 +987,59 @@ export const RegisterView: React.FC<Props> = ({
           </div>
         </div>
       </div>
+      {/* =============== MODAL REGISTRO EXITOSO =============== */}
+      {successId && (
+        <div className="modalOverlay successOverlay" role="dialog" aria-modal="true">
+          <div className="modalCard successCard">
+            <div className="modalHead">
+              <h3>🎉 ¡Felicitaciones!</h3>
+              <button
+                type="button"
+                className="modalClose"
+                onClick={() => navigate("/")}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modalBody" style={{ whiteSpace: "normal" }}>
+              <p>
+                Tu inscripción ha sido registrada con éxito. Estamos felices
+                y te esperamos en nuestro próximo <strong>XVI Retiro de ITER 4.12</strong>.
+              </p>
+              <p>
+                Para más información, comunícate con uno de nuestros
+                coordinadores:
+              </p>
+              <p>
+                <strong>Karen Cruz</strong> (Coordinadora): 319-618-8804
+                <br />
+                <strong>Yostin Arteaga</strong> (Coordinador): 319-557-1763
+              </p>
+              <p className="successNumber">
+                Tu número de registro es:
+                <strong>{registrationNumber}</strong>
+              </p>
+            </div>
+            <div className="modalActions successActions">
+              <button
+                type="button"
+                className="btnGhost"
+                onClick={() => navigate("/")}
+              >
+                Volver
+              </button>
+              <button
+                type="button"
+                className="btnPrimary"
+                onClick={() => window.location.reload()}
+              >
+                Continuar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* =============== MODAL TÉRMINOS =============== */}
       {openTerms && (
         <div className="modalOverlay" role="dialog" aria-modal="true">

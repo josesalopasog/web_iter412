@@ -87,3 +87,37 @@
   justify-content: flex-end;
   margin-top: 12px;
 }
+
+/* ========= Modal de registro exitoso ========= */
+.successOverlay {
+  background: rgba(34, 139, 87, 0.18);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.successCard {
+  background: rgba(184, 247, 205, 0.75);
+  border: 1px solid rgba(34, 139, 87, 0.35);
+}
+
+.successCard .modalBody {
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.successActions {
+  gap: 24px;
+}
+
+.successNumber {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.3;
+  color: #0f5132;
+}
+
+.successNumber strong {
+  display: block;
+  font-size: 1.6em;
+}

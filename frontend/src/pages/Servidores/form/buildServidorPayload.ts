@@ -30,15 +30,15 @@ type BuildArgs = {
   merchSize: ShirtSize;
   merchSizeOther: string;
 
-  emergency1Name: string;
-  emergency1Phone: string;
-  emergency1Relation: string;
-  emergency1Address: string;
-
-  emergency2Name: string;
-  emergency2Phone: string;
-  emergency2Relation: string;
-  emergency2Address: string;
+  emergencyFirstName: string;
+  emergencyLastName: string;
+  emergencyDocumentType: DocumentType;
+  emergencyDocumentTypeOther: string;
+  emergencyDocumentNumber: string;
+  emergencyPhone: string;
+  emergencyRelation: string;
+  emergencyEmail: string;
+  emergencyAddress: string;
 
   services: Service[];
   lastService: Service;
@@ -85,15 +85,15 @@ export const buildServidorPayload = (a: BuildArgs): RegistrationServidoresDTO =>
     merchSize: a.merchSize,
     merchSizeOther: a.merchSize === "OTRO" ? a.merchSizeOther.trim() : "",
 
-    emergency1Name: a.emergency1Name.trim(),
-    emergency1Phone: a.emergency1Phone.trim(),
-    emergency1Relation: a.emergency1Relation.trim(),
-    emergency1Address: a.emergency1Address.trim(),
-
-    emergency2Name: a.emergency2Name.trim(),
-    emergency2Phone: a.emergency2Phone.trim(),
-    emergency2Relation: a.emergency2Relation.trim(),
-    emergency2Address: a.emergency2Address.trim(),
+    emergencyFirstName: a.emergencyFirstName.trim(),
+    emergencyLastName: a.emergencyLastName.trim(),
+    emergencyDocumentType: a.emergencyDocumentType,
+    emergencyDocumentTypeOther: a.emergencyDocumentType === "OTRO" ? a.emergencyDocumentTypeOther.trim() : "",
+    emergencyDocumentNumber: a.emergencyDocumentNumber.trim(),
+    emergencyPhone: a.emergencyPhone.trim(),
+    emergencyRelation: a.emergencyRelation.trim(),
+    emergencyEmail: a.emergencyEmail.trim(),
+    emergencyAddress: a.emergencyAddress.trim(),
 
     services: a.services,
     lastService: a.lastService,

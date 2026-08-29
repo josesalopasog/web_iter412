@@ -3,7 +3,9 @@ import { USER_ROLES } from "./soldado.types.js";
 
 const SoldadoSchema = new Schema(
     {
-        //Auth 
+        registrationNumber: { type: Number, required: true, unique: true },
+
+        //Auth
         gender: { type: String, required: true },
 
         email: { type: String, required: true, unique: true, lowercase: true, trim: true },
