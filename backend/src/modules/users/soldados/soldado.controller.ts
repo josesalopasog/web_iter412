@@ -2,7 +2,7 @@ import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { ApiError } from "../../../utils/errors.js";
 import { sendRegistrationConfirmationEmail } from "../../../services/mailer.service.js";
 import { softDelete } from "../softDelete.js";
-import { createLog } from "../../logs/createLog.js";
+import { createLog } from "../../activityLog/createLog.js";
 import { Soldado } from "./soldado.model.js";
 import type { RegistrationSoldadosDTO, YesNo } from "./soldado.types.js";
 

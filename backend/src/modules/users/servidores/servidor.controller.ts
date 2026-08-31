@@ -3,7 +3,7 @@ import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { ApiError } from "../../../utils/errors.js";
 import { sendRegistrationConfirmationEmail } from "../../../services/mailer.service.js";
 import { softDelete } from "../softDelete.js";
-import { createLog } from "../../logs/createLog.js";
+import { createLog } from "../../activityLog/createLog.js";
 import { Servidor } from "./servidor.model.js";
 import type { RegistrationServidoresDTO } from "./servidor.types.js"
 

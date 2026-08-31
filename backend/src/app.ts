@@ -3,7 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import usersRouter from "./modules/users/index.js";
 import authRouter from "./modules/auth/auth.routes.js";
-import logsRouter from "./modules/logs/log.routes.js";
+import logsRouter from "./modules/activityLog/log.routes.js";
 import { ApiError } from "./utils/errors.js";
 
 export const createApp = () => {

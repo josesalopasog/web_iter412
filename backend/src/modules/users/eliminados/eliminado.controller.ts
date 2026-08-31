@@ -1,6 +1,6 @@
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { ApiError } from "../../../utils/errors.js";
-import { createLog } from "../../logs/createLog.js";
+import { createLog } from "../../activityLog/createLog.js";
 import { Eliminado } from "./eliminado.model.js";
 import { Soldado } from "../soldados/soldado.model.js";
 import { Servidor } from "../servidores/servidor.model.js";
