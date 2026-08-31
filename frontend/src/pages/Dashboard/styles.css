@@ -243,6 +243,45 @@
   flex-shrink: 0;
 }
 
+@media (max-width: 640px) {
+  .tableSectionHead {
+    display: grid;
+    grid-template-columns: max-content max-content 1fr;
+    grid-template-areas:
+      "view count ."
+      "columns excel ."
+      "search search search";
+    align-items: center;
+    gap: 10px;
+  }
+
+  .tableSectionHeadLeft,
+  .tableSectionHeadRight {
+    display: contents;
+  }
+
+  .tableSectionHead .dbDropdown {
+    grid-area: view;
+  }
+
+  .tableSectionHead .tableCount {
+    grid-area: count;
+  }
+
+  .tableSectionHead .columnPicker {
+    grid-area: columns;
+  }
+
+  .tableSectionHead .exportBtn {
+    grid-area: excel;
+  }
+
+  .tableSectionHead .tableSearch {
+    grid-area: search;
+    width: 100%;
+  }
+}
+
 .exportSelectAll {
   display: flex;
   gap: 16px;

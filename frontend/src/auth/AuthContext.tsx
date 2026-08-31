@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { login as loginRequest } from "../api/auth";
+import { getMyServidorProfile } from "../api/adminUsers";
 import type { AuthUser } from "./types";
 
 const STORAGE_KEY = "iter412_auth";
@@ -25,18 +26,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as StoredAuth;
-        setToken(parsed.token);
-        setUser(parsed.user);
+    const bootstrap = async () => {
+      let stored: StoredAuth | null = null;
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) stored = JSON.parse(raw) as StoredAuth;
+      } catch {
+        localStorage.removeItem(STORAGE_KEY);
       }
-    } catch {
-      localStorage.removeItem(STORAGE_KEY);
-    } finally {
-      setIsLoading(false);
-    }
+
+      if (!stored) {
+        setIsLoading(false);
+        return;
+      }
+
+      setToken(stored.token);
+      setUser(stored.user);
+
+      try {
+        const profile = await getMyServidorProfile(stored.token);
+        const refreshedUser: AuthUser = {
+          sub: stored.user.sub,
+          email: String(profile.email ?? stored.user.email),
+          role: (profile.role as AuthUser["role"]) ?? stored.user.role,
+          firstNames: String(profile.firstNames ?? stored.user.firstNames),
+          lastNames: String(profile.lastNames ?? stored.user.lastNames),
+          preferredName: String(profile.preferredName ?? stored.user.preferredName),
+        };
+        setUser(refreshedUser);
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({ token: stored.token, user: refreshedUser })
+        );
+      } catch {
+        // Keep the cached session if the refresh fails (e.g. offline).
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    bootstrap();
   }, []);
 
   const login = async (email: string, password: string) => {
