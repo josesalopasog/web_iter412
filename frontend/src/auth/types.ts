@@ -13,4 +13,5 @@ export type AuthUser = {
   role: UserRole;
   firstNames: string;
   lastNames: string;
+  preferredName: string;
 };

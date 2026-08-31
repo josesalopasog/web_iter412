@@ -1,0 +1,11 @@
+.loginStack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: min(420px, 100%);
+}
+
+.loginStack .loginCard {
+  width: 100%;
+}

@@ -83,6 +83,18 @@ export const updateServidorField = (token: string, id: string, field: string, va
     body: JSON.stringify({ field, value }),
   });
 
+export const updateMyServidorField = (token: string, field: string, value: unknown) =>
+  authedRequest<ServidorRecord>("/api/users/servidores/me", token, {
+    method: "PATCH",
+    body: JSON.stringify({ field, value }),
+  });
+
+export const changeMyPassword = (token: string, oldPassword: string, newPassword: string) =>
+  authedRequest<{ ok: true }>("/api/users/servidores/me/password", token, {
+    method: "PATCH",
+    body: JSON.stringify({ oldPassword, newPassword }),
+  });
+
 export const updateServidorRole = (token: string, id: string, role: string) =>
   authedRequest<ServidorRecord>(`/api/users/servidores/${id}/role`, token, {
     method: "PATCH",

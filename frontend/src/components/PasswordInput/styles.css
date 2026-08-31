@@ -1,0 +1,30 @@
+.passwordInputWrap {
+  position: relative;
+}
+
+.passwordInputWrap .formInput {
+  padding-right: 42px;
+}
+
+.passwordToggleBtn {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0;
+  border-radius: 8px;
+}
+
+.passwordToggleBtn:hover {
+  color: #111;
+  background: #f3f4f6;
+}

@@ -18,6 +18,7 @@ import StatsCards from "./ui/StatsCards";
 import UsersTable from "./ui/UsersTable";
 import EliminadosTable from "./ui/EliminadosTable";
 import type { View } from "./ui/ViewDropdown";
+import ConfirmLogoutModal from "../../components/ConfirmLogoutModal";
 import "./styles.css";
 
 const isMujer = (gender?: string) => gender === "Mujer" || gender === "Femenino";
@@ -34,6 +35,7 @@ const Dashboard = () => {
   const [eliminados, setEliminados] = useState<EliminadoRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const fetchAll = async () => {
     if (!token) return;
@@ -76,10 +78,6 @@ const Dashboard = () => {
   }, [servidores]);
 
   const activeStats = view === "soldados" ? soldadoStats : servidorStats;
-
-  const handleLogout = () => {
-    logout();
-  };
 
   const handleEditSoldado = async (id: string, field: string, value: string) => {
     const updated = await updateSoldadoField(token!, id, field, value);
@@ -124,9 +122,7 @@ const Dashboard = () => {
         </div>
 
         <div className="dashboardHeaderRight">
-          <span className="dashboardUserName">
-            {user?.firstNames} {user?.lastNames}
-          </span>
+          <span className="dashboardUserName">{user?.preferredName}</span>
           <button
             className="iconBtn"
             type="button"
@@ -139,7 +135,7 @@ const Dashboard = () => {
             className="iconBtn"
             type="button"
             title="Cerrar sesión"
-            onClick={handleLogout}
+            onClick={() => setShowLogoutConfirm(true)}
           >
             <LogoutIcon className="w-5 h-5" />
           </button>
@@ -193,6 +189,10 @@ const Dashboard = () => {
           </>
         )}
       </div>
+
+      {showLogoutConfirm && (
+        <ConfirmLogoutModal onCancel={() => setShowLogoutConfirm(false)} onConfirm={logout} />
+      )}
     </div>
   );
 };

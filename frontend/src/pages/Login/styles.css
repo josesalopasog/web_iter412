@@ -56,6 +56,12 @@
   margin: 0;
 }
 
+.loginSuccess {
+  color: #16a34a;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
 .loginBack {
   display: inline-block;
   margin-top: 20px;
@@ -66,4 +72,25 @@
 
 .loginBack:hover {
   text-decoration: underline;
+}
+
+.loginBackRow {
+  margin: 20px 0 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.loginBackRow a {
+  color: #6a00ff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.loginBackRow a:hover {
+  text-decoration: underline;
+}
+
+.loginBackRow .sep {
+  margin: 0 6px;
+  color: #d1d5db;
 }

@@ -23,6 +23,7 @@ export const login = asyncHandler(async (req, res) => {
     role: servidor.role,
     firstNames: servidor.firstNames,
     lastNames: servidor.lastNames,
+    preferredName: servidor.preferredName,
   };
 
   const token = signToken(user);

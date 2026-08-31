@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../auth/AuthContext";
 import type { UseRegisterServidorFormReturn } from "../form/useRegisterServidorForm";
 import type {
   DocumentType,
@@ -142,10 +143,33 @@ export const RegisterServidorView: React.FC<Props> = ({
   errorMsg,
 }) => {
   const navigate = useNavigate();
+  const { login, logout } = useAuth();
   const [openTerms, setOpenTerms] = React.useState(false);
   const [openPolicy, setOpenPolicy] = React.useState(false);
+  const [isLoggingIn, setIsLoggingIn] = React.useState(false);
+  const [autoLoginError, setAutoLoginError] = React.useState<string | null>(null);
 
   const passwordOk = password.length >= 8 && password === confirmPassword;
+
+  const handleGoToProfile = async () => {
+    setAutoLoginError(null);
+    setIsLoggingIn(true);
+    try {
+      await login(email, password);
+      navigate("/profile");
+    } catch (error: unknown) {
+      setAutoLoginError(
+        error instanceof Error ? error.message : "No se pudo iniciar sesión automáticamente"
+      );
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+
+  const handleCancelSuccess = () => {
+    logout();
+    navigate("/");
+  };
 
   const handleToggleMerch = (item: MerchItem) => {
     toggleMerchItem(item);
@@ -1060,7 +1084,7 @@ export const RegisterServidorView: React.FC<Props> = ({
               <button
                 type="button"
                 className="modalClose"
-                onClick={() => navigate("/")}
+                onClick={handleCancelSuccess}
               >
                 ✕
               </button>
@@ -1083,21 +1107,24 @@ export const RegisterServidorView: React.FC<Props> = ({
                 Tu número de registro es:
                 <strong>{registrationNumber}</strong>
               </p>
+              {autoLoginError && <p className="loginError">{autoLoginError}</p>}
             </div>
             <div className="modalActions successActions">
               <button
                 type="button"
                 className="btnGhost"
-                onClick={() => navigate("/")}
+                onClick={handleCancelSuccess}
+                disabled={isLoggingIn}
               >
-                Volver
+                Cancelar
               </button>
               <button
                 type="button"
                 className="btnPrimary"
-                onClick={() => window.location.reload()}
+                onClick={handleGoToProfile}
+                disabled={isLoggingIn}
               >
-                Continuar
+                {isLoggingIn ? "Ingresando..." : "Ir a mi perfil"}
               </button>
             </div>
           </div>

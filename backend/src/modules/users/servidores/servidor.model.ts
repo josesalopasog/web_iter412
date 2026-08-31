@@ -33,7 +33,7 @@ const ServidorSchema = new Schema(
 
     needsShirt: { type: String, required: true, enum: ["SI", "NO"] },
     shirtColors: { type: [String], required: true, default: [] }, 
-    shirtSize: { type: String, required: true },
+    shirtSize: { type: String, default: "" },
     shirtSizeOther: { type: String, trim: true, default: "" },
 
     merchItems: { type: [String], required: true, default: [] },

@@ -27,8 +27,10 @@ const EDITABLE_FIELDS = new Set([
   "eps",
   "bloodType",
   "needsShirt",
+  "shirtColors",
   "shirtSize",
   "shirtSizeOther",
+  "merchItems",
   "merchSize",
   "merchSizeOther",
   "emergencyFirstName",
@@ -40,6 +42,7 @@ const EDITABLE_FIELDS = new Set([
   "emergencyRelation",
   "emergencyEmail",
   "emergencyAddress",
+  "services",
   "lastService",
   "serviceLeaderOf",
   "wentToOtherSedes",
@@ -229,6 +232,14 @@ export const getMyServidorProfile = asyncHandler(async (req, res) => {
   res.json(servidor);
 });
 
+const isValidServicesValue = (value: unknown): value is string[] =>
+  Array.isArray(value) && value.length > 0 && value.every((v) => typeof v === "string" && v);
+
+const isValidStringArray = (value: unknown): value is string[] =>
+  Array.isArray(value) && value.every((v) => typeof v === "string");
+
+const ARRAY_FIELDS = new Set(["shirtColors", "merchItems"]);
+
 export const updateServidor = asyncHandler(async (req, res) => {
   const { field, value } = req.body as { field?: string; value?: unknown };
 
@@ -249,6 +260,12 @@ export const updateServidor = asyncHandler(async (req, res) => {
     servidor.passwordHash = await bcrypt.hash(value, 10);
   } else if (field === "email") {
     servidor.email = String(value).toLowerCase();
+  } else if (field === "services") {
+    if (!isValidServicesValue(value)) throw new ApiError(400, "Selecciona al menos un servicio");
+    servidor.services = value;
+  } else if (ARRAY_FIELDS.has(field)) {
+    if (!isValidStringArray(value)) throw new ApiError(400, "Selección inválida");
+    (servidor as any)[field] = value;
   } else {
     (servidor as any)[field] = value;
   }
@@ -258,6 +275,58 @@ export const updateServidor = asyncHandler(async (req, res) => {
   const result = servidor.toObject();
   delete (result as any).passwordHash;
   res.json(result);
+});
+
+export const updateMyServidor = asyncHandler(async (req, res) => {
+  const { field, value } = req.body as { field?: string; value?: unknown };
+
+  if (!field || field === "password" || !EDITABLE_FIELDS.has(field)) {
+    throw new ApiError(400, "Campo no editable");
+  }
+  if (RESTRICTED_FIELDS.has(field) && req.user!.role !== "SUPERADMIN") {
+    throw new ApiError(403, "Solo un SUPERADMIN puede editar este campo");
+  }
+
+  const servidor = await Servidor.findById(req.user!.sub);
+  if (!servidor) throw new ApiError(404, "No encontrado");
+
+  if (field === "services") {
+    if (!isValidServicesValue(value)) throw new ApiError(400, "Selecciona al menos un servicio");
+    servidor.services = value;
+  } else if (ARRAY_FIELDS.has(field)) {
+    if (!isValidStringArray(value)) throw new ApiError(400, "Selección inválida");
+    (servidor as any)[field] = value;
+  } else {
+    (servidor as any)[field] = field === "email" ? String(value).toLowerCase() : value;
+  }
+
+  await servidor.save();
+
+  const result = servidor.toObject();
+  delete (result as any).passwordHash;
+  res.json(result);
+});
+
+export const changeMyPassword = asyncHandler(async (req, res) => {
+  const { oldPassword, newPassword } = req.body as { oldPassword?: string; newPassword?: string };
+
+  if (!oldPassword || !newPassword) {
+    throw new ApiError(400, "La contraseña actual y la nueva son obligatorias");
+  }
+  if (newPassword.length < 8) {
+    throw new ApiError(400, "La nueva contraseña debe tener al menos 8 caracteres");
+  }
+
+  const servidor = await Servidor.findById(req.user!.sub);
+  if (!servidor) throw new ApiError(404, "No encontrado");
+
+  const isValid = await bcrypt.compare(oldPassword, servidor.passwordHash);
+  if (!isValid) throw new ApiError(401, "La contraseña actual no es correcta");
+
+  servidor.passwordHash = await bcrypt.hash(newPassword, 10);
+  await servidor.save();
+
+  res.json({ ok: true });
 });
 
 export const updateServidorRole = asyncHandler(async (req, res) => {

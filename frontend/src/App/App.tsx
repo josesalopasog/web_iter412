@@ -6,9 +6,11 @@ import Layout from "../components/Layout";
 import { AppProvider } from "../context";
 import { AuthProvider } from "../auth/AuthContext";
 import ProtectedRoute from "../auth/ProtectedRoute";
+import RequireLoggedOut from "../auth/RequireLoggedOut";
 import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 import Profile from "../pages/Profile";
+import ChangePassword from "../pages/ChangePassword";
 
 import "./App.css";
 import RegisterServidores from "../pages/Servidores";
@@ -24,10 +26,24 @@ const AppRoutes = () => {
       children: [
         { path: "/", element: <Home /> },
         { path: "/inscribirme", element: <Register /> },
-        { path: "/servidores", element: <RegisterServidores /> },
+        {
+          path: "/servidores",
+          element: (
+            <RequireLoggedOut>
+              <RegisterServidores />
+            </RequireLoggedOut>
+          ),
+        },
       ],
     },
-    { path: "/login", element: <Login /> },
+    {
+      path: "/login",
+      element: (
+        <RequireLoggedOut>
+          <Login />
+        </RequireLoggedOut>
+      ),
+    },
     {
       path: "/dashboard",
       element: (
@@ -41,6 +57,14 @@ const AppRoutes = () => {
       element: (
         <ProtectedRoute>
           <Profile />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/password",
+      element: (
+        <ProtectedRoute>
+          <ChangePassword />
         </ProtectedRoute>
       ),
     },
