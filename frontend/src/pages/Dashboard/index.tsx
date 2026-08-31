@@ -13,7 +13,7 @@ import {
   restoreEliminado,
 } from "../../api/adminUsers";
 import type { SoldadoRecord, ServidorRecord, EliminadoRecord } from "../../api/adminUsers";
-import { UserIcon, LogoutIcon } from "../../assets/icons";
+import { UserIcon, LogoutIcon, LogsIcon } from "../../assets/icons";
 import StatsCards from "./ui/StatsCards";
 import UsersTable from "./ui/UsersTable";
 import EliminadosTable from "./ui/EliminadosTable";
@@ -131,6 +131,16 @@ const Dashboard = () => {
           >
             <UserIcon className="w-5 h-5" />
           </button>
+          {isSuperAdmin && (
+            <button
+              className="iconBtn"
+              type="button"
+              title="Registro de actividad"
+              onClick={() => navigate("/logs")}
+            >
+              <LogsIcon className="w-5 h-5" />
+            </button>
+          )}
           <button
             className="iconBtn"
             type="button"

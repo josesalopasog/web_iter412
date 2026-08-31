@@ -3,6 +3,7 @@ import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { ApiError } from "../../../utils/errors.js";
 import { sendRegistrationConfirmationEmail } from "../../../services/mailer.service.js";
 import { softDelete } from "../softDelete.js";
+import { createLog } from "../../logs/createLog.js";
 import { Servidor } from "./servidor.model.js";
 import type { RegistrationServidoresDTO } from "./servidor.types.js"
 
@@ -253,6 +254,8 @@ export const updateServidor = asyncHandler(async (req, res) => {
   const servidor = await Servidor.findById(req.params.id);
   if (!servidor) throw new ApiError(404, "No encontrado");
 
+  const oldValue = (servidor as any)[field];
+
   if (field === "password") {
     if (typeof value !== "string" || value.length < 8) {
       throw new ApiError(400, "La contraseña debe tener al menos 8 caracteres");
@@ -272,6 +275,20 @@ export const updateServidor = asyncHandler(async (req, res) => {
 
   await servidor.save();
 
+  if (field === "password") {
+    await createLog(
+      req.user!,
+      "RESTABLECER_CONTRASEÑA",
+      `Restableció la contraseña de ${servidor.firstNames} ${servidor.lastNames} (${servidor.role})`
+    );
+  } else {
+    await createLog(
+      req.user!,
+      "EDITAR_SERVIDOR",
+      `Editó "${field}" de ${servidor.firstNames} ${servidor.lastNames} (${servidor.role}): "${oldValue ?? ""}" → "${value ?? ""}"`
+    );
+  }
+
   const result = servidor.toObject();
   delete (result as any).passwordHash;
   res.json(result);
@@ -290,6 +307,8 @@ export const updateMyServidor = asyncHandler(async (req, res) => {
   const servidor = await Servidor.findById(req.user!.sub);
   if (!servidor) throw new ApiError(404, "No encontrado");
 
+  const oldValue = (servidor as any)[field];
+
   if (field === "services") {
     if (!isValidServicesValue(value)) throw new ApiError(400, "Selecciona al menos un servicio");
     servidor.services = value;
@@ -301,6 +320,12 @@ export const updateMyServidor = asyncHandler(async (req, res) => {
   }
 
   await servidor.save();
+
+  await createLog(
+    req.user!,
+    "EDITAR_PERFIL_PROPIO",
+    `Editó "${field}" de su propio perfil (${servidor.role}): "${oldValue ?? ""}" → "${value ?? ""}"`
+  );
 
   const result = servidor.toObject();
   delete (result as any).passwordHash;
@@ -326,6 +351,8 @@ export const changeMyPassword = asyncHandler(async (req, res) => {
   servidor.passwordHash = await bcrypt.hash(newPassword, 10);
   await servidor.save();
 
+  await createLog(req.user!, "CAMBIAR_CONTRASEÑA_PROPIA", "Cambió su propia contraseña");
+
   res.json({ ok: true });
 });
 
@@ -339,8 +366,15 @@ export const updateServidorRole = asyncHandler(async (req, res) => {
   const servidor = await Servidor.findById(req.params.id);
   if (!servidor) throw new ApiError(404, "No encontrado");
 
+  const oldRole = servidor.role;
   servidor.role = role as any;
   await servidor.save();
+
+  await createLog(
+    req.user!,
+    "CAMBIAR_ROL",
+    `Cambió el rol de ${servidor.firstNames} ${servidor.lastNames}: ${oldRole} → ${role}`
+  );
 
   const result = servidor.toObject();
   delete (result as any).passwordHash;
@@ -353,6 +387,12 @@ export const deleteServidor = asyncHandler(async (req, res) => {
 
   await softDelete(servidor, "servidores", req.user!);
   await servidor.deleteOne();
+
+  await createLog(
+    req.user!,
+    "ELIMINAR_SERVIDOR",
+    `Eliminó a ${servidor.firstNames} ${servidor.lastNames} (${servidor.role}) - N° registro ${String(servidor.registrationNumber).padStart(3, "0")}`
+  );
 
   res.json({ ok: true });
 });

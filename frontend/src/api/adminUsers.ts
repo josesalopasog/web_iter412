@@ -38,6 +38,16 @@ export type EliminadoRecord = {
   deletedBy: { sub: string; email: string; firstNames: string; lastNames: string };
 };
 
+export type LogRecord = {
+  _id: string;
+  userId: string;
+  userName: string;
+  userRole: string;
+  action: string;
+  summary: string;
+  createdAt: string;
+};
+
 const authedRequest = async <T>(
   path: string,
   token: string,
@@ -114,3 +124,5 @@ export const restoreEliminado = (token: string, id: string) =>
   authedRequest<Record<string, unknown>>(`/api/users/eliminados/${id}/restore`, token, {
     method: "POST",
   });
+
+export const listLogs = (token: string) => authedRequest<LogRecord[]>("/api/logs", token);

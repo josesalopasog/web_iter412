@@ -2,6 +2,7 @@ import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { ApiError } from "../../../utils/errors.js";
 import { sendRegistrationConfirmationEmail } from "../../../services/mailer.service.js";
 import { softDelete } from "../softDelete.js";
+import { createLog } from "../../logs/createLog.js";
 import { Soldado } from "./soldado.model.js";
 import type { RegistrationSoldadosDTO, YesNo } from "./soldado.types.js";
 
@@ -224,8 +225,15 @@ export const updateSoldado = asyncHandler(async (req, res) => {
   const soldado = await Soldado.findById(req.params.id);
   if (!soldado) throw new ApiError(404, "No encontrado");
 
+  const oldValue = (soldado as any)[field];
   (soldado as any)[field] = field === "email" ? String(value).toLowerCase() : value;
   await soldado.save();
+
+  await createLog(
+    req.user!,
+    "EDITAR_SOLDADO",
+    `Editó "${field}" de ${soldado.firstNames} ${soldado.lastNames} (SOLDADO): "${oldValue ?? ""}" → "${value ?? ""}"`
+  );
 
   res.json(soldado);
 });
@@ -236,6 +244,12 @@ export const deleteSoldado = asyncHandler(async (req, res) => {
 
   await softDelete(soldado, "soldados", req.user!);
   await soldado.deleteOne();
+
+  await createLog(
+    req.user!,
+    "ELIMINAR_SOLDADO",
+    `Eliminó a ${soldado.firstNames} ${soldado.lastNames} (SOLDADO) - N° registro ${String(soldado.registrationNumber).padStart(3, "0")}`
+  );
 
   res.json({ ok: true });
 });

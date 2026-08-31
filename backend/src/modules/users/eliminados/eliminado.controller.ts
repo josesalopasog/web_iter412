@@ -1,5 +1,6 @@
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { ApiError } from "../../../utils/errors.js";
+import { createLog } from "../../logs/createLog.js";
 import { Eliminado } from "./eliminado.model.js";
 import { Soldado } from "../soldados/soldado.model.js";
 import { Servidor } from "../servidores/servidor.model.js";
@@ -24,6 +25,12 @@ export const restoreEliminado = asyncHandler(async (req, res) => {
 
   const restored = await Model.create(data);
   await eliminado.deleteOne();
+
+  await createLog(
+    req.user!,
+    "RESTAURAR",
+    `Restauró a ${restored.firstNames} ${restored.lastNames} (${eliminado.originalCollection === "soldados" ? "SOLDADO" : "SERVIDOR"}) - N° registro ${String(restored.registrationNumber).padStart(3, "0")}`
+  );
 
   res.json(restored);
 });

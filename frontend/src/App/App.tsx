@@ -11,6 +11,7 @@ import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 import Profile from "../pages/Profile";
 import ChangePassword from "../pages/ChangePassword";
+import Logs from "../pages/Logs";
 
 import "./App.css";
 import RegisterServidores from "../pages/Servidores";
@@ -65,6 +66,14 @@ const AppRoutes = () => {
       element: (
         <ProtectedRoute>
           <ChangePassword />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/logs",
+      element: (
+        <ProtectedRoute allowedRoles={["SUPERADMIN"]} redirectTo="/profile">
+          <Logs />
         </ProtectedRoute>
       ),
     },

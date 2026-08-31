@@ -193,6 +193,24 @@ export const FilterIcon: React.FC<IconProps> = ({ className, ...props }) => (
   </svg>
 );
 
+export const LogsIcon: React.FC<IconProps> = ({ className, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    className={cx("w-5 h-5", className)}
+    {...props}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M9 12h6m-6 3.75h6M9 8.25h6M5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V8.87a2.25 2.25 0 0 0-.659-1.591l-4.62-4.62A2.25 2.25 0 0 0 14.129 2H5.25A2.25 2.25 0 0 0 3 4.25v14.5A2.25 2.25 0 0 0 5.25 21Z"
+    />
+  </svg>
+);
+
 export const EyeIcon: React.FC<IconProps> = ({ className, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
