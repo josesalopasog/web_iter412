@@ -32,7 +32,7 @@ export type EliminadoRecord = {
   _id: string;
   originalCollection: "soldados" | "servidores";
   originalId: string;
-  registrationNumber: number;
+  registrationNumber: number | undefined;
   data: Record<string, unknown>;
   deletedAt: string;
   deletedBy: { sub: string; email: string; firstNames: string; lastNames: string };

@@ -66,6 +66,9 @@ const formatDate = (iso: string) => {
   return date.toLocaleDateString("es-CO", { day: "numeric", month: "short", year: "numeric" });
 };
 
+const formatRegNum = (n: number | null | undefined) =>
+  n == null || Number.isNaN(n) ? "s/n" : String(n).padStart(3, "0");
+
 const loadColumnOrder = (
   storageKey: string,
   columns: typeof SOLDADO_COLUMNS,
@@ -90,6 +93,12 @@ const UsersTable: React.FC<Props> = (props) => {
 
   const columns = props.view === "soldados" ? SOLDADO_COLUMNS : SERVIDOR_COLUMNS;
   const defaultVisible = props.view === "soldados" ? SOLDADO_DEFAULT_VISIBLE : SERVIDOR_DEFAULT_VISIBLE;
+  const registrationNumberColumn: (typeof columns)[number] = {
+    id: "registrationNumber",
+    label: "N° Registro",
+    type: "text",
+    editable: true,
+  };
   const storageKey = `dashboard_cols_${props.view}`;
 
   const visibleColumns = columns.filter(
@@ -123,7 +132,11 @@ const UsersTable: React.FC<Props> = (props) => {
     .map((o) => visibleColumns.find((c) => c.id === o.id))
     .filter((c): c is (typeof columns)[number] => Boolean(c));
 
-  const [deleteTarget, setDeleteTarget] = useState<{ id: string; registrationNumber: number; name: string } | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{
+    id: string;
+    registrationNumber: number | undefined;
+    name: string;
+  } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showExport, setShowExport] = useState(false);
   const [columnFilters, setColumnFilters] = useState<Record<string, Set<string>>>({});
@@ -131,6 +144,7 @@ const UsersTable: React.FC<Props> = (props) => {
   const renderCellValue = (col: (typeof columns)[number], row: SoldadoRecord | ServidorRecord) => {
     if (col.id === "createdAt") return formatDate(String(row.createdAt ?? ""));
     if (col.id === "gender") return normalizeGender(row.gender as string | undefined) || "";
+    if (col.id === "registrationNumber") return formatRegNum(row.registrationNumber);
     return row[col.id] != null ? String(row[col.id]) : "";
   };
 
@@ -213,7 +227,7 @@ const UsersTable: React.FC<Props> = (props) => {
   };
 
   const exportValueFor = (colId: string, row: SoldadoRecord | ServidorRecord) => {
-    if (colId === "registrationNumber") return String(row.registrationNumber).padStart(3, "0");
+    if (colId === "registrationNumber") return formatRegNum(row.registrationNumber);
     if (colId === "role") return String((row as ServidorRecord).role ?? "");
     const col = columns.find((c) => c.id === colId);
     return col ? renderCellValue(col, row) : "";
@@ -246,7 +260,7 @@ const UsersTable: React.FC<Props> = (props) => {
         [key]: {
           rowId: row._id,
           field: col.id,
-          rowLabel: `#${String(row.registrationNumber).padStart(3, "0")} ${row.firstNames} ${row.lastNames}`,
+          rowLabel: `#${formatRegNum(row.registrationNumber)} ${row.firstNames} ${row.lastNames}`,
           fieldLabel: col.label,
           oldValue: col.id === "password" ? "" : oldValue,
           newValue,
@@ -382,7 +396,21 @@ const UsersTable: React.FC<Props> = (props) => {
                         <TrashIcon className="w-4 h-4" />
                       </button>
                     </td>
-                    <td>{String(r.registrationNumber).padStart(3, "0")}</td>
+                    {props.currentUserRole === "SUPERADMIN" ? (
+                      <EditableCell
+                        column={registrationNumberColumn}
+                        value={
+                          pendingEdits[`${r._id}::registrationNumber`]
+                            ? pendingEdits[`${r._id}::registrationNumber`].newValue
+                            : formatRegNum(r.registrationNumber)
+                        }
+                        isDirty={Boolean(pendingEdits[`${r._id}::registrationNumber`])}
+                        canEdit
+                        onCommit={(value) => handleCommitEdit(r, registrationNumberColumn, value)}
+                      />
+                    ) : (
+                      <td>{formatRegNum(r.registrationNumber)}</td>
+                    )}
                     {props.view === "servidores" && (
                       <td>
                         <RoleDropdown

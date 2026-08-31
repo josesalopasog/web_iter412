@@ -611,11 +611,29 @@
   gap: 8px;
   padding: 6px 4px;
   border-radius: 8px;
-  cursor: grab;
 }
 
 .columnPickerItem:hover {
   background: #f9fafb;
+}
+
+.columnPickerItem.dragging {
+  opacity: 0.5;
+  background: #f3f4f6;
+}
+
+.columnPickerDragHandle {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.columnPickerDragHandle:active {
+  cursor: grabbing;
 }
 
 .columnPickerDrag {

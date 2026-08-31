@@ -45,11 +45,18 @@ const EDITABLE_FIELDS = new Set([
   "hearAboutOther",
   "invitedByCommunity",
   "invitedByName",
+  "registrationNumber",
 ]);
 
-const RESTRICTED_FIELDS = new Set(["email"]);
+const RESTRICTED_FIELDS = new Set(["email", "registrationNumber"]);
 
-const formatRegistrationNumber = (n: number) => String(n).padStart(3, "0");
+const isValidRegistrationNumber = (value: unknown): value is number => {
+  const num = Number(value);
+  return Number.isInteger(num) && num > 0;
+};
+
+const formatRegistrationNumber = (n: number | null | undefined) =>
+  n == null ? "s/n" : String(n).padStart(3, "0");
 
 const isEmpty = (v: unknown) => {
   if (v === undefined || v === null) return true;
@@ -226,8 +233,24 @@ export const updateSoldado = asyncHandler(async (req, res) => {
   if (!soldado) throw new ApiError(404, "No encontrado");
 
   const oldValue = (soldado as any)[field];
-  (soldado as any)[field] = field === "email" ? String(value).toLowerCase() : value;
-  await soldado.save();
+
+  if (field === "registrationNumber") {
+    if (!isValidRegistrationNumber(value)) {
+      throw new ApiError(400, "El número de registro debe ser un entero positivo");
+    }
+    soldado.registrationNumber = Number(value);
+  } else {
+    (soldado as any)[field] = field === "email" ? String(value).toLowerCase() : value;
+  }
+
+  try {
+    await soldado.save();
+  } catch (error: any) {
+    if (error?.code === 11000) {
+      throw new ApiError(409, "Ese número de registro ya está en uso");
+    }
+    throw error;
+  }
 
   await createLog(
     req.user!,
@@ -248,7 +271,7 @@ export const deleteSoldado = asyncHandler(async (req, res) => {
   await createLog(
     req.user!,
     "ELIMINAR_SOLDADO",
-    `Eliminó a ${soldado.firstNames} ${soldado.lastNames} (SOLDADO) - N° registro ${String(soldado.registrationNumber).padStart(3, "0")}`
+    `Eliminó a ${soldado.firstNames} ${soldado.lastNames} (SOLDADO) - N° registro ${formatRegistrationNumber(soldado.registrationNumber)}`
   );
 
   res.json({ ok: true });

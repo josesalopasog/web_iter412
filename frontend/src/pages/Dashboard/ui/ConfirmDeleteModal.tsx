@@ -1,10 +1,13 @@
 type Props = {
-  registrationNumber: number;
+  registrationNumber: number | undefined;
   name: string;
   isDeleting: boolean;
   onCancel: () => void;
   onConfirm: () => void;
 };
+
+const formatRegNum = (n: number | null | undefined) =>
+  n == null || Number.isNaN(n) ? "s/n" : String(n).padStart(3, "0");
 
 const ConfirmDeleteModal: React.FC<Props> = ({
   registrationNumber,
@@ -25,7 +28,7 @@ const ConfirmDeleteModal: React.FC<Props> = ({
         <div className="modalBody" style={{ whiteSpace: "normal" }}>
           <p>
             ¿Seguro que deseas eliminar el registro N.º{" "}
-            <strong>{String(registrationNumber).padStart(3, "0")}</strong> (
+            <strong>{formatRegNum(registrationNumber)}</strong> (
             <strong>{name}</strong>)?
           </p>
           <p>Se moverá a la colección de eliminados, no se borra permanentemente.</p>

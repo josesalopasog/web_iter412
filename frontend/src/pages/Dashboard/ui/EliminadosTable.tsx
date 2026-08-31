@@ -15,6 +15,9 @@ const formatDate = (iso: string) => {
   return date.toLocaleDateString("es-CO", { day: "numeric", month: "short", year: "numeric" });
 };
 
+const formatRegNum = (n: number | null | undefined) =>
+  n == null || Number.isNaN(n) ? "s/n" : String(n).padStart(3, "0");
+
 const EliminadosTable: React.FC<Props> = ({ rows, onViewChange, onRestore }) => {
   const [restoringId, setRestoringId] = useState<string | null>(null);
 
@@ -60,7 +63,7 @@ const EliminadosTable: React.FC<Props> = ({ rows, onViewChange, onRestore }) => 
                   <td>
                     {String(r.data.firstNames ?? "")} {String(r.data.lastNames ?? "")}
                   </td>
-                  <td>{String(r.registrationNumber).padStart(3, "0")}</td>
+                  <td>{formatRegNum(r.registrationNumber)}</td>
                   <td>
                     {r.deletedBy.firstNames} {r.deletedBy.lastNames}
                   </td>

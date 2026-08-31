@@ -18,8 +18,11 @@ export const restoreEliminado = asyncHandler(async (req, res) => {
   const data = { ...(eliminado.data as Record<string, unknown>) };
   data._id = eliminado.originalId;
 
-  const numberTaken = await Model.exists({ registrationNumber: eliminado.registrationNumber });
-  if (numberTaken) {
+  const numberTaken =
+    eliminado.registrationNumber != null &&
+    (await Model.exists({ registrationNumber: eliminado.registrationNumber }));
+
+  if (!eliminado.registrationNumber || numberTaken) {
     data.registrationNumber = (await Model.countDocuments()) + 1;
   }
 

@@ -7,7 +7,8 @@ import { createLog } from "../../logs/createLog.js";
 import { Servidor } from "./servidor.model.js";
 import type { RegistrationServidoresDTO } from "./servidor.types.js"
 
-const formatRegistrationNumber = (n: number) => String(n).padStart(3, "0");
+const formatRegistrationNumber = (n: number | null | undefined) =>
+  n == null ? "s/n" : String(n).padStart(3, "0");
 
 const EDITABLE_FIELDS = new Set([
   "gender",
@@ -49,9 +50,15 @@ const EDITABLE_FIELDS = new Set([
   "wentToOtherSedes",
   "otherSedesDetail",
   "formationOther",
+  "registrationNumber",
 ]);
 
-const RESTRICTED_FIELDS = new Set(["email", "password"]);
+const RESTRICTED_FIELDS = new Set(["email", "password", "registrationNumber"]);
+
+const isValidRegistrationNumber = (value: unknown): value is number => {
+  const num = Number(value);
+  return Number.isInteger(num) && num > 0;
+};
 
 const ASSIGNABLE_ROLES = new Set(["SERVIDOR", "ADMIN", "SUPERADMIN"]);
 
@@ -269,11 +276,23 @@ export const updateServidor = asyncHandler(async (req, res) => {
   } else if (ARRAY_FIELDS.has(field)) {
     if (!isValidStringArray(value)) throw new ApiError(400, "Selección inválida");
     (servidor as any)[field] = value;
+  } else if (field === "registrationNumber") {
+    if (!isValidRegistrationNumber(value)) {
+      throw new ApiError(400, "El número de registro debe ser un entero positivo");
+    }
+    servidor.registrationNumber = Number(value);
   } else {
     (servidor as any)[field] = value;
   }
 
-  await servidor.save();
+  try {
+    await servidor.save();
+  } catch (error: any) {
+    if (error?.code === 11000) {
+      throw new ApiError(409, "Ese número de registro ya está en uso");
+    }
+    throw error;
+  }
 
   if (field === "password") {
     await createLog(
@@ -315,11 +334,23 @@ export const updateMyServidor = asyncHandler(async (req, res) => {
   } else if (ARRAY_FIELDS.has(field)) {
     if (!isValidStringArray(value)) throw new ApiError(400, "Selección inválida");
     (servidor as any)[field] = value;
+  } else if (field === "registrationNumber") {
+    if (!isValidRegistrationNumber(value)) {
+      throw new ApiError(400, "El número de registro debe ser un entero positivo");
+    }
+    servidor.registrationNumber = Number(value);
   } else {
     (servidor as any)[field] = field === "email" ? String(value).toLowerCase() : value;
   }
 
-  await servidor.save();
+  try {
+    await servidor.save();
+  } catch (error: any) {
+    if (error?.code === 11000) {
+      throw new ApiError(409, "Ese número de registro ya está en uso");
+    }
+    throw error;
+  }
 
   await createLog(
     req.user!,
@@ -391,7 +422,7 @@ export const deleteServidor = asyncHandler(async (req, res) => {
   await createLog(
     req.user!,
     "ELIMINAR_SERVIDOR",
-    `Eliminó a ${servidor.firstNames} ${servidor.lastNames} (${servidor.role}) - N° registro ${String(servidor.registrationNumber).padStart(3, "0")}`
+    `Eliminó a ${servidor.firstNames} ${servidor.lastNames} (${servidor.role}) - N° registro ${formatRegistrationNumber(servidor.registrationNumber)}`
   );
 
   res.json({ ok: true });

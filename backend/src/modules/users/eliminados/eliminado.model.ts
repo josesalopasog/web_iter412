@@ -3,7 +3,7 @@ import mongoose, { Schema } from "mongoose";
 const EliminadoSchema = new Schema({
   originalCollection: { type: String, enum: ["soldados", "servidores"], required: true },
   originalId: { type: String, required: true },
-  registrationNumber: { type: Number, required: true },
+  registrationNumber: { type: Number },
 
   data: { type: Schema.Types.Mixed, required: true },
 
