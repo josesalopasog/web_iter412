@@ -11,7 +11,7 @@ import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 import Profile from "../pages/Profile";
 import ChangePassword from "../pages/ChangePassword";
-import Logs from "../pages/Logs";
+import Logs from "../pages/ActivityLog";
 
 import "./App.css";
 import RegisterServidores from "../pages/Servidores";
