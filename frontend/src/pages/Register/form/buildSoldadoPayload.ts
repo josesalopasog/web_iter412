@@ -12,6 +12,7 @@ import type {
 
 type BuildArgs = {
   gender: Gender;
+  genderOther: string;
 
   email: string;
   firstNames: string;
@@ -77,6 +78,7 @@ export const buildSoldadoPayload = (a: BuildArgs): RegisterSoldadoPayload => {
 
   return {
     gender: a.gender,
+    genderOther: a.gender === "Otro" ? a.genderOther.trim() : "",
 
     email: a.email.trim(),
     firstNames: a.firstNames.trim(),

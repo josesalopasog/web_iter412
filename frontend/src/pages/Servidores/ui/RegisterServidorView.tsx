@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import type { UseRegisterServidorFormReturn } from "../form/useRegisterServidorForm";
 import type {
   DocumentType,
+  Gender,
   MerchItem,
   Service,
   ShirtColor,
@@ -20,6 +21,7 @@ const DATA_POLICY_TEXT = `
 `;
 
 export const RegisterServidorView: React.FC<Props> = ({
+  gender,
   email,
   firstNames,
   lastNames,
@@ -74,6 +76,7 @@ export const RegisterServidorView: React.FC<Props> = ({
   confirmPassword,
 
   // setters
+  setGender,
   setEmail,
   setFirstNames,
   setLastNames,
@@ -193,6 +196,22 @@ export const RegisterServidorView: React.FC<Props> = ({
                 <h4 className="formTitle">Datos personales</h4>
 
                 <div className="formGrid">
+                  <div className="formRow">
+                    <label className="formLabel" htmlFor="gender">
+                      Género <span className="req">*</span>
+                    </label>
+                    <select
+                      id="gender"
+                      className="formSelect"
+                      value={gender}
+                      onChange={(e) => setGender(e.target.value as Gender)}
+                      required
+                    >
+                      <option value="Mujer">Mujer</option>
+                      <option value="Hombre">Hombre</option>
+                    </select>
+                  </div>
+
                   <div className="formRow">
                     <label className="formLabel" htmlFor="email">
                       Correo electrónico <span className="req">*</span>

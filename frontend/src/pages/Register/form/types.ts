@@ -1,7 +1,7 @@
 // ============ Básicos ============
 export type YesNo = "" | "SI" | "NO";
 
-export type Gender = "" | "Mujer" | "Hombre";
+export type Gender = "" | "Mujer" | "Hombre" | "Otro";
 
 // ============ Documento ============
 export type DocumentType =
@@ -48,6 +48,7 @@ export type Sacrament =
 export type RegisterSoldadoPayload = {
   // antes de comenzar
   gender: Gender;
+  genderOther: string;
 
   email: string;
   firstNames: string;

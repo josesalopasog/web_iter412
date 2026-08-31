@@ -7,6 +7,7 @@ const SoldadoSchema = new Schema(
 
         //Auth
         gender: { type: String, required: true },
+        genderOther: { type: String, default: "", trim: true },
 
         email: { type: String, required: true, unique: true, lowercase: true, trim: true },
         role: { type: String, enum: USER_ROLES, required: true, default: "SOLDADO" },

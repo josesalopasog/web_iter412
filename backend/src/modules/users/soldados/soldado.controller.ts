@@ -1,8 +1,52 @@
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { ApiError } from "../../../utils/errors.js";
 import { sendRegistrationConfirmationEmail } from "../../../services/mailer.service.js";
+import { softDelete } from "../softDelete.js";
 import { Soldado } from "./soldado.model.js";
 import type { RegistrationSoldadosDTO, YesNo } from "./soldado.types.js";
+
+const EDITABLE_FIELDS = new Set([
+  "gender",
+  "genderOther",
+  "email",
+  "firstNames",
+  "lastNames",
+  "preferredName",
+  "documentType",
+  "documentTypeOther",
+  "documentNumber",
+  "age",
+  "birthDate",
+  "address",
+  "city",
+  "neighborhood",
+  "phone",
+  "eps",
+  "bloodType",
+  "practicesReligion",
+  "whichReligion",
+  "occupation",
+  "occupationOther",
+  "occupationPlace",
+  "shirtSize",
+  "shirtSizeOther",
+  "isSurprise",
+  "emergencyFirstName",
+  "emergencyLastName",
+  "emergencyDocumentType",
+  "emergencyDocumentTypeOther",
+  "emergencyDocumentNumber",
+  "emergencyPhone",
+  "emergencyRelation",
+  "emergencyEmail",
+  "emergencyAddress",
+  "hearAbout",
+  "hearAboutOther",
+  "invitedByCommunity",
+  "invitedByName",
+]);
+
+const RESTRICTED_FIELDS = new Set(["email"]);
 
 const formatRegistrationNumber = (n: number) => String(n).padStart(3, "0");
 
@@ -70,6 +114,7 @@ export const createSoldadoFromForm = asyncHandler(async (req, res) => {
 
   requireTrue(body as any, ["acceptTerms", "acceptDataPolicy"]);
 
+  requireIf(body.gender === "Otro", body as any, ["genderOther"]);
   requireIf(body.documentType === "OTRO", body as any, ["documentTypeOther"]);
   requireIf(body.emergencyDocumentType === "OTRO", body as any, ["emergencyDocumentTypeOther"]);
   requireIf(body.occupation === "OTRO", body as any, ["occupationOther"]);
@@ -91,6 +136,7 @@ export const createSoldadoFromForm = asyncHandler(async (req, res) => {
     role: "SOLDADO",
 
     gender: body.gender,
+    genderOther: body.gender === "Otro" ? body.genderOther : "",
 
     firstNames: body.firstNames,
     lastNames: body.lastNames,
@@ -158,4 +204,38 @@ export const createSoldadoFromForm = asyncHandler(async (req, res) => {
     role: soldado.role,
     createdAt: soldado.createdAt,
   });
+});
+
+export const listSoldados = asyncHandler(async (_req, res) => {
+  const soldados = await Soldado.find().sort({ createdAt: 1 });
+  res.json(soldados);
+});
+
+export const updateSoldado = asyncHandler(async (req, res) => {
+  const { field, value } = req.body as { field?: string; value?: unknown };
+
+  if (!field || !EDITABLE_FIELDS.has(field)) {
+    throw new ApiError(400, "Campo no editable");
+  }
+  if (RESTRICTED_FIELDS.has(field) && req.user!.role !== "SUPERADMIN") {
+    throw new ApiError(403, "Solo un SUPERADMIN puede editar este campo");
+  }
+
+  const soldado = await Soldado.findById(req.params.id);
+  if (!soldado) throw new ApiError(404, "No encontrado");
+
+  (soldado as any)[field] = field === "email" ? String(value).toLowerCase() : value;
+  await soldado.save();
+
+  res.json(soldado);
+});
+
+export const deleteSoldado = asyncHandler(async (req, res) => {
+  const soldado = await Soldado.findById(req.params.id);
+  if (!soldado) throw new ApiError(404, "No encontrado");
+
+  await softDelete(soldado, "soldados", req.user!);
+  await soldado.deleteOne();
+
+  res.json({ ok: true });
 });

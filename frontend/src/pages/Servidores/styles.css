@@ -57,6 +57,12 @@
   margin: 0;
 }
 
+.modalHeadWithIcon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .modalClose {
   border: 0;
   background: transparent;
@@ -85,6 +91,7 @@
 .modalActions {
   display: flex;
   justify-content: flex-end;
+  gap: 12px;
   margin-top: 12px;
 }
 

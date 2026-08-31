@@ -1,4 +1,5 @@
 export type YesNo = "SI" | "NO";
+export type Gender = "" | "Mujer" | "Hombre";
 export type DocumentType = "TI" | "CC" | "PAS" | "OTRO";
 export type ShirtSize = "" | "S" | "M" | "L" | "OTRO";
 export type ShirtColor = "BLANCA" | "VERDE" | "AZUL";
@@ -23,6 +24,7 @@ export type Service =
   | "NINGUNO";
 
 export type RegistrationServidoresDTO = {
+  gender: Gender;
   email: string;
   firstNames: string;
   lastNames: string;

@@ -1,20 +1,8 @@
-export const USER_ROLES = [
-  "SUPERADMIN",
-  "ADMIN",
-  "CM",
-  "LIDER",
-  "COORDINADOR",
-  "SERVIDOR",
-  "SOLDADO",
-] as const;
-
-
-export type UserRole = (typeof USER_ROLES)[number];
-
+export { USER_ROLES, type UserRole } from "../roles.js";
 
 export type YesNo = "SI" | "NO";
 
-export type Gender = "MUJER" | "HOMBRE";
+export type Gender = "Mujer" | "Hombre" | "Otro";
 
 export type DocumentType = "TI" | "CC" | "PAS" | "OTRO";
 
@@ -47,7 +35,8 @@ export type Sacrament =
 
 export type RegistrationSoldadosDTO = {
   gender: Gender;
-  // Data for the form 
+  genderOther: string;
+  // Data for the form
   email: string;
   firstNames: string;
   lastNames: string;

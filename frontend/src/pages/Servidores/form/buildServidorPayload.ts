@@ -1,7 +1,8 @@
 import type { RegistrationServidoresDTO } from "./types";
-import type { DocumentType, MerchItem, Service, ShirtColor, ShirtSize, YesNo } from "./types";
+import type { DocumentType, Gender, MerchItem, Service, ShirtColor, ShirtSize, YesNo } from "./types";
 
 type BuildArgs = {
+  gender: Gender;
   email: string;
   firstNames: string;
   lastNames: string;
@@ -57,6 +58,7 @@ type BuildArgs = {
 
 export const buildServidorPayload = (a: BuildArgs): RegistrationServidoresDTO => {
   return {
+    gender: a.gender,
     email: a.email.trim().toLowerCase(),
     firstNames: a.firstNames.trim(),
     lastNames: a.lastNames.trim(),

@@ -22,6 +22,7 @@ const DATA_POLICY_TEXT = `
 
 export const RegisterView: React.FC<Props> = ({
   gender,
+  genderOther,
   email,
   firstNames,
   lastNames,
@@ -66,6 +67,7 @@ export const RegisterView: React.FC<Props> = ({
   acceptDataPolicy,
 
   setGender,
+  setGenderOther,
   setEmail,
   setFirstNames,
   setLastNames,
@@ -141,6 +143,7 @@ export const RegisterView: React.FC<Props> = ({
 
   const missingFields: string[] = [];
   if (!gender.trim()) missingFields.push("Género");
+  if (gender === "Otro" && !genderOther.trim()) missingFields.push("Género: ¿Cuál?");
   if (!email.trim()) missingFields.push("Correo electrónico");
   if (!firstNames.trim()) missingFields.push("Nombres");
   if (!lastNames.trim()) missingFields.push("Apellidos");
@@ -200,10 +203,26 @@ export const RegisterView: React.FC<Props> = ({
                       onChange={(e) => setGender(e.target.value as Gender)}
                       required
                     >
-                      <option value="Femenino">Mujer</option>
-                      <option value="Masculino">Hombre</option>
+                      <option value="Mujer">Mujer</option>
+                      <option value="Hombre">Hombre</option>
+                      <option value="Otro">Otro</option>
                     </select>
                   </div>
+
+                  {gender === "Otro" && (
+                    <div className="formRow">
+                      <label className="formLabel" htmlFor="genderOther">
+                        ¿Cuál? <span className="req">*</span>
+                      </label>
+                      <input
+                        id="genderOther"
+                        className="formInput"
+                        value={genderOther}
+                        onChange={(e) => setGenderOther(e.target.value)}
+                        required
+                      />
+                    </div>
+                  )}
 
                   <div className="formRow">
                     <label className="formLabel" htmlFor="isSurprise">

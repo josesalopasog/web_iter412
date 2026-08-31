@@ -1,10 +1,14 @@
 import mongoose, { Schema } from "mongoose";
+import { USER_ROLES } from "../roles.js";
 
 export type ServidorDoc = mongoose.InferSchemaType<typeof ServidorSchema>;
 
 const ServidorSchema = new Schema(
   {
     registrationNumber: { type: Number, required: true, unique: true },
+
+    role: { type: String, enum: USER_ROLES, required: true, default: "SERVIDOR" },
+    gender: { type: String, enum: ["Mujer", "Hombre"], required: true },
 
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     passwordHash: { type: String, required: true },

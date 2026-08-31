@@ -30,7 +30,7 @@ const Header = () => {
         </ul>
       </nav>
       <div className="header-third-column">
-        <AnimatedBorder className="login-button" text="Iniciar Sesión" />
+        <AnimatedBorder className="login-button" text="Iniciar Sesión" href="/login" />
         <DropdownMenuButton className="header-menu-button" />
       </div>
     </header>

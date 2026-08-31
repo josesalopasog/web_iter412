@@ -1,14 +1,7 @@
-export const USER_ROLES = [
-  "SUPERADMIN",
-  "ADMIN",
-  "CM",
-  "LIDER",
-  "COORDINADOR",
-  "SERVIDOR",
-  "SOLDADO",
-] as const;
+export { USER_ROLES, type UserRole } from "../roles.js";
 
 export type YesNo = "SI" | "NO";
+export type Gender = "Mujer" | "Hombre";
 export type DocumentType = "TI" | "CC" | "PAS" | "OTRO";
 
 export type ShirtSize = "S" | "M" | "L" | "OTRO";
@@ -34,6 +27,8 @@ export type Service =
   | "NINGUNO";
 
 export type RegistrationServidoresDTO = {
+
+  gender: Gender;
 
   email: string;
   firstNames: string;

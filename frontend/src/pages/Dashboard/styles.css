@@ -1,0 +1,595 @@
+.dashboardPage {
+  min-height: 100vh;
+  background: #f4f5f9;
+}
+
+.dashboardHeader {
+  position: static;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 28px;
+  margin: 0;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  border-radius: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  flex-wrap: wrap;
+  height: auto;
+  overflow: visible;
+}
+
+.dashboardHeader::before {
+  content: none;
+}
+
+.dashboardHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dashboardLogo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.dashboardTitle h1 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-family: "CalSans";
+  font-weight: normal;
+  letter-spacing: normal;
+  padding-top: 0;
+}
+
+.dashboardHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.dashboardUserName {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #111;
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  cursor: pointer;
+  color: #374151;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.iconBtn:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.dashboardBody {
+  padding: 24px 28px 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dbDropdown {
+  position: relative;
+}
+
+.dbDropdownBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #fff;
+  transition: transform 0.15s;
+}
+
+.dbDropdownBtn:hover {
+  transform: translateY(-1px);
+}
+
+.dbDropdownBtn.soldados {
+  background: linear-gradient(120deg, #6a00ff, #a855f7);
+}
+
+.dbDropdownBtn.servidores {
+  background: linear-gradient(120deg, #80ff00, #16a34a);
+}
+
+.dbDropdownCaret {
+  display: inline-block;
+  transition: transform 0.15s;
+  font-size: 0.8em;
+}
+
+.dbDropdownCaret.open {
+  transform: rotate(180deg);
+}
+
+.dbDropdownMenu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 160px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  z-index: 20;
+}
+
+.dbDropdownItem {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: #fff;
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: #111;
+}
+
+.dbDropdownItem:hover {
+  background: #f3f4f6;
+}
+
+.dbDropdownItem.active {
+  font-weight: 700;
+  color: #6a00ff;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 18px;
+  margin-bottom: 26px;
+}
+
+.statCard {
+  border-radius: 18px;
+  padding: 20px;
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+}
+
+.statCard .statValue {
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 6px 0 2px;
+}
+
+.statCard .statLabel {
+  font-size: 0.85rem;
+  opacity: 0.95;
+}
+
+.statCard.total {
+  background: linear-gradient(135deg, #6a00ff, #7030a0);
+}
+
+.statCard.hombres {
+  background: linear-gradient(135deg, #4ff034, #16a34a);
+}
+
+.statCard.mujeres {
+  background: linear-gradient(135deg, #ff4d8d, #dc2626);
+}
+
+.tableSection {
+  background: #fff;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.tableSectionHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.tableSectionHeadLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tableCount {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.tableSearch {
+  width: min(280px, 100%);
+}
+
+.tableSectionHeadRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+
+.exportBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.exportSelectAll {
+  display: flex;
+  gap: 16px;
+  margin: 4px 0 10px;
+}
+
+.exportColumnList {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px 16px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.exportColumnItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  padding: 5px 4px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.exportColumnItem:hover {
+  background: #f9fafb;
+}
+
+.tableScroll {
+  overflow-x: auto;
+}
+
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.dataTable th {
+  text-align: left;
+  padding: 10px 12px;
+  color: #6b7280;
+  font-weight: 600;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+.sortHeaderBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  font-weight: 600;
+  color: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.sortHeaderBtn:hover {
+  color: #6a00ff;
+}
+
+.sortHeaderIcon {
+  font-size: 0.7em;
+  opacity: 0.35;
+}
+
+.sortHeaderIcon.active {
+  opacity: 1;
+  color: #6a00ff;
+}
+
+.filterHeaderIcon {
+  opacity: 0.35;
+}
+
+.filterHeaderIcon.active {
+  opacity: 1;
+  color: #6a00ff;
+}
+
+.filterMenu {
+  min-width: 180px;
+  padding: 8px;
+}
+
+.filterMenuActions {
+  display: flex;
+  gap: 12px;
+  padding: 4px 8px 8px;
+  border-bottom: 1px solid #f1f1f1;
+  margin-bottom: 6px;
+}
+
+.filterMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px;
+  font-size: 0.88rem;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.filterMenuItem:hover {
+  background: #f9fafb;
+}
+
+.dataTable td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f1f1f1;
+  white-space: nowrap;
+}
+
+.dataTable tr:hover td {
+  background: #fafafa;
+}
+
+.emptyState {
+  padding: 24px;
+  text-align: center;
+  color: #6b7280;
+}
+
+.dbDropdownBtn.eliminados {
+  background: linear-gradient(120deg, #6b7280, #dc2626);
+}
+
+/* ===== Editable cells ===== */
+.editableCell {
+  cursor: pointer;
+}
+
+.editableCell:hover {
+  background: #f5f3ff !important;
+  outline: 1px dashed #a855f7;
+  outline-offset: -2px;
+}
+
+.editingCell {
+  padding: 4px 6px !important;
+}
+
+.cellInput {
+  width: 100%;
+  min-width: 100px;
+  padding: 6px 8px;
+  border: 1px solid #6a00ff;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-family: inherit;
+}
+
+.dirtyCell {
+  background: #fef9c3 !important;
+  box-shadow: inset 3px 0 0 #eab308;
+}
+
+/* ===== Pending changes bar ===== */
+.pendingBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: #fefce8;
+  border: 1px solid #fde68a;
+  border-radius: 14px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #854d0e;
+}
+
+.pendingBarActions {
+  display: flex;
+  gap: 10px;
+}
+
+.pendingChangesList {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.pendingChangesList li {
+  margin-bottom: 8px;
+  font-size: 0.88rem;
+}
+
+.pendingChangesList .oldValue {
+  color: #dc2626;
+  text-decoration: line-through;
+}
+
+.pendingChangesList .newValue {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+/* ===== Row delete button ===== */
+.rowDeleteBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.rowDeleteBtn:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.btnDanger {
+  border: none;
+  background: #dc2626;
+  color: #fff;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btnDanger:hover {
+  background: #b91c1c;
+}
+
+.btnDanger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.deleteOverlay {
+  background: rgba(220, 38, 38, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* ===== Role dropdown ===== */
+.roleDropdown {
+  position: relative;
+}
+
+.roleDropdownBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #374151;
+  cursor: pointer;
+}
+
+.roleDropdownBtn:hover {
+  background: #f3f4f6;
+}
+
+.roleDropdownBtn.readonly {
+  cursor: default;
+  color: #9ca3af;
+}
+
+.roleDropdownBtn.readonly:hover {
+  background: #f9fafb;
+}
+
+.portalMenu {
+  position: fixed !important;
+  z-index: 5000;
+}
+
+/* ===== Column picker ===== */
+.columnPicker {
+  position: relative;
+}
+
+.columnPickerBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  padding: 8px 14px;
+}
+
+.columnPickerMenu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 260px;
+  max-height: 320px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  padding: 10px;
+  z-index: 25;
+}
+
+.columnPickerHint {
+  margin: 0 0 8px;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.columnPickerItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 4px;
+  border-radius: 8px;
+  cursor: grab;
+}
+
+.columnPickerItem:hover {
+  background: #f9fafb;
+}
+
+.columnPickerDrag {
+  color: #d1d5db;
+  flex-shrink: 0;
+}
+
+.columnPickerItem label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  width: 100%;
+}
+

@@ -2,6 +2,8 @@ import express, { type Request, type Response, type NextFunction } from "express
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import usersRouter from "./modules/users/index.js";
+import authRouter from "./modules/auth/auth.routes.js";
+import { ApiError } from "./utils/errors.js";
 
 export const createApp = () => {
   const app = express();
@@ -30,12 +32,14 @@ export const createApp = () => {
   app.get("/api/health", (_req, res) => res.json({ ok: true }));
 
   app.use("/api/users", usersRouter);
+  app.use("/api/auth", authRouter);
 
   app.use((_req, res) => res.status(404).json({ message: "Not Found" }));
 
   app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+    const statusCode = err instanceof ApiError ? err.statusCode : 500;
     const message = err instanceof Error ? err.message : "Server error";
-    res.status(500).json({ message });
+    res.status(statusCode).json({ message });
   });
 
   return app;

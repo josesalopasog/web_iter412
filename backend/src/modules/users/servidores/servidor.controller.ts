@@ -2,10 +2,54 @@ import bcrypt from "bcryptjs";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { ApiError } from "../../../utils/errors.js";
 import { sendRegistrationConfirmationEmail } from "../../../services/mailer.service.js";
+import { softDelete } from "../softDelete.js";
 import { Servidor } from "./servidor.model.js";
 import type { RegistrationServidoresDTO } from "./servidor.types.js"
 
 const formatRegistrationNumber = (n: number) => String(n).padStart(3, "0");
+
+const EDITABLE_FIELDS = new Set([
+  "gender",
+  "email",
+  "password",
+  "firstNames",
+  "lastNames",
+  "preferredName",
+  "referralNamePhone",
+  "documentType",
+  "documentTypeOther",
+  "documentNumber",
+  "city",
+  "address",
+  "birthDate",
+  "age",
+  "phone",
+  "eps",
+  "bloodType",
+  "needsShirt",
+  "shirtSize",
+  "shirtSizeOther",
+  "merchSize",
+  "merchSizeOther",
+  "emergencyFirstName",
+  "emergencyLastName",
+  "emergencyDocumentType",
+  "emergencyDocumentTypeOther",
+  "emergencyDocumentNumber",
+  "emergencyPhone",
+  "emergencyRelation",
+  "emergencyEmail",
+  "emergencyAddress",
+  "lastService",
+  "serviceLeaderOf",
+  "wentToOtherSedes",
+  "otherSedesDetail",
+  "formationOther",
+]);
+
+const RESTRICTED_FIELDS = new Set(["email", "password"]);
+
+const ASSIGNABLE_ROLES = new Set(["SERVIDOR", "ADMIN", "SUPERADMIN"]);
 
 const requireFields = (body: any, fields: string[]) => {
   const missing = fields.filter(
@@ -23,6 +67,7 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
   const body = req.body as Partial<RegistrationServidoresDTO>;
 
   requireFields(body, [
+    "gender",
     "email",
     "password",
     "firstNames",
@@ -107,6 +152,8 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
 
   const servidor = await Servidor.create({
     registrationNumber,
+    role: "SERVIDOR",
+    gender: body.gender,
 
     email: String(body.email).toLowerCase(),
     passwordHash,
@@ -169,4 +216,74 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
     email: servidor.email,
     createdAt: servidor.createdAt,
   });
+});
+
+export const listServidores = asyncHandler(async (_req, res) => {
+  const servidores = await Servidor.find().select("-passwordHash").sort({ createdAt: 1 });
+  res.json(servidores);
+});
+
+export const getMyServidorProfile = asyncHandler(async (req, res) => {
+  const servidor = await Servidor.findById(req.user!.sub).select("-passwordHash");
+  if (!servidor) throw new ApiError(404, "No encontrado");
+  res.json(servidor);
+});
+
+export const updateServidor = asyncHandler(async (req, res) => {
+  const { field, value } = req.body as { field?: string; value?: unknown };
+
+  if (!field || !EDITABLE_FIELDS.has(field)) {
+    throw new ApiError(400, "Campo no editable");
+  }
+  if (RESTRICTED_FIELDS.has(field) && req.user!.role !== "SUPERADMIN") {
+    throw new ApiError(403, "Solo un SUPERADMIN puede editar este campo");
+  }
+
+  const servidor = await Servidor.findById(req.params.id);
+  if (!servidor) throw new ApiError(404, "No encontrado");
+
+  if (field === "password") {
+    if (typeof value !== "string" || value.length < 8) {
+      throw new ApiError(400, "La contraseña debe tener al menos 8 caracteres");
+    }
+    servidor.passwordHash = await bcrypt.hash(value, 10);
+  } else if (field === "email") {
+    servidor.email = String(value).toLowerCase();
+  } else {
+    (servidor as any)[field] = value;
+  }
+
+  await servidor.save();
+
+  const result = servidor.toObject();
+  delete (result as any).passwordHash;
+  res.json(result);
+});
+
+export const updateServidorRole = asyncHandler(async (req, res) => {
+  const { role } = req.body as { role?: string };
+
+  if (!role || !ASSIGNABLE_ROLES.has(role)) {
+    throw new ApiError(400, "Rol inválido");
+  }
+
+  const servidor = await Servidor.findById(req.params.id);
+  if (!servidor) throw new ApiError(404, "No encontrado");
+
+  servidor.role = role as any;
+  await servidor.save();
+
+  const result = servidor.toObject();
+  delete (result as any).passwordHash;
+  res.json(result);
+});
+
+export const deleteServidor = asyncHandler(async (req, res) => {
+  const servidor = await Servidor.findById(req.params.id);
+  if (!servidor) throw new ApiError(404, "No encontrado");
+
+  await softDelete(servidor, "servidores", req.user!);
+  await servidor.deleteOne();
+
+  res.json({ ok: true });
 });

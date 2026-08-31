@@ -3,6 +3,7 @@ import { registerServidor } from "../../../api/registerServidor";
 import { buildServidorPayload } from "./buildServidorPayload";
 import type {
   DocumentType,
+  Gender,
   MerchItem,
   Service,
   ShirtColor,
@@ -12,6 +13,7 @@ import type {
 
 export const useRegisterServidorForm = () => {
   // basic
+  const [gender, setGender] = useState<Gender>("Mujer");
   const [email, setEmail] = useState("");
   const [firstNames, setFirstNames] = useState("");
   const [lastNames, setLastNames] = useState("");
@@ -108,6 +110,7 @@ export const useRegisterServidorForm = () => {
     (merchSize.trim() !== "" && (merchSize !== "OTRO" || merchSizeOther.trim() !== ""));
 
   const canSubmit =
+    gender.trim() &&
     email.trim() &&
     firstNames.trim() &&
     lastNames.trim() &&
@@ -144,6 +147,7 @@ export const useRegisterServidorForm = () => {
   const payload = useMemo(
     () =>
       buildServidorPayload({
+        gender,
         email,
         firstNames,
         lastNames,
@@ -186,6 +190,7 @@ export const useRegisterServidorForm = () => {
         password,
       }),
     [
+      gender,
       email,
       firstNames,
       lastNames,
@@ -251,6 +256,7 @@ export const useRegisterServidorForm = () => {
 
   return {
     // state
+    gender,
     email,
     firstNames,
     lastNames,
@@ -294,6 +300,7 @@ export const useRegisterServidorForm = () => {
     confirmPassword,
 
     // setters
+    setGender,
     setEmail,
     setFirstNames,
     setLastNames,

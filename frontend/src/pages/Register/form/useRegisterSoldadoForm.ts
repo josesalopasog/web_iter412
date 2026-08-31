@@ -15,6 +15,7 @@ import type {
 export const useRegisterSoldadoForm = () => {
   // --- state
   const [gender, setGender] = useState<Gender>("Mujer");
+  const [genderOther, setGenderOther] = useState("");
   const [isSurprise, setIsSurprise] = useState<YesNo>("NO");
 
   const [email, setEmail] = useState("");
@@ -104,6 +105,7 @@ export const useRegisterSoldadoForm = () => {
 
   const canSubmit: boolean =
     gender.trim().length > 0 &&
+    (gender !== "Otro" || genderOther.trim().length > 0) &&
     email.trim().length > 0 &&
     firstNames.trim().length > 0 &&
     lastNames.trim().length > 0 &&
@@ -134,6 +136,7 @@ export const useRegisterSoldadoForm = () => {
     () =>
       buildSoldadoPayload({
         gender,
+        genderOther,
         email,
         firstNames,
         lastNames,
@@ -179,6 +182,7 @@ export const useRegisterSoldadoForm = () => {
       }),
     [
       gender,
+      genderOther,
       email,
       firstNames,
       lastNames,
@@ -247,6 +251,7 @@ export const useRegisterSoldadoForm = () => {
   return {
     // state
     gender,
+    genderOther,
     email,
     firstNames,
     lastNames,
@@ -292,6 +297,7 @@ export const useRegisterSoldadoForm = () => {
 
     // setters
     setGender,
+    setGenderOther,
     setEmail,
     setFirstNames,
     setLastNames,
