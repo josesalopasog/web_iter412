@@ -81,13 +81,20 @@ const MERCH_ITEM_PRICE_FIELD: Record<string, "busoChaquetaPrice" | "canguroPrice
 const SIZED_MERCH_ITEMS = new Set(["BUSO_CERRADO", "CHAQUETA_ABIERTA"]);
 
 const computeMerchMax = (
-  servidor: { needsShirt: string; shirtSize?: string; merchItems: string[]; merchSize?: string },
+  servidor: {
+    needsShirt: string;
+    shirtSize?: string;
+    shirtColors?: string[];
+    merchItems: string[];
+    merchSize?: string;
+  },
   settings: Awaited<ReturnType<typeof getSettings>>
 ) => {
   let max = 0;
   if (servidor.needsShirt === "SI") {
-    max += settings.shirtPrice;
-    if (servidor.shirtSize === "OTRO") max += settings.extraSizePrice;
+    const shirtCount = Math.max(1, servidor.shirtColors?.length ?? 0);
+    max += settings.shirtPrice * shirtCount;
+    if (servidor.shirtSize === "OTRO") max += settings.extraSizePrice * shirtCount;
   }
   for (const item of servidor.merchItems) {
     const field = MERCH_ITEM_PRICE_FIELD[item];

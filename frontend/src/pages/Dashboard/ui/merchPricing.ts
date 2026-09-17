@@ -89,8 +89,9 @@ export const computeMerchCatalogCounts = (rows: ServidorRecord[]): number[] => {
 export const computeOrderTotal = (row: ServidorRecord, settings: AppSettings): number => {
   let total = 0;
   if (row.needsShirt === "SI") {
-    total += settings.shirtPrice;
-    if (row.shirtSize === "OTRO") total += settings.extraSizePrice;
+    const shirtCount = Math.max(1, asStringArray(row.shirtColors).length);
+    total += settings.shirtPrice * shirtCount;
+    if (row.shirtSize === "OTRO") total += settings.extraSizePrice * shirtCount;
   }
   for (const item of asStringArray(row.merchItems)) {
     const field = MERCH_ITEM_PRICE_FIELD[item];

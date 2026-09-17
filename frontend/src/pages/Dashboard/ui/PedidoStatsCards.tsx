@@ -141,6 +141,14 @@ const PedidoStatsCards: React.FC<Props> = ({ rows, settings }) => {
                 </tr>
               ))}
             </tbody>
+            <tfoot>
+              <tr className="pedidoStatTotalRow">
+                <td>Total</td>
+                <td>{card.rows.reduce((sum, r) => sum + r.count, 0)}</td>
+                <td>{formatCOP(card.rows.reduce((sum, r) => sum + r.paid, 0))}</td>
+                <td>{formatCOP(card.rows.reduce((sum, r) => sum + r.pending, 0))}</td>
+              </tr>
+            </tfoot>
           </table>
         </div>
       ))}
