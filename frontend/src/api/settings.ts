@@ -15,6 +15,12 @@ export type AppSettings = {
   finalPaymentEndDay: number;
   finalPaymentMonth: number;
   subsidyCap: number;
+  shirtPrice: number;
+  busoChaquetaPrice: number;
+  canguroPrice: number;
+  tulaPrice: number;
+  cachuchaPrice: number;
+  extraSizePrice: number;
 };
 
 export type PublicSettings = {
@@ -67,6 +73,12 @@ export const getPublicSettings = async (): Promise<PublicSettings> => {
 
 export const updateSettings = (token: string, changes: Partial<AppSettings>) =>
   authedRequest<AppSettings>("/api/settings", token, {
+    method: "PATCH",
+    body: JSON.stringify(changes),
+  });
+
+export const updateMerchSettings = (token: string, changes: Partial<AppSettings>) =>
+  authedRequest<AppSettings>("/api/settings/merch-prices", token, {
     method: "PATCH",
     body: JSON.stringify(changes),
   });

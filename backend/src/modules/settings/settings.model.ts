@@ -16,6 +16,13 @@ const SettingsSchema = new Schema(
     finalPaymentEndDay: { type: Number, required: true, default: 7, min: 1, max: 31 },
     finalPaymentMonth: { type: Number, required: true, default: 11, min: 1, max: 12 },
     subsidyCap: { type: Number, required: true, default: 100000, min: 0 },
+
+    shirtPrice: { type: Number, required: true, default: 27000, min: 0 },
+    busoChaquetaPrice: { type: Number, required: true, default: 52000, min: 0 },
+    canguroPrice: { type: Number, required: true, default: 29000, min: 0 },
+    tulaPrice: { type: Number, required: true, default: 7000, min: 0 },
+    cachuchaPrice: { type: Number, required: true, default: 16000, min: 0 },
+    extraSizePrice: { type: Number, required: true, default: 4000, min: 0 },
   },
   { timestamps: true, collection: "settings" }
 );

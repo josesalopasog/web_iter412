@@ -55,6 +55,7 @@ const EDITABLE_FIELDS = new Set([
   "registrationNumber",
   "paymentAmount",
   "subsidyAmount",
+  "merchPaymentAmount",
 ]);
 
 const RESTRICTED_FIELDS = new Set(["email", "password", "registrationNumber"]);
@@ -67,6 +68,34 @@ const isValidRegistrationNumber = (value: unknown): value is number => {
 const isValidAmount = (value: unknown, max: number): value is number => {
   const num = Number(value);
   return Number.isFinite(num) && num >= 0 && num <= max;
+};
+
+const MERCH_ITEM_PRICE_FIELD: Record<string, "busoChaquetaPrice" | "canguroPrice" | "tulaPrice" | "cachuchaPrice"> = {
+  BUSO_CERRADO: "busoChaquetaPrice",
+  CHAQUETA_ABIERTA: "busoChaquetaPrice",
+  CANGURO: "canguroPrice",
+  TULA: "tulaPrice",
+  GORRA: "cachuchaPrice",
+};
+
+const SIZED_MERCH_ITEMS = new Set(["BUSO_CERRADO", "CHAQUETA_ABIERTA"]);
+
+const computeMerchMax = (
+  servidor: { needsShirt: string; shirtSize?: string; merchItems: string[]; merchSize?: string },
+  settings: Awaited<ReturnType<typeof getSettings>>
+) => {
+  let max = 0;
+  if (servidor.needsShirt === "SI") {
+    max += settings.shirtPrice;
+    if (servidor.shirtSize === "OTRO") max += settings.extraSizePrice;
+  }
+  for (const item of servidor.merchItems) {
+    const field = MERCH_ITEM_PRICE_FIELD[item];
+    if (!field) continue;
+    max += settings[field];
+    if (SIZED_MERCH_ITEMS.has(item) && servidor.merchSize === "OTRO") max += settings.extraSizePrice;
+  }
+  return max;
 };
 
 const ASSIGNABLE_ROLES = new Set(["SERVIDOR", "ADMIN", "TREASURER", "SUPERADMIN"]);
@@ -297,6 +326,13 @@ export const updateServidor = asyncHandler(async (req, res) => {
       throw new ApiError(400, `El pago debe estar entre $0 y $${effectiveMax.toLocaleString("es-CO")}`);
     }
     servidor.paymentAmount = Number(value);
+  } else if (field === "merchPaymentAmount") {
+    const settings = await getSettings();
+    const effectiveMax = computeMerchMax(servidor, settings);
+    if (!isValidAmount(value, effectiveMax)) {
+      throw new ApiError(400, `El pago debe estar entre $0 y $${effectiveMax.toLocaleString("es-CO")}`);
+    }
+    servidor.merchPaymentAmount = Number(value);
   } else if (field === "subsidyAmount") {
     const num = Number(value);
     if (!Number.isFinite(num) || num < 0) {
@@ -439,6 +475,31 @@ export const updateServidorRole = asyncHandler(async (req, res) => {
     req.user!,
     "CAMBIAR_ROL",
     `Cambió el rol de ${servidor.firstNames} ${servidor.lastNames}: ${oldRole} → ${role}`
+  );
+
+  const result = servidor.toObject();
+  delete (result as any).passwordHash;
+  res.json(result);
+});
+
+export const resetServidorMerch = asyncHandler(async (req, res) => {
+  const servidor = await Servidor.findById(req.params.id);
+  if (!servidor) throw new ApiError(404, "No encontrado");
+
+  servidor.needsShirt = "NO";
+  servidor.shirtColors = [];
+  servidor.shirtSize = "";
+  servidor.shirtSizeOther = "";
+  servidor.merchItems = [];
+  servidor.merchSize = "";
+  servidor.merchSizeOther = "";
+
+  await servidor.save();
+
+  await createLog(
+    req.user!,
+    "EDITAR_SERVIDOR",
+    `Borró el pedido de merch de ${servidor.firstNames} ${servidor.lastNames} (${servidor.role})`
   );
 
   const result = servidor.toObject();

@@ -9,6 +9,7 @@ const ServidorSchema = new Schema(
 
     paymentAmount: { type: Number, required: true, default: 0, min: 0 },
     subsidyAmount: { type: Number, required: true, default: 0, min: 0 },
+    merchPaymentAmount: { type: Number, required: true, default: 0, min: 0 },
 
     role: { type: String, enum: USER_ROLES, required: true, default: "SERVIDOR" },
     gender: { type: String, enum: ["Mujer", "Hombre"], required: true },

@@ -29,6 +29,7 @@ export type ServidorRecord = {
   createdAt: string;
   paymentAmount: number;
   subsidyAmount: number;
+  merchPaymentAmount: number;
   [key: string]: unknown;
 };
 
@@ -120,6 +121,11 @@ export const deleteSoldado = (token: string, id: string) =>
 
 export const deleteServidor = (token: string, id: string) =>
   authedRequest<{ ok: true }>(`/api/users/servidores/${id}`, token, { method: "DELETE" });
+
+export const resetServidorMerch = (token: string, id: string) =>
+  authedRequest<ServidorRecord>(`/api/users/servidores/${id}/reset-merch`, token, {
+    method: "PATCH",
+  });
 
 export const listEliminados = (token: string) =>
   authedRequest<EliminadoRecord[]>("/api/users/eliminados", token);

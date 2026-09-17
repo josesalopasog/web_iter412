@@ -10,6 +10,7 @@ import {
   updateServidorRole,
   deleteSoldado,
   deleteServidor,
+  resetServidorMerch,
   restoreEliminado,
 } from "../../api/adminUsers";
 import type { SoldadoRecord, ServidorRecord, EliminadoRecord } from "../../api/adminUsers";
@@ -20,6 +21,7 @@ import StatsCards from "./ui/StatsCards";
 import SettingsModal from "./ui/SettingsModal";
 import UsersTable from "./ui/UsersTable";
 import EliminadosTable from "./ui/EliminadosTable";
+import PedidoTable from "./ui/PedidoTable";
 import type { View } from "./ui/ViewDropdown";
 import ConfirmLogoutModal from "../../components/ConfirmLogoutModal";
 import "./styles.css";
@@ -39,6 +41,12 @@ const DEFAULT_SETTINGS: AppSettings = {
   finalPaymentEndDay: 7,
   finalPaymentMonth: 11,
   subsidyCap: 100000,
+  shirtPrice: 27000,
+  busoChaquetaPrice: 52000,
+  canguroPrice: 29000,
+  tulaPrice: 7000,
+  cachuchaPrice: 16000,
+  extraSizePrice: 4000,
 };
 
 const isMujer = (gender?: string) => gender === "Mujer" || gender === "Femenino";
@@ -49,6 +57,8 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const isSuperAdmin = user?.role === "SUPERADMIN";
   const canEditSettings = user?.role === "SUPERADMIN" || user?.role === "TREASURER";
+  const canEditMerchSettings =
+    user?.role === "SUPERADMIN" || user?.role === "TREASURER" || user?.role === "ADMIN";
 
   const [view, setView] = useState<View>("soldados");
   const [soldados, setSoldados] = useState<SoldadoRecord[]>([]);
@@ -167,6 +177,11 @@ const Dashboard = () => {
     if (isSuperAdmin) setEliminados(await listEliminados(token!));
   };
 
+  const handleResetMerch = async (id: string) => {
+    const updated = await resetServidorMerch(token!, id);
+    setServidores((prev) => prev.map((s) => (s._id === id ? updated : s)));
+  };
+
   const handleRestore = async (id: string) => {
     await restoreEliminado(token!, id);
     await fetchAll();
@@ -220,7 +235,7 @@ const Dashboard = () => {
           <p className="emptyState">Cargando datos...</p>
         ) : (
           <>
-            {view !== "eliminados" && (
+            {view !== "eliminados" && view !== "pedido" && (
               <div className="statsWrap">
                 <StatsCards
                   view={view}
@@ -270,6 +285,20 @@ const Dashboard = () => {
                 onDelete={handleDeleteServidor}
                 onRoleChange={handleRoleChange}
                 onOpenSettings={() => setShowSettingsModal(true)}
+              />
+            )}
+
+            {view === "pedido" && (
+              <PedidoTable
+                rows={servidores}
+                showEliminados={isSuperAdmin}
+                settings={settings}
+                token={token!}
+                canEditSettings={canEditMerchSettings}
+                onViewChange={setView}
+                onEditField={handleEditServidor}
+                onResetMerch={handleResetMerch}
+                onSettingsSaved={setSettings}
               />
             )}
 

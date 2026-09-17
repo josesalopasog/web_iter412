@@ -30,6 +30,12 @@ const FIELD_LABELS: Record<keyof AppSettings, string> = {
   finalPaymentStartDay: "Pago desde",
   finalPaymentEndDay: "Pago hasta",
   finalPaymentMonth: "Mes pago",
+  shirtPrice: "Precio camiseta",
+  busoChaquetaPrice: "Precio chaqueta o buso",
+  canguroPrice: "Precio canguro",
+  tulaPrice: "Precio tula",
+  cachuchaPrice: "Precio cachucha",
+  extraSizePrice: "Recargo talla especial",
 };
 
 const CURRENCY_FIELDS = new Set<keyof AppSettings>(["soldadoPrice", "servidorPrice", "subsidyCap"]);

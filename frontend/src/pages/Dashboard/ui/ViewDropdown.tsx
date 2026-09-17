@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-export type View = "soldados" | "servidores" | "eliminados";
+export type View = "soldados" | "servidores" | "pedido" | "eliminados";
 
 type Props = {
   view: View;
@@ -11,6 +11,7 @@ type Props = {
 const LABELS: Record<View, string> = {
   soldados: "Soldados",
   servidores: "Servidores",
+  pedido: "Pedido",
   eliminados: "Eliminados",
 };
 
@@ -27,8 +28,8 @@ const ViewDropdown: React.FC<Props> = ({ view, showEliminados, onChange }) => {
   }, []);
 
   const options: View[] = showEliminados
-    ? ["soldados", "servidores", "eliminados"]
-    : ["soldados", "servidores"];
+    ? ["soldados", "servidores", "pedido", "eliminados"]
+    : ["soldados", "servidores", "pedido"];
 
   return (
     <div className="dbDropdown" ref={ref}>

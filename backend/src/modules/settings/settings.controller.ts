@@ -1,3 +1,4 @@
+import type { Request, Response } from "express";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { ApiError } from "../../utils/errors.js";
 import { createLog } from "../activityLog/createLog.js";
@@ -18,7 +19,13 @@ type SettingsField =
   | "finalPaymentStartDay"
   | "finalPaymentEndDay"
   | "finalPaymentMonth"
-  | "subsidyCap";
+  | "subsidyCap"
+  | "shirtPrice"
+  | "busoChaquetaPrice"
+  | "canguroPrice"
+  | "tulaPrice"
+  | "cachuchaPrice"
+  | "extraSizePrice";
 
 const FIELD_LABELS: Record<SettingsField, string> = {
   soldadoPrice: "precio de retiro soldados",
@@ -35,6 +42,12 @@ const FIELD_LABELS: Record<SettingsField, string> = {
   finalPaymentEndDay: "fin plazo de pago total",
   finalPaymentMonth: "mes del plazo de pago total",
   subsidyCap: "subsidio disponible",
+  shirtPrice: "precio camiseta manga corta",
+  busoChaquetaPrice: "precio chaqueta o buso",
+  canguroPrice: "precio canguro",
+  tulaPrice: "precio tula",
+  cachuchaPrice: "precio cachucha",
+  extraSizePrice: "recargo talla especial (XL o más)",
 };
 
 const isValidPrice = (value: unknown): value is number => {
@@ -77,9 +90,24 @@ const FIELD_VALIDATORS: Record<SettingsField, (value: unknown) => boolean> = {
   finalPaymentEndDay: isValidDayOfMonth,
   finalPaymentMonth: isValidMonth,
   subsidyCap: isValidCap,
+  shirtPrice: isValidPrice,
+  busoChaquetaPrice: isValidPrice,
+  canguroPrice: isValidPrice,
+  tulaPrice: isValidPrice,
+  cachuchaPrice: isValidPrice,
+  extraSizePrice: isValidCap,
 };
 
 const SETTINGS_FIELDS = Object.keys(FIELD_VALIDATORS) as SettingsField[];
+
+const MERCH_FIELDS: SettingsField[] = [
+  "shirtPrice",
+  "busoChaquetaPrice",
+  "canguroPrice",
+  "tulaPrice",
+  "cachuchaPrice",
+  "extraSizePrice",
+];
 
 const toResponse = (settings: SettingsDoc) => ({
   soldadoPrice: settings.soldadoPrice,
@@ -96,6 +124,12 @@ const toResponse = (settings: SettingsDoc) => ({
   finalPaymentEndDay: settings.finalPaymentEndDay,
   finalPaymentMonth: settings.finalPaymentMonth,
   subsidyCap: settings.subsidyCap,
+  shirtPrice: settings.shirtPrice,
+  busoChaquetaPrice: settings.busoChaquetaPrice,
+  canguroPrice: settings.canguroPrice,
+  tulaPrice: settings.tulaPrice,
+  cachuchaPrice: settings.cachuchaPrice,
+  extraSizePrice: settings.extraSizePrice,
 });
 
 export const getSettingsHandler = asyncHandler(async (_req, res) => {
@@ -105,13 +139,27 @@ export const getSettingsHandler = asyncHandler(async (_req, res) => {
 
 export const getPublicSettingsHandler = asyncHandler(async (_req, res) => {
   const settings = await getSettings();
-  const { subsidyCap: _subsidyCap, ...publicFields } = toResponse(settings);
+  const {
+    subsidyCap: _subsidyCap,
+    shirtPrice: _shirtPrice,
+    busoChaquetaPrice: _busoChaquetaPrice,
+    canguroPrice: _canguroPrice,
+    tulaPrice: _tulaPrice,
+    cachuchaPrice: _cachuchaPrice,
+    extraSizePrice: _extraSizePrice,
+    ...publicFields
+  } = toResponse(settings);
   res.json(publicFields);
 });
 
-export const updateSettingsHandler = asyncHandler(async (req, res) => {
+const applySettingsUpdate = async (
+  req: Request,
+  res: Response,
+  allowedFields: SettingsField[],
+  logSummaryPrefix: string
+) => {
   const body = req.body as Partial<Record<SettingsField, unknown>>;
-  const updates = SETTINGS_FIELDS.filter((f) => body[f] !== undefined);
+  const updates = allowedFields.filter((f) => body[f] !== undefined);
 
   if (updates.length === 0) {
     throw new ApiError(400, "Nada para actualizar");
@@ -131,7 +179,15 @@ export const updateSettingsHandler = asyncHandler(async (req, res) => {
 
   await settings.save();
 
-  await createLog(req.user!, "EDITAR_CONFIGURACION", `Actualizó configuración (${changes.join(", ")})`);
+  await createLog(req.user!, "EDITAR_CONFIGURACION", `${logSummaryPrefix} (${changes.join(", ")})`);
 
   res.json(toResponse(settings));
+};
+
+export const updateSettingsHandler = asyncHandler(async (req, res) => {
+  await applySettingsUpdate(req, res, SETTINGS_FIELDS, "Actualizó configuración");
+});
+
+export const updateMerchSettingsHandler = asyncHandler(async (req, res) => {
+  await applySettingsUpdate(req, res, MERCH_FIELDS, "Actualizó precios de merch");
 });
