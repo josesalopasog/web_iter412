@@ -13,6 +13,15 @@ import type {
 } from "../form/types";
 import TermsAndConditions from "./TermsAndConditions";
 import whatsapp_logo from "../../../assets/svg/WhatsApp.svg";
+import { usePublicSettings } from "../../../hooks/usePublicSettings";
+
+function formatCOP(value: number) {
+  return new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    maximumFractionDigits: 0,
+  }).format(value);
+}
 
 type Props = UseRegisterSoldadoFormReturn;
 
@@ -122,6 +131,7 @@ export const RegisterView: React.FC<Props> = ({
   const navigate = useNavigate();
   const [openTerms, setOpenTerms] = React.useState(false);
   const [openPolicy, setOpenPolicy] = React.useState(false);
+  const { soldadoPrice } = usePublicSettings();
 
   const SACRAMENTS: Sacrament[] = [
     "NINGUNO",
@@ -965,7 +975,7 @@ export const RegisterView: React.FC<Props> = ({
             <h3>ℹ️ Información</h3>
             <ul className="section-list">
               <li>
-                Precio del retiro: <strong>$435.000 COP</strong>. Consulta al
+                Precio del retiro: <strong>{formatCOP(soldadoPrice)}</strong>. Consulta al
                 final del formulario en los terminos y condiciones los metodos
                 de pago.
               </li>

@@ -7,7 +7,7 @@ import "../pages/Login/styles.css";
 const AlreadyLoggedInNotice = () => {
   const { user, logout } = useAuth();
   const [showConfirm, setShowConfirm] = useState(false);
-  const isAdmin = user?.role === "ADMIN" || user?.role === "SUPERADMIN";
+  const isAdmin = user?.role === "ADMIN" || user?.role === "SUPERADMIN" || user?.role === "TREASURER";
 
   return (
     <div className="loginPage">

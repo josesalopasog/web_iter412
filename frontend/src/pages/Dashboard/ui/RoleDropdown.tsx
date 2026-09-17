@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-const ASSIGNABLE_ROLES = ["SERVIDOR", "ADMIN", "SUPERADMIN"];
+const ASSIGNABLE_ROLES = ["SERVIDOR", "ADMIN", "TREASURER", "SUPERADMIN"];
 
 type Props = {
   role: string;

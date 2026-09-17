@@ -13,13 +13,33 @@ import {
   restoreEliminado,
 } from "../../api/adminUsers";
 import type { SoldadoRecord, ServidorRecord, EliminadoRecord } from "../../api/adminUsers";
+import { getSettings } from "../../api/settings";
+import type { AppSettings } from "../../api/settings";
 import { UserIcon, LogoutIcon, LogsIcon } from "../../assets/icons";
 import StatsCards from "./ui/StatsCards";
+import SettingsModal from "./ui/SettingsModal";
 import UsersTable from "./ui/UsersTable";
 import EliminadosTable from "./ui/EliminadosTable";
 import type { View } from "./ui/ViewDropdown";
 import ConfirmLogoutModal from "../../components/ConfirmLogoutModal";
 import "./styles.css";
+
+const DEFAULT_SETTINGS: AppSettings = {
+  soldadoPrice: 435000,
+  servidorPrice: 300000,
+  fridayDate: 13,
+  saturdayDate: 14,
+  sundayDate: 15,
+  retreatMonth: 11,
+  retreatYear: 2026,
+  advanceStartDay: 1,
+  advanceEndDay: 15,
+  advanceMonth: 10,
+  finalPaymentStartDay: 1,
+  finalPaymentEndDay: 7,
+  finalPaymentMonth: 11,
+  subsidyCap: 100000,
+};
 
 const isMujer = (gender?: string) => gender === "Mujer" || gender === "Femenino";
 const isHombre = (gender?: string) => gender === "Hombre" || gender === "Masculino";
@@ -28,26 +48,31 @@ const Dashboard = () => {
   const { user, token, logout } = useAuth();
   const navigate = useNavigate();
   const isSuperAdmin = user?.role === "SUPERADMIN";
+  const canEditSettings = user?.role === "SUPERADMIN" || user?.role === "TREASURER";
 
   const [view, setView] = useState<View>("soldados");
   const [soldados, setSoldados] = useState<SoldadoRecord[]>([]);
   const [servidores, setServidores] = useState<ServidorRecord[]>([]);
   const [eliminados, setEliminados] = useState<EliminadoRecord[]>([]);
+  const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
 
   const fetchAll = async () => {
     if (!token) return;
     setIsLoading(true);
     setErrorMsg(null);
     try {
-      const [soldadosData, servidoresData] = await Promise.all([
+      const [soldadosData, servidoresData, settingsData] = await Promise.all([
         listSoldados(token),
         listServidores(token),
+        getSettings(token),
       ]);
       setSoldados(soldadosData);
       setServidores(servidoresData);
+      setSettings(settingsData);
       if (isSuperAdmin) {
         setEliminados(await listEliminados(token));
       }
@@ -63,21 +88,57 @@ const Dashboard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  const soldadoStats = useMemo(() => {
-    const total = soldados.length;
-    const hombres = soldados.filter((s) => isHombre(s.gender)).length;
-    const mujeres = soldados.filter((s) => isMujer(s.gender)).length;
-    return { total, hombres, mujeres };
-  }, [soldados]);
+  const buildStats = (
+    rows: (SoldadoRecord | ServidorRecord)[],
+    price: number
+  ) => {
+    const hombresList = rows.filter((s) => isHombre(s.gender));
+    const mujeresList = rows.filter((s) => isMujer(s.gender));
+    const sumField = (list: (SoldadoRecord | ServidorRecord)[], field: "paymentAmount" | "subsidyAmount") =>
+      list.reduce((sum, s) => sum + (Number(s[field]) || 0), 0);
 
-  const servidorStats = useMemo(() => {
-    const total = servidores.length;
-    const hombres = servidores.filter((s) => isHombre(s.gender)).length;
-    const mujeres = servidores.filter((s) => isMujer(s.gender)).length;
-    return { total, hombres, mujeres };
-  }, [servidores]);
+    const total = rows.length;
+    const totalPaid = sumField(rows, "paymentAmount");
+    const totalSubsidy = sumField(rows, "subsidyAmount");
+    const hombresPaid = sumField(hombresList, "paymentAmount");
+    const hombresSubsidy = sumField(hombresList, "subsidyAmount");
+    const mujeresPaid = sumField(mujeresList, "paymentAmount");
+    const mujeresSubsidy = sumField(mujeresList, "subsidyAmount");
+
+    return {
+      total,
+      hombres: hombresList.length,
+      mujeres: mujeresList.length,
+      totalPaid,
+      totalDue: Math.max(0, total * price - totalPaid - totalSubsidy),
+      totalSubsidy,
+      hombresPaid,
+      hombresDue: Math.max(0, hombresList.length * price - hombresPaid - hombresSubsidy),
+      hombresSubsidy,
+      mujeresPaid,
+      mujeresDue: Math.max(0, mujeresList.length * price - mujeresPaid - mujeresSubsidy),
+      mujeresSubsidy,
+    };
+  };
+
+  const soldadoStats = useMemo(
+    () => buildStats(soldados, settings.soldadoPrice),
+    [soldados, settings.soldadoPrice]
+  );
+
+  const servidorStats = useMemo(
+    () => buildStats(servidores, settings.servidorPrice),
+    [servidores, settings.servidorPrice]
+  );
 
   const activeStats = view === "soldados" ? soldadoStats : servidorStats;
+
+  const totalSubsidyUsed = useMemo(
+    () =>
+      soldados.reduce((sum, s) => sum + (Number(s.subsidyAmount) || 0), 0) +
+      servidores.reduce((sum, s) => sum + (Number(s.subsidyAmount) || 0), 0),
+    [soldados, servidores]
+  );
 
   const handleEditSoldado = async (id: string, field: string, value: string) => {
     const updated = await updateSoldadoField(token!, id, field, value);
@@ -160,12 +221,23 @@ const Dashboard = () => {
         ) : (
           <>
             {view !== "eliminados" && (
-              <StatsCards
-                view={view}
-                total={activeStats.total}
-                hombres={activeStats.hombres}
-                mujeres={activeStats.mujeres}
-              />
+              <div className="statsWrap">
+                <StatsCards
+                  view={view}
+                  total={activeStats.total}
+                  hombres={activeStats.hombres}
+                  mujeres={activeStats.mujeres}
+                  totalPaid={activeStats.totalPaid}
+                  totalDue={activeStats.totalDue}
+                  totalSubsidy={activeStats.totalSubsidy}
+                  hombresPaid={activeStats.hombresPaid}
+                  hombresDue={activeStats.hombresDue}
+                  hombresSubsidy={activeStats.hombresSubsidy}
+                  mujeresPaid={activeStats.mujeresPaid}
+                  mujeresDue={activeStats.mujeresDue}
+                  mujeresSubsidy={activeStats.mujeresSubsidy}
+                />
+              </div>
             )}
 
             {view === "soldados" && (
@@ -174,9 +246,13 @@ const Dashboard = () => {
                 rows={soldados}
                 currentUserRole={user?.role ?? ""}
                 showEliminados={isSuperAdmin}
+                price={settings.soldadoPrice}
+                subsidyMax={settings.subsidyCap}
+                totalSubsidyUsed={totalSubsidyUsed}
                 onViewChange={setView}
                 onEditField={handleEditSoldado}
                 onDelete={handleDeleteSoldado}
+                onOpenSettings={() => setShowSettingsModal(true)}
               />
             )}
 
@@ -186,10 +262,14 @@ const Dashboard = () => {
                 rows={servidores}
                 currentUserRole={user?.role ?? ""}
                 showEliminados={isSuperAdmin}
+                price={settings.servidorPrice}
+                subsidyMax={settings.subsidyCap}
+                totalSubsidyUsed={totalSubsidyUsed}
                 onViewChange={setView}
                 onEditField={handleEditServidor}
                 onDelete={handleDeleteServidor}
                 onRoleChange={handleRoleChange}
+                onOpenSettings={() => setShowSettingsModal(true)}
               />
             )}
 
@@ -202,6 +282,17 @@ const Dashboard = () => {
 
       {showLogoutConfirm && (
         <ConfirmLogoutModal onCancel={() => setShowLogoutConfirm(false)} onConfirm={logout} />
+      )}
+
+      {showSettingsModal && (
+        <SettingsModal
+          settings={settings}
+          token={token!}
+          canEdit={canEditSettings}
+          totalSubsidyUsed={totalSubsidyUsed}
+          onSaved={setSettings}
+          onClose={() => setShowSettingsModal(false)}
+        />
       )}
     </div>
   );

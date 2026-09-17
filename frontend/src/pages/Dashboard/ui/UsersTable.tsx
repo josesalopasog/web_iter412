@@ -15,7 +15,17 @@ import { downloadXlsx } from "./exportXlsx";
 import SortableHeader from "./SortableHeader";
 import type { SortDirection } from "./SortableHeader";
 import FilterableHeader from "./FilterableHeader";
-import { TrashIcon, ExcelIcon } from "../../../assets/icons";
+import PaymentCell from "./PaymentCell";
+import SubsidyCell from "./SubsidyCell";
+import { formatCOP } from "./paymentConfig";
+import {
+  ExcelIcon,
+  SearchIcon,
+  TrashIcon,
+  ColumnCollapseIcon,
+  ColumnExpandIcon,
+  GearIcon,
+} from "../../../assets/icons";
 import {
   SOLDADO_COLUMNS,
   SOLDADO_DEFAULT_VISIBLE,
@@ -29,19 +39,27 @@ type Props =
       rows: SoldadoRecord[];
       currentUserRole: string;
       showEliminados: boolean;
+      price: number;
+      subsidyMax: number;
+      totalSubsidyUsed: number;
       onViewChange: (view: View) => void;
       onEditField: (id: string, field: string, value: string) => Promise<void>;
       onDelete: (id: string) => Promise<void>;
+      onOpenSettings: () => void;
     }
   | {
       view: "servidores";
       rows: ServidorRecord[];
       currentUserRole: string;
       showEliminados: boolean;
+      price: number;
+      subsidyMax: number;
+      totalSubsidyUsed: number;
       onViewChange: (view: View) => void;
       onEditField: (id: string, field: string, value: string) => Promise<void>;
       onDelete: (id: string) => Promise<void>;
       onRoleChange: (id: string, role: string) => Promise<void>;
+      onOpenSettings: () => void;
     };
 
 type PendingEdit = {
@@ -89,7 +107,9 @@ const loadColumnOrder = (
 };
 
 const UsersTable: React.FC<Props> = (props) => {
-  const [search, setSearch] = useState("");
+  const [showSearchRow, setShowSearchRow] = useState(false);
+  const [columnSearch, setColumnSearch] = useState<Record<string, string>>({});
+  const [showPaymentCols, setShowPaymentCols] = useState(true);
 
   const columns = props.view === "soldados" ? SOLDADO_COLUMNS : SERVIDOR_COLUMNS;
   const defaultVisible = props.view === "soldados" ? SOLDADO_DEFAULT_VISIBLE : SERVIDOR_DEFAULT_VISIBLE;
@@ -119,6 +139,7 @@ const UsersTable: React.FC<Props> = (props) => {
     setPendingEdits({});
     setSortConfig(null);
     setColumnFilters({});
+    setColumnSearch({});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.view, props.currentUserRole]);
 
@@ -155,10 +176,16 @@ const UsersTable: React.FC<Props> = (props) => {
     setColumnFilters((prev) => ({ ...prev, [colId]: selected }));
   };
 
+  const setColumnSearchValue = (colId: string, value: string) => {
+    setColumnSearch((prev) => ({ ...prev, [colId]: value }));
+  };
+
   const exportColumns: ExportColumn[] = [
     { id: "registrationNumber", label: "N° Registro" },
     ...(props.view === "servidores" ? [{ id: "role", label: "Rol" }] : []),
     ...visibleColumns.filter((c) => c.id !== "password").map((c) => ({ id: c.id, label: c.label })),
+    { id: "paymentAmount", label: "Pagado" },
+    { id: "subsidyAmount", label: "Subsidiado" },
   ];
 
   const exportDefaultSelected = [
@@ -167,18 +194,24 @@ const UsersTable: React.FC<Props> = (props) => {
     ...activeColumns.map((c) => c.id),
   ];
 
-  const searchFilteredRows = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return props.rows;
-    return props.rows.filter((r) => {
-      const fullName = `${r.firstNames} ${r.lastNames}`.toLowerCase();
-      return fullName.includes(q) || String(r.documentNumber ?? "").toLowerCase().includes(q);
-    });
-  }, [props.rows, search]);
-
   const filteredRows = useMemo(() => {
-    let rows = searchFilteredRows;
+    let rows: (SoldadoRecord | ServidorRecord)[] = props.rows;
+
+    const regNumQuery = columnSearch.registrationNumber?.trim().toLowerCase();
+    if (regNumQuery) {
+      rows = rows.filter((r) => formatRegNum(r.registrationNumber).toLowerCase().includes(regNumQuery));
+    }
+
+    const roleQuery = props.view === "servidores" ? columnSearch.role?.trim().toLowerCase() : "";
+    if (roleQuery) {
+      rows = rows.filter((r) => String((r as ServidorRecord).role ?? "").toLowerCase().includes(roleQuery));
+    }
+
     for (const col of visibleColumns) {
+      const query = columnSearch[col.id]?.trim().toLowerCase();
+      if (query) {
+        rows = rows.filter((r) => renderCellValue(col, r).toLowerCase().includes(query));
+      }
       if (!col.filterable || !col.options) continue;
       const selected = columnFilters[col.id];
       if (!selected || selected.size === col.options.length) continue;
@@ -186,7 +219,7 @@ const UsersTable: React.FC<Props> = (props) => {
     }
     return rows;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchFilteredRows, columnFilters, visibleColumns]);
+  }, [props.rows, columnSearch, columnFilters, visibleColumns]);
 
   const getSortValue = (key: string, row: SoldadoRecord | ServidorRecord): string | number => {
     if (key === "registrationNumber") return row.registrationNumber;
@@ -226,9 +259,33 @@ const UsersTable: React.FC<Props> = (props) => {
     }
   };
 
+  const handleChangePayment = async (id: string, amount: number) => {
+    await props.onEditField(id, "paymentAmount", String(amount));
+  };
+
+  const handleChangeSubsidy = async (row: SoldadoRecord | ServidorRecord, amount: number) => {
+    await props.onEditField(row._id, "subsidyAmount", String(amount));
+
+    const effectiveMax = Math.max(0, props.price - amount);
+    const currentPayment = typeof row.paymentAmount === "number" ? row.paymentAmount : 0;
+    if (currentPayment > effectiveMax) {
+      await props.onEditField(row._id, "paymentAmount", String(effectiveMax));
+    }
+  };
+
+  const handleRequestDelete = (row: SoldadoRecord | ServidorRecord) => {
+    setDeleteTarget({
+      id: row._id,
+      registrationNumber: row.registrationNumber,
+      name: `${row.firstNames} ${row.lastNames}`,
+    });
+  };
+
   const exportValueFor = (colId: string, row: SoldadoRecord | ServidorRecord) => {
     if (colId === "registrationNumber") return formatRegNum(row.registrationNumber);
     if (colId === "role") return String((row as ServidorRecord).role ?? "");
+    if (colId === "paymentAmount") return formatCOP(typeof row.paymentAmount === "number" ? row.paymentAmount : 0);
+    if (colId === "subsidyAmount") return formatCOP(typeof row.subsidyAmount === "number" ? row.subsidyAmount : 0);
     const col = columns.find((c) => c.id === colId);
     return col ? renderCellValue(col, row) : "";
   };
@@ -301,8 +358,15 @@ const UsersTable: React.FC<Props> = (props) => {
       <div className="tableSectionHead">
         <div className="tableSectionHeadLeft">
           <ViewDropdown view={props.view} showEliminados={props.showEliminados} onChange={props.onViewChange} />
-          <span className="tableCount">{filteredRows.length} registros</span>
           <ColumnPicker columns={visibleColumns} order={columnOrder} onChange={handleColumnOrderChange} />
+          <button
+            type="button"
+            className="btnGhost settingsBtn"
+            title="Ajustes del retiro"
+            onClick={props.onOpenSettings}
+          >
+            <GearIcon className="w-5 h-5" />
+          </button>
         </div>
         <div className="tableSectionHeadRight">
           <button
@@ -311,14 +375,17 @@ const UsersTable: React.FC<Props> = (props) => {
             title="Exportar a Excel"
             onClick={() => setShowExport(true)}
           >
-            <ExcelIcon />
+            <ExcelIcon className="w-4 h-4" />
+            <span className="exportBtnLabel">Exportar</span>
           </button>
-          <input
-            className="formInput tableSearch"
-            placeholder="Buscar por nombre o documento..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <button
+            type="button"
+            className={`btnGhost searchRowToggleBtn ${showSearchRow ? "active" : ""}`}
+            title={showSearchRow ? "Ocultar fila de búsqueda" : "Buscar por columna"}
+            onClick={() => setShowSearchRow((s) => !s)}
+          >
+            <SearchIcon className="w-4 h-4" />
+          </button>
         </div>
       </div>
 
@@ -326,7 +393,29 @@ const UsersTable: React.FC<Props> = (props) => {
         <table className="dataTable">
           <thead>
               <tr>
-                <th></th>
+                <th className={`paymentColCell${showPaymentCols ? "" : " collapsed"}`}>
+                  <div className={`colCollapseInner colCollapseInnerSmall${showPaymentCols ? "" : " collapsed"}`} />
+                </th>
+                <th className={`paymentColCell${showPaymentCols ? "" : " collapsed"}`}>
+                  <div className={`colCollapseInner${showPaymentCols ? "" : " collapsed"}`}>Pagado</div>
+                </th>
+                <th className={`paymentColCell${showPaymentCols ? "" : " collapsed"}`}>
+                  <div className={`colCollapseInner${showPaymentCols ? "" : " collapsed"}`}>Subsidiado</div>
+                </th>
+                <th className="colDivider">
+                  <button
+                    type="button"
+                    className="colDividerToggle"
+                    onClick={() => setShowPaymentCols((s) => !s)}
+                    title={showPaymentCols ? "Ocultar columnas de pago" : "Mostrar columnas de pago"}
+                  >
+                    {showPaymentCols ? (
+                      <ColumnCollapseIcon className="w-4 h-4" />
+                    ) : (
+                      <ColumnExpandIcon className="w-4 h-4" />
+                    )}
+                  </button>
+                </th>
                 <SortableHeader
                   label="#"
                   sortType="numeric"
@@ -369,33 +458,94 @@ const UsersTable: React.FC<Props> = (props) => {
                   );
                 })}
               </tr>
+              {showSearchRow && (
+                <tr className="columnSearchRow">
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th>
+                    <input
+                      className="columnSearchInput"
+                      placeholder="Buscar"
+                      value={columnSearch.registrationNumber ?? ""}
+                      onChange={(e) => setColumnSearchValue("registrationNumber", e.target.value)}
+                    />
+                  </th>
+                  {props.view === "servidores" && (
+                    <th>
+                      <input
+                        className="columnSearchInput"
+                        placeholder="Buscar"
+                        value={columnSearch.role ?? ""}
+                        onChange={(e) => setColumnSearchValue("role", e.target.value)}
+                      />
+                    </th>
+                  )}
+                  {activeColumns.map((col) => (
+                    <th key={col.id}>
+                      <input
+                        className="columnSearchInput"
+                        placeholder="Buscar"
+                        value={columnSearch[col.id] ?? ""}
+                        onChange={(e) => setColumnSearchValue(col.id, e.target.value)}
+                      />
+                    </th>
+                  ))}
+                </tr>
+              )}
             </thead>
             <tbody>
               {sortedRows.length === 0 ? (
                 <tr>
-                  <td className="emptyState" colSpan={2 + (props.view === "servidores" ? 1 : 0) + activeColumns.length}>
+                  <td
+                    className="emptyState"
+                    colSpan={5 + (props.view === "servidores" ? 1 : 0) + activeColumns.length}
+                  >
                     No hay registros para mostrar.
                   </td>
                 </tr>
               ) : (
                 sortedRows.map((r) => (
                   <tr key={r._id}>
-                    <td>
-                      <button
-                        type="button"
-                        className="rowDeleteBtn"
-                        title="Eliminar"
-                        onClick={() =>
-                          setDeleteTarget({
-                            id: r._id,
-                            registrationNumber: r.registrationNumber,
-                            name: `${r.firstNames} ${r.lastNames}`,
-                          })
-                        }
-                      >
-                        <TrashIcon className="w-4 h-4" />
-                      </button>
+                    <td className={`paymentColCell${showPaymentCols ? "" : " collapsed"}`}>
+                      <div className={`colCollapseInner colCollapseInnerSmall${showPaymentCols ? "" : " collapsed"}`}>
+                        <button
+                          type="button"
+                          className="rowDeleteBtn"
+                          title="Eliminar"
+                          onClick={() => handleRequestDelete(r)}
+                        >
+                          <TrashIcon className="w-4 h-4" />
+                        </button>
+                      </div>
                     </td>
+                    <td className={`paymentColCell${showPaymentCols ? "" : " collapsed"}`}>
+                      <div className={`colCollapseInner${showPaymentCols ? "" : " collapsed"}`}>
+                        <PaymentCell
+                          amount={typeof r.paymentAmount === "number" ? r.paymentAmount : 0}
+                          max={Math.max(
+                            0,
+                            props.price - (typeof r.subsidyAmount === "number" ? r.subsidyAmount : 0)
+                          )}
+                          onChange={(amount) => handleChangePayment(r._id, amount)}
+                        />
+                      </div>
+                    </td>
+                    <td className={`paymentColCell${showPaymentCols ? "" : " collapsed"}`}>
+                      <div className={`colCollapseInner${showPaymentCols ? "" : " collapsed"}`}>
+                        <SubsidyCell
+                          amount={typeof r.subsidyAmount === "number" ? r.subsidyAmount : 0}
+                          max={Math.max(
+                            0,
+                            props.subsidyMax -
+                              (props.totalSubsidyUsed - (typeof r.subsidyAmount === "number" ? r.subsidyAmount : 0))
+                          )}
+                          onChange={(amount) => handleChangeSubsidy(r, amount)}
+                        />
+                      </div>
+                    </td>
+                    <td className="colDivider"></td>
                     {props.currentUserRole === "SUPERADMIN" ? (
                       <EditableCell
                         column={registrationNumberColumn}

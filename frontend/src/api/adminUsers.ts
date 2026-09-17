@@ -10,6 +10,8 @@ export type SoldadoRecord = {
   phone: string;
   city: string;
   createdAt: string;
+  paymentAmount: number;
+  subsidyAmount: number;
   [key: string]: unknown;
 };
 
@@ -25,6 +27,8 @@ export type ServidorRecord = {
   phone: string;
   city: string;
   createdAt: string;
+  paymentAmount: number;
+  subsidyAmount: number;
   [key: string]: unknown;
 };
 

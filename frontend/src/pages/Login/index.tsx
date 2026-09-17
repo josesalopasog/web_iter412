@@ -20,7 +20,8 @@ const Login = () => {
 
     try {
       const user = await login(email, password);
-      navigate(user.role === "ADMIN" || user.role === "SUPERADMIN" ? "/dashboard" : "/profile");
+      const dashboardRoles = ["ADMIN", "SUPERADMIN", "TREASURER"];
+      navigate(dashboardRoles.includes(user.role) ? "/dashboard" : "/profile");
     } catch (error: unknown) {
       setErrorMsg(error instanceof Error ? error.message : "Error inesperado");
     } finally {
@@ -46,6 +47,7 @@ const Login = () => {
               className="formInput"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              autoComplete="username"
               required
             />
           </div>

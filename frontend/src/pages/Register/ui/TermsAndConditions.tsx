@@ -1,6 +1,8 @@
+import { usePublicSettings } from "../../../hooks/usePublicSettings";
+import { spanishMonthName } from "../../../utils/spanishMonth";
+
 const PHONE_NUMBER_H = "3195571763";
 const PHONE_NUMBER_M = "3196188804";
-const TOTAL_PRICE_COP = 435_000;
 const MIN_ADVANCE_COP = 100_000;
 
 const NEQUI_CONTACT_NAME_H = "Yostin Arteaga - Coordinador XVI Retiro";
@@ -20,8 +22,25 @@ function formatCOP(value: number) {
 }
 
 export default function TermsAndConditions() {
-  const totalPriceText = formatCOP(TOTAL_PRICE_COP);
+  const {
+    soldadoPrice,
+    fridayDate,
+    saturdayDate,
+    sundayDate,
+    retreatMonth,
+    retreatYear,
+    advanceStartDay,
+    advanceEndDay,
+    advanceMonth,
+    finalPaymentStartDay,
+    finalPaymentEndDay,
+    finalPaymentMonth,
+  } = usePublicSettings();
+  const totalPriceText = formatCOP(soldadoPrice);
   const minAdvanceText = formatCOP(MIN_ADVANCE_COP);
+  const retreatMonthYearText = `${spanishMonthName(retreatMonth)} del ${retreatYear}`;
+  const advanceWindowText = `${advanceStartDay} y el ${advanceEndDay} de ${spanishMonthName(advanceMonth)} del ${retreatYear}`;
+  const finalPaymentWindowText = `${finalPaymentStartDay} y el ${finalPaymentEndDay} de ${spanishMonthName(finalPaymentMonth)} del ${retreatYear}`;
 
   return (
     <section className="terms">
@@ -35,8 +54,10 @@ export default function TermsAndConditions() {
         El{" "}
         <strong>XVI Retiro Espiritual de la Comunidad ITER 4.12 Bogotá</strong>,
         se llevará a cabo los días{" "}
-        <strong>viernes 13, 14 sábado y 15 Domingo</strong> de{" "}
-        <strong>noviembre del 2026</strong>, en el Centro de Espiritualidad María
+        <strong>
+          viernes {fridayDate}, {saturdayDate} sábado y {sundayDate} Domingo
+        </strong>{" "}
+        de <strong>{retreatMonthYearText}</strong>, en el Centro de Espiritualidad María
         Consolata (Carrera 24B #1D-60).
       </p>
 
@@ -56,10 +77,10 @@ export default function TermsAndConditions() {
         <strong>NO</strong> garantiza la reserva del cupo. Para su reserva, se
         requerirá cancelar un <strong>adelanto mínimo</strong> de{" "}
         <strong>{minAdvanceText}</strong> entre el{" "}
-        <strong>1 y el 15 de octubre del 2026</strong>. El valor restante, o
+        <strong>{advanceWindowText}</strong>. El valor restante, o
         la totalidad del valor (<strong>{totalPriceText}</strong>) si se paga
         de una sola vez, debe ser cancelado entre el{" "}
-        <strong>1 y el 7 de noviembre del 2026</strong>.
+        <strong>{finalPaymentWindowText}</strong>.
       </p>
 
       <div className="terms__block">

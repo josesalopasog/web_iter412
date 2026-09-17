@@ -17,9 +17,9 @@ router.post("/", createServidorFromForm);
 router.get("/me", requireAuth, getMyServidorProfile);
 router.patch("/me", requireAuth, updateMyServidor);
 router.patch("/me/password", requireAuth, changeMyPassword);
-router.get("/", requireAuth, requireRole("ADMIN", "SUPERADMIN"), listServidores);
+router.get("/", requireAuth, requireRole("ADMIN", "SUPERADMIN", "TREASURER"), listServidores);
 router.patch("/:id/role", requireAuth, requireRole("SUPERADMIN"), updateServidorRole);
-router.patch("/:id", requireAuth, requireRole("ADMIN", "SUPERADMIN"), updateServidor);
-router.delete("/:id", requireAuth, requireRole("ADMIN", "SUPERADMIN"), deleteServidor);
+router.patch("/:id", requireAuth, requireRole("ADMIN", "SUPERADMIN", "TREASURER"), updateServidor);
+router.delete("/:id", requireAuth, requireRole("ADMIN", "SUPERADMIN", "TREASURER"), deleteServidor);
 
 export default router;

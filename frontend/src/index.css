@@ -21,6 +21,16 @@ body {
   font-size: clamp(0.9rem, 1vw, 1rem);
 }
 
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]) {
+  cursor: pointer;
+}
+
+button {
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease,
+    box-shadow 0.15s ease, opacity 0.15s ease, transform 0.15s ease;
+}
+
 @font-face {
   font-family: "CalSans";
   src: url("/fonts/CalSans-SemiBold.woff") format("woff");

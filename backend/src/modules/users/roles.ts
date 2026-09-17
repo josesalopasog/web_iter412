@@ -1,5 +1,6 @@
 export const USER_ROLES = [
   "SUPERADMIN",
+  "TREASURER",
   "ADMIN",
   "CM",
   "LIDER",

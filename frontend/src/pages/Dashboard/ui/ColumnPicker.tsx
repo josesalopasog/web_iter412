@@ -12,12 +12,18 @@ type Props = {
 
 const ColumnPicker: React.FC<Props> = ({ columns, order, onChange }) => {
   const [open, setOpen] = useState(false);
+  const [draftOrder, setDraftOrder] = useState<ColumnOrderItem[]>(order);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const dragIndex = useRef<number | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
-  const orderRef = useRef(order);
-  orderRef.current = order;
+  const draftRef = useRef(draftOrder);
+  draftRef.current = draftOrder;
+
+  useEffect(() => {
+    if (open) setDraftOrder(order);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   useEffect(() => {
     const onClickOutside = (e: MouseEvent) => {
@@ -30,15 +36,19 @@ const ColumnPicker: React.FC<Props> = ({ columns, order, onChange }) => {
   const labelFor = (id: string) => columns.find((c) => c.id === id)?.label ?? id;
 
   const toggleVisible = (id: string) => {
-    onChange(order.map((item) => (item.id === id ? { ...item, visible: !item.visible } : item)));
+    setDraftOrder((prev) => prev.map((item) => (item.id === id ? { ...item, visible: !item.visible } : item)));
+  };
+
+  const markAll = (visible: boolean) => {
+    setDraftOrder((prev) => prev.map((item) => ({ ...item, visible })));
   };
 
   const moveItem = (fromIndex: number, toIndex: number) => {
     if (fromIndex === toIndex) return;
-    const next = [...orderRef.current];
+    const next = [...draftRef.current];
     const [moved] = next.splice(fromIndex, 1);
     next.splice(toIndex, 0, moved);
-    onChange(next);
+    setDraftOrder(next);
   };
 
   const findIndexAtPoint = (clientY: number): number | null => {
@@ -68,7 +78,7 @@ const ColumnPicker: React.FC<Props> = ({ columns, order, onChange }) => {
       // some browsers may reject capture for certain pointer types; dragging still works via move events
     }
     dragIndex.current = index;
-    setDraggingId(orderRef.current[index]?.id ?? null);
+    setDraggingId(draftRef.current[index]?.id ?? null);
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLSpanElement>) => {
@@ -85,43 +95,72 @@ const ColumnPicker: React.FC<Props> = ({ columns, order, onChange }) => {
     setDraggingId(null);
   };
 
+  const handleSave = () => {
+    onChange(draftOrder);
+    setOpen(false);
+  };
+
+  const handleCancel = () => {
+    setOpen(false);
+  };
+
   return (
     <div className="columnPicker" ref={ref}>
       <button type="button" className="btnGhost columnPickerBtn" onClick={() => setOpen((o) => !o)}>
         <ColumnsIcon className="w-4 h-4" />
-        Columnas
+        <span className="columnPickerBtnLabel">Columnas</span>
       </button>
 
       {open && (
-        <div className="columnPickerMenu" ref={listRef}>
-          <p className="columnPickerHint">Marca para mostrar, arrastra para ordenar</p>
-          {order.map((item, index) => (
-            <div
-              key={item.id}
-              data-col-index={index}
-              className={["columnPickerItem", draggingId === item.id && "dragging"]
-                .filter(Boolean)
-                .join(" ")}
-            >
-              <span
-                className="columnPickerDragHandle"
-                onPointerDown={(e) => handlePointerDown(e, index)}
-                onPointerMove={handlePointerMove}
-                onPointerUp={endDrag}
-                onPointerCancel={endDrag}
-              >
-                <DragHandleIcon className="columnPickerDrag" />
-              </span>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={item.visible}
-                  onChange={() => toggleVisible(item.id)}
-                />
-                {labelFor(item.id)}
-              </label>
+        <div className="columnPickerMenu">
+          <div className="columnPickerMenuHeader">
+            <div className="columnPickerHeaderRow">
+              <button type="button" className="linkBtn" onClick={() => markAll(true)}>
+                Marcar todo
+              </button>
+              <button type="button" className="linkBtn" onClick={() => markAll(false)}>
+                Desmarcar todo
+              </button>
             </div>
-          ))}
+            <div className="columnPickerHeaderRow">
+              <button type="button" className="btnGhost columnPickerSmallBtn" onClick={handleCancel}>
+                Cancelar
+              </button>
+              <button type="button" className="btnPrimary columnPickerSmallBtn" onClick={handleSave}>
+                Guardar
+              </button>
+            </div>
+          </div>
+          <p className="columnPickerHint">Marca para mostrar, arrastra para ordenar</p>
+          <div className="columnPickerList" ref={listRef}>
+            {draftOrder.map((item, index) => (
+              <div
+                key={item.id}
+                data-col-index={index}
+                className={["columnPickerItem", draggingId === item.id && "dragging"]
+                  .filter(Boolean)
+                  .join(" ")}
+              >
+                <span
+                  className="columnPickerDragHandle"
+                  onPointerDown={(e) => handlePointerDown(e, index)}
+                  onPointerMove={handlePointerMove}
+                  onPointerUp={endDrag}
+                  onPointerCancel={endDrag}
+                >
+                  <DragHandleIcon className="columnPickerDrag" />
+                </span>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={item.visible}
+                    onChange={() => toggleVisible(item.id)}
+                  />
+                  {labelFor(item.id)}
+                </label>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>

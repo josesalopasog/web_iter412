@@ -4,6 +4,8 @@ import { ApiError } from "../../../utils/errors.js";
 import { sendRegistrationConfirmationEmail } from "../../../services/mailer.service.js";
 import { softDelete } from "../softDelete.js";
 import { createLog } from "../../activityLog/createLog.js";
+import { getSettings } from "../../settings/settings.service.js";
+import { getTotalSubsidyUsed } from "../subsidyPool.js";
 import { Servidor } from "./servidor.model.js";
 import type { RegistrationServidoresDTO } from "./servidor.types.js"
 
@@ -51,6 +53,8 @@ const EDITABLE_FIELDS = new Set([
   "otherSedesDetail",
   "formationOther",
   "registrationNumber",
+  "paymentAmount",
+  "subsidyAmount",
 ]);
 
 const RESTRICTED_FIELDS = new Set(["email", "password", "registrationNumber"]);
@@ -60,7 +64,12 @@ const isValidRegistrationNumber = (value: unknown): value is number => {
   return Number.isInteger(num) && num > 0;
 };
 
-const ASSIGNABLE_ROLES = new Set(["SERVIDOR", "ADMIN", "SUPERADMIN"]);
+const isValidAmount = (value: unknown, max: number): value is number => {
+  const num = Number(value);
+  return Number.isFinite(num) && num >= 0 && num <= max;
+};
+
+const ASSIGNABLE_ROLES = new Set(["SERVIDOR", "ADMIN", "TREASURER", "SUPERADMIN"]);
 
 const requireFields = (body: any, fields: string[]) => {
   const missing = fields.filter(
@@ -281,6 +290,25 @@ export const updateServidor = asyncHandler(async (req, res) => {
       throw new ApiError(400, "El número de registro debe ser un entero positivo");
     }
     servidor.registrationNumber = Number(value);
+  } else if (field === "paymentAmount") {
+    const { servidorPrice } = await getSettings();
+    const effectiveMax = Math.max(0, servidorPrice - (servidor.subsidyAmount ?? 0));
+    if (!isValidAmount(value, effectiveMax)) {
+      throw new ApiError(400, `El pago debe estar entre $0 y $${effectiveMax.toLocaleString("es-CO")}`);
+    }
+    servidor.paymentAmount = Number(value);
+  } else if (field === "subsidyAmount") {
+    const num = Number(value);
+    if (!Number.isFinite(num) || num < 0) {
+      throw new ApiError(400, "El subsidio debe ser un número mayor o igual a 0");
+    }
+    const { subsidyCap } = await getSettings();
+    const totalUsed = await getTotalSubsidyUsed();
+    const available = Math.max(0, subsidyCap - (totalUsed - (servidor.subsidyAmount ?? 0)));
+    if (num > available) {
+      throw new ApiError(400, "No queda subsidio disponible, solicita que se agregue más monto en esta casilla");
+    }
+    servidor.subsidyAmount = num;
   } else {
     (servidor as any)[field] = value;
   }
@@ -316,7 +344,13 @@ export const updateServidor = asyncHandler(async (req, res) => {
 export const updateMyServidor = asyncHandler(async (req, res) => {
   const { field, value } = req.body as { field?: string; value?: unknown };
 
-  if (!field || field === "password" || !EDITABLE_FIELDS.has(field)) {
+  if (
+    !field ||
+    field === "password" ||
+    field === "paymentAmount" ||
+    field === "subsidyAmount" ||
+    !EDITABLE_FIELDS.has(field)
+  ) {
     throw new ApiError(400, "Campo no editable");
   }
   if (RESTRICTED_FIELDS.has(field) && req.user!.role !== "SUPERADMIN") {

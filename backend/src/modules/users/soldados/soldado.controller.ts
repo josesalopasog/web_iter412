@@ -3,6 +3,8 @@ import { ApiError } from "../../../utils/errors.js";
 import { sendRegistrationConfirmationEmail } from "../../../services/mailer.service.js";
 import { softDelete } from "../softDelete.js";
 import { createLog } from "../../activityLog/createLog.js";
+import { getSettings } from "../../settings/settings.service.js";
+import { getTotalSubsidyUsed } from "../subsidyPool.js";
 import { Soldado } from "./soldado.model.js";
 import type { RegistrationSoldadosDTO, YesNo } from "./soldado.types.js";
 
@@ -46,6 +48,8 @@ const EDITABLE_FIELDS = new Set([
   "invitedByCommunity",
   "invitedByName",
   "registrationNumber",
+  "paymentAmount",
+  "subsidyAmount",
 ]);
 
 const RESTRICTED_FIELDS = new Set(["email", "registrationNumber"]);
@@ -53,6 +57,11 @@ const RESTRICTED_FIELDS = new Set(["email", "registrationNumber"]);
 const isValidRegistrationNumber = (value: unknown): value is number => {
   const num = Number(value);
   return Number.isInteger(num) && num > 0;
+};
+
+const isValidAmount = (value: unknown, max: number): value is number => {
+  const num = Number(value);
+  return Number.isFinite(num) && num >= 0 && num <= max;
 };
 
 const formatRegistrationNumber = (n: number | null | undefined) =>
@@ -239,6 +248,25 @@ export const updateSoldado = asyncHandler(async (req, res) => {
       throw new ApiError(400, "El número de registro debe ser un entero positivo");
     }
     soldado.registrationNumber = Number(value);
+  } else if (field === "paymentAmount") {
+    const { soldadoPrice } = await getSettings();
+    const effectiveMax = Math.max(0, soldadoPrice - (soldado.subsidyAmount ?? 0));
+    if (!isValidAmount(value, effectiveMax)) {
+      throw new ApiError(400, `El pago debe estar entre $0 y $${effectiveMax.toLocaleString("es-CO")}`);
+    }
+    soldado.paymentAmount = Number(value);
+  } else if (field === "subsidyAmount") {
+    const num = Number(value);
+    if (!Number.isFinite(num) || num < 0) {
+      throw new ApiError(400, "El subsidio debe ser un número mayor o igual a 0");
+    }
+    const { subsidyCap } = await getSettings();
+    const totalUsed = await getTotalSubsidyUsed();
+    const available = Math.max(0, subsidyCap - (totalUsed - (soldado.subsidyAmount ?? 0)));
+    if (num > available) {
+      throw new ApiError(400, "No queda subsidio disponible, solicita que se agregue más monto en esta casilla");
+    }
+    soldado.subsidyAmount = num;
   } else {
     (soldado as any)[field] = field === "email" ? String(value).toLowerCase() : value;
   }

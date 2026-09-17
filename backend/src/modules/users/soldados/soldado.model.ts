@@ -5,6 +5,9 @@ const SoldadoSchema = new Schema(
     {
         registrationNumber: { type: Number, required: true, unique: true },
 
+        paymentAmount: { type: Number, required: true, default: 0, min: 0 },
+        subsidyAmount: { type: Number, required: true, default: 0, min: 0 },
+
         //Auth
         gender: { type: String, required: true },
         genderOther: { type: String, default: "", trim: true },

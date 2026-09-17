@@ -1,13 +1,17 @@
 import express, { type Request, type Response, type NextFunction } from "express";
 import cors from "cors";
+import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import usersRouter from "./modules/users/index.js";
 import authRouter from "./modules/auth/auth.routes.js";
 import logsRouter from "./modules/activityLog/log.routes.js";
+import settingsRouter from "./modules/settings/settings.routes.js";
 import { ApiError } from "./utils/errors.js";
 
 export const createApp = () => {
   const app = express();
+
+  app.use(helmet());
 
   const allowedOrigins = [
     "https://iter412.com",
@@ -35,6 +39,7 @@ export const createApp = () => {
   app.use("/api/users", usersRouter);
   app.use("/api/auth", authRouter);
   app.use("/api/logs", logsRouter);
+  app.use("/api/settings", settingsRouter);
 
   app.use((_req, res) => res.status(404).json({ message: "Not Found" }));
 

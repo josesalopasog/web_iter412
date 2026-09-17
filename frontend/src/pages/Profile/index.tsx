@@ -44,7 +44,7 @@ const toDisplay = (v: string | string[]) =>
 const Profile = () => {
   const { user, token, logout } = useAuth();
   const navigate = useNavigate();
-  const isAdmin = user?.role === "ADMIN" || user?.role === "SUPERADMIN";
+  const isAdmin = user?.role === "ADMIN" || user?.role === "SUPERADMIN" || user?.role === "TREASURER";
   const isSuperadmin = user?.role === "SUPERADMIN";
 
   const [data, setData] = useState<Record<string, any> | null>(null);

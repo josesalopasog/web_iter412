@@ -14,6 +14,15 @@ import type {
 
 import whatsapp_logo from "../../../assets/svg/WhatsApp.svg";
 import TermsAndConditions from "./TermsAndConditions";
+import { usePublicSettings } from "../../../hooks/usePublicSettings";
+
+function formatCOP(value: number) {
+  return new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    maximumFractionDigits: 0,
+  }).format(value);
+}
 
 type Props = UseRegisterServidorFormReturn;
 
@@ -148,6 +157,7 @@ export const RegisterServidorView: React.FC<Props> = ({
   const [openPolicy, setOpenPolicy] = React.useState(false);
   const [isLoggingIn, setIsLoggingIn] = React.useState(false);
   const [autoLoginError, setAutoLoginError] = React.useState<string | null>(null);
+  const { servidorPrice } = usePublicSettings();
 
   const passwordOk = password.length >= 8 && password === confirmPassword;
 
@@ -1050,7 +1060,7 @@ export const RegisterServidorView: React.FC<Props> = ({
             <h3>ℹ️ Info</h3>
             <ul className="section-list">
               <li>
-                Precio del retiro:<strong> $300.000 COP</strong>{" "}
+                Precio del retiro:<strong> {formatCOP(servidorPrice)}</strong>{" "}
               </li>
               <li>Recuerda usar un correo real para futuras notificaciones.</li>
               <li>La contraseña debe tener mínimo 8 caracteres.</li>

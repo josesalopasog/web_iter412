@@ -1,6 +1,8 @@
+import { usePublicSettings } from "../../../hooks/usePublicSettings";
+import { spanishMonthName } from "../../../utils/spanishMonth";
+
 const PHONE_NUMBER_H = "3195571763";
 const PHONE_NUMBER_M = "3196188804";
-const TOTAL_PRICE_COP = 300_000;
 const MIN_ABONO_COP = 100_000;
 
 const NEQUI_CONTACT_NAME_H = "Yostin Arteaga - Coordinador XVI Retiro";
@@ -20,8 +22,20 @@ function formatCOP(value: number) {
 }
 
 export default function TermsAndConditions() {
-  const totalPriceText = formatCOP(TOTAL_PRICE_COP);
+  const {
+    servidorPrice,
+    retreatYear,
+    advanceStartDay,
+    advanceEndDay,
+    advanceMonth,
+    finalPaymentStartDay,
+    finalPaymentEndDay,
+    finalPaymentMonth,
+  } = usePublicSettings();
+  const totalPriceText = formatCOP(servidorPrice);
   const minAbonoText = formatCOP(MIN_ABONO_COP);
+  const advanceWindowText = `${advanceStartDay} y el ${advanceEndDay} de ${spanishMonthName(advanceMonth)} del ${retreatYear}`;
+  const finalPaymentWindowText = `${finalPaymentStartDay} y el ${finalPaymentEndDay} de ${spanishMonthName(finalPaymentMonth)} del ${retreatYear}`;
 
   return (
     <section className="terms">
@@ -34,10 +48,10 @@ export default function TermsAndConditions() {
         separación del cupo para la realización del retiro. Para hacerla
         válida, se debe cancelar un <strong>abono mínimo</strong> de{" "}
         <strong>{minAbonoText}</strong> entre el{" "}
-        <strong>1 y el 15 de octubre del 2026</strong>. El valor restante, o
+        <strong>{advanceWindowText}</strong>. El valor restante, o
         la totalidad del valor (<strong>{totalPriceText}</strong>) si se paga
         de una sola vez, debe ser cancelado entre el{" "}
-        <strong>1 y el 7 de noviembre del 2026</strong>. Adicionalmente, a
+        <strong>{finalPaymentWindowText}</strong>. Adicionalmente, a
         pesar de que se realice el abono, es indispensable la asistencia a
         las <strong>formaciones</strong> para poder servir dentro del retiro.
       </p>

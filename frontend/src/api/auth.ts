@@ -8,11 +8,22 @@ export type LoginResponse = {
 };
 
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
-  const res = await fetch(`${API_URL}/api/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+  } catch {
+    throw new Error(
+      "No pudimos conectar con el servidor. Revisa tu conexión a internet e intenta de nuevo en unos minutos."
+    );
+  }
+
+  if (res.status === 429) {
+    throw new Error("Demasiados intentos. Espera unos minutos antes de volver a intentarlo.");
+  }
 
   const data = await res.json().catch(() => ({}));
 
