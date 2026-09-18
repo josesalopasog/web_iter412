@@ -568,6 +568,7 @@ export const RegisterServidorView: React.FC<Props> = ({
                             className="formInput"
                             value={shirtSizeOther}
                             onChange={(e) => setShirtSizeOther(e.target.value)}
+                            maxLength={15}
                             required
                           />
                         </div>
@@ -641,6 +642,7 @@ export const RegisterServidorView: React.FC<Props> = ({
                         className="formInput"
                         value={merchSizeOther}
                         onChange={(e) => setMerchSizeOther(e.target.value)}
+                        maxLength={15}
                         required
                       />
                     </div>

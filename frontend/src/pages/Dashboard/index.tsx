@@ -155,7 +155,7 @@ const Dashboard = () => {
     setSoldados((prev) => prev.map((s) => (s._id === id ? updated : s)));
   };
 
-  const handleEditServidor = async (id: string, field: string, value: string) => {
+  const handleEditServidor = async (id: string, field: string, value: unknown) => {
     const updated = await updateServidorField(token!, id, field, value);
     setServidores((prev) => prev.map((s) => (s._id === id ? updated : s)));
   };

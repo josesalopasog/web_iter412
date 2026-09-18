@@ -1,4 +1,6 @@
-.logSummaryCell {
+.dataTable td.logSummaryCell {
   white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
   max-width: 480px;
 }

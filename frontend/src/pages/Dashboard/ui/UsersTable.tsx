@@ -109,7 +109,7 @@ const loadColumnOrder = (
 const UsersTable: React.FC<Props> = (props) => {
   const [showSearchRow, setShowSearchRow] = useState(false);
   const [columnSearch, setColumnSearch] = useState<Record<string, string>>({});
-  const [showPaymentCols, setShowPaymentCols] = useState(true);
+  const [showPaymentCols, setShowPaymentCols] = useState(false);
 
   const columns = props.view === "soldados" ? SOLDADO_COLUMNS : SERVIDOR_COLUMNS;
   const defaultVisible = props.view === "soldados" ? SOLDADO_DEFAULT_VISIBLE : SERVIDOR_DEFAULT_VISIBLE;

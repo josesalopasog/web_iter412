@@ -224,10 +224,13 @@
 
 .pedidoStatCard {
   flex: 1 1 260px;
+  min-width: 0;
+  max-width: 100%;
   background: #fff;
   border-radius: 18px;
   padding: 16px 18px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
 }
 
 .pedidoStatCardTitle {
@@ -246,8 +249,14 @@
 
 .pedidoStatTable {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   font-size: 0.8rem;
+}
+
+.pedidoStatTable th:not(:first-child),
+.pedidoStatTable td:not(:first-child) {
+  width: 56px;
 }
 
 .pedidoStatTable th {
@@ -269,6 +278,12 @@
   border-bottom: 1px solid #f3f4f6;
   color: #374151;
   white-space: nowrap;
+}
+
+.pedidoStatTable td:first-child {
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .pedidoStatTable tr:last-child td {
@@ -709,6 +724,109 @@
 .dirtyCell {
   background: #fef9c3 !important;
   box-shadow: inset 3px 0 0 #eab308;
+}
+
+/* ===== Pills (Pedido: camiseta / merch) ===== */
+.pillsCell {
+  min-width: 220px;
+}
+
+.pillsWrap {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #f5f3ff;
+  color: #5b21b6;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.pillRemove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(91, 33, 182, 0.15);
+  color: #5b21b6;
+  font-size: 0.8rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.pillRemove:hover {
+  background: rgba(91, 33, 182, 0.3);
+}
+
+.pillAddWrap {
+  position: relative;
+}
+
+.pillAddBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(106, 0, 255, 0.12);
+  color: #6a00ff;
+  font-size: 0.8rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.pillAddBtn:hover {
+  background: rgba(106, 0, 255, 0.22);
+}
+
+.pillAddBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pillAddMenu {
+  position: fixed;
+  min-width: 160px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 -10px 24px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  z-index: 1000;
+}
+
+.pillAddOption {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: #fff;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  color: #111;
+}
+
+.pillAddOption:hover {
+  background: #f5f3ff;
+  color: #6a00ff;
 }
 
 /* ===== Pending changes bar ===== */
