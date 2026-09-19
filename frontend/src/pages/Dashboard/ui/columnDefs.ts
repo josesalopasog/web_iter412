@@ -1,4 +1,6 @@
-export type ColumnType = "text" | "select" | "readonly";
+import { SERVICES } from "../../Profile/ui/options";
+
+export type ColumnType = "text" | "select" | "readonly" | "pills" | "dropup";
 export type SortType = "text" | "numeric" | "date";
 
 export type ColumnDef = {
@@ -107,6 +109,10 @@ export const SERVIDOR_COLUMNS: ColumnDef[] = [
   { id: "emergencyEmail", label: "Emerg. correo", type: "text", editable: true },
   { id: "emergencyAddress", label: "Emerg. dirección", type: "text", editable: true },
   { id: "serviceLeaderOf", label: "Líder de", type: "text", editable: true },
+  { id: "services", label: "Servicios", type: "pills", options: SERVICES, editable: true, sortable: false },
+  { id: "lastService", label: "Último servicio", type: "dropup", options: SERVICES, editable: true },
+  { id: "wentToOtherSedes", label: "¿Otras sedes?", type: "dropup", options: ["SI", "NO"], editable: true },
+  { id: "formationOther", label: "Otra formación", type: "text", editable: true },
   { id: "createdAt", label: "Fecha registro", type: "readonly", editable: false, sortType: "date" },
 ];
 

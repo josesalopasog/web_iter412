@@ -3,6 +3,7 @@ import {
   createServidorFromForm,
   listServidores,
   getMyServidorProfile,
+  getServidorByDocument,
   updateServidor,
   updateMyServidor,
   changeMyPassword,
@@ -19,7 +20,13 @@ router.get("/me", requireAuth, getMyServidorProfile);
 router.patch("/me", requireAuth, updateMyServidor);
 router.patch("/me/password", requireAuth, changeMyPassword);
 router.get("/", requireAuth, requireRole("ADMIN", "SUPERADMIN", "TREASURER"), listServidores);
-router.patch("/:id/role", requireAuth, requireRole("SUPERADMIN"), updateServidorRole);
+router.get(
+  "/by-document/:documentNumber",
+  requireAuth,
+  requireRole("ADMIN", "SUPERADMIN", "TREASURER"),
+  getServidorByDocument
+);
+router.patch("/:id/role",requireAuth, requireRole("SUPERADMIN"), updateServidorRole);
 router.patch("/:id", requireAuth, requireRole("ADMIN", "SUPERADMIN", "TREASURER"), updateServidor);
 router.patch(
   "/:id/reset-merch",

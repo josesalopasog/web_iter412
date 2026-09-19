@@ -16,6 +16,10 @@ import SortableHeader from "./SortableHeader";
 import type { SortDirection } from "./SortableHeader";
 import FilterableHeader from "./FilterableHeader";
 import PaymentCell from "./PaymentCell";
+import PillsCell from "./PillsCell";
+import DropupCell from "./DropupCell";
+import { formatEnumLabel } from "../../Profile/ui/format";
+import { asStringArray } from "./merchPricing";
 import SubsidyCell from "./SubsidyCell";
 import { formatCOP } from "./paymentConfig";
 import {
@@ -25,6 +29,7 @@ import {
   ColumnCollapseIcon,
   ColumnExpandIcon,
   GearIcon,
+  DocumentIcon,
 } from "../../../assets/icons";
 import {
   SOLDADO_COLUMNS,
@@ -56,7 +61,7 @@ type Props =
       subsidyMax: number;
       totalSubsidyUsed: number;
       onViewChange: (view: View) => void;
-      onEditField: (id: string, field: string, value: string) => Promise<void>;
+      onEditField: (id: string, field: string, value: unknown) => Promise<void>;
       onDelete: (id: string) => Promise<void>;
       onRoleChange: (id: string, role: string) => Promise<void>;
       onOpenSettings: () => void;
@@ -166,7 +171,9 @@ const UsersTable: React.FC<Props> = (props) => {
     if (col.id === "createdAt") return formatDate(String(row.createdAt ?? ""));
     if (col.id === "gender") return normalizeGender(row.gender as string | undefined) || "";
     if (col.id === "registrationNumber") return formatRegNum(row.registrationNumber);
-    return row[col.id] != null ? String(row[col.id]) : "";
+    const value = row[col.id];
+    if (Array.isArray(value)) return value.map((v) => formatEnumLabel(String(v))).join(", ");
+    return value != null ? String(value) : "";
   };
 
   const getFilterSelected = (col: (typeof columns)[number]) =>
@@ -225,7 +232,9 @@ const UsersTable: React.FC<Props> = (props) => {
     if (key === "registrationNumber") return row.registrationNumber;
     if (key === "role") return String((row as ServidorRecord).role ?? "");
     if (key === "gender") return normalizeGender(row.gender as string | undefined) || "";
-    return row[key] != null ? String(row[key]) : "";
+    const value = row[key];
+    if (Array.isArray(value)) return value.join(", ");
+    return value != null ? String(value) : "";
   };
 
   const sortedRows = useMemo(() => {
@@ -271,6 +280,17 @@ const UsersTable: React.FC<Props> = (props) => {
     if (currentPayment > effectiveMax) {
       await props.onEditField(row._id, "paymentAmount", String(effectiveMax));
     }
+  };
+
+  const editServidorField = props.view === "servidores" ? props.onEditField : null;
+
+  const handleOpenAnswers = (row: SoldadoRecord | ServidorRecord) => {
+    const documento = String(row.documentNumber ?? "").trim();
+    if (!documento) {
+      alert("Este registro no tiene número de documento");
+      return;
+    }
+    window.open(`/participante/${props.view}/${encodeURIComponent(documento)}`, "_blank", "noopener");
   };
 
   const handleRequestDelete = (row: SoldadoRecord | ServidorRecord) => {
@@ -397,6 +417,9 @@ const UsersTable: React.FC<Props> = (props) => {
                   <div className={`colCollapseInner colCollapseInnerSmall${showPaymentCols ? "" : " collapsed"}`} />
                 </th>
                 <th className={`paymentColCell${showPaymentCols ? "" : " collapsed"}`}>
+                  <div className={`colCollapseInner colCollapseInnerSmall${showPaymentCols ? "" : " collapsed"}`} />
+                </th>
+                <th className={`paymentColCell${showPaymentCols ? "" : " collapsed"}`}>
                   <div className={`colCollapseInner${showPaymentCols ? "" : " collapsed"}`}>Pagado</div>
                 </th>
                 <th className={`paymentColCell${showPaymentCols ? "" : " collapsed"}`}>
@@ -464,6 +487,7 @@ const UsersTable: React.FC<Props> = (props) => {
                   <th></th>
                   <th></th>
                   <th></th>
+                  <th></th>
                   <th>
                     <input
                       className="columnSearchInput"
@@ -500,7 +524,7 @@ const UsersTable: React.FC<Props> = (props) => {
                 <tr>
                   <td
                     className="emptyState"
-                    colSpan={5 + (props.view === "servidores" ? 1 : 0) + activeColumns.length}
+                    colSpan={6 + (props.view === "servidores" ? 1 : 0) + activeColumns.length}
                   >
                     No hay registros para mostrar.
                   </td>
@@ -517,6 +541,18 @@ const UsersTable: React.FC<Props> = (props) => {
                           onClick={() => handleRequestDelete(r)}
                         >
                           <TrashIcon className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                    <td className={`paymentColCell${showPaymentCols ? "" : " collapsed"}`}>
+                      <div className={`colCollapseInner colCollapseInnerSmall${showPaymentCols ? "" : " collapsed"}`}>
+                        <button
+                          type="button"
+                          className="rowDocBtn"
+                          title="Ver respuestas"
+                          onClick={() => handleOpenAnswers(r)}
+                        >
+                          <DocumentIcon className="w-4 h-4" />
                         </button>
                       </div>
                     </td>
@@ -572,6 +608,28 @@ const UsersTable: React.FC<Props> = (props) => {
                       </td>
                     )}
                     {activeColumns.map((col) => {
+                      const canEditCol = col.editable && (!col.restrictedTo || col.restrictedTo === props.currentUserRole);
+                      if (col.type === "pills" && editServidorField) {
+                        return (
+                          <PillsCell
+                            key={col.id}
+                            value={asStringArray(r[col.id])}
+                            options={(col.options ?? []).map((code) => ({ code, label: formatEnumLabel(code) }))}
+                            onChange={(next) => editServidorField(r._id, col.id, next)}
+                          />
+                        );
+                      }
+                      if (col.type === "dropup" && editServidorField) {
+                        return (
+                          <DropupCell
+                            key={col.id}
+                            value={typeof r[col.id] === "string" ? (r[col.id] as string) : ""}
+                            options={col.options ?? []}
+                            canEdit={canEditCol}
+                            onChange={(next) => editServidorField(r._id, col.id, next)}
+                          />
+                        );
+                      }
                       const key = `${r._id}::${col.id}`;
                       const pending = pendingEdits[key];
                       return (

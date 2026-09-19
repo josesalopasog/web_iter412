@@ -83,7 +83,19 @@ export const listSoldados = (token: string) =>
 export const listServidores = (token: string) =>
   authedRequest<ServidorRecord[]>("/api/users/servidores", token);
 
-export const getMyServidorProfile = (token: string) =>
+export const getServidorByDocument = (token: string, documentNumber: string) =>
+  authedRequest<Record<string, unknown>>(
+    `/api/users/servidores/by-document/${encodeURIComponent(documentNumber)}`,
+    token
+  );
+
+export const getSoldadoByDocument = (token: string, documentNumber: string) =>
+  authedRequest<Record<string, unknown>>(
+    `/api/users/soldados/by-document/${encodeURIComponent(documentNumber)}`,
+    token
+  );
+
+export const getMyServidorProfile =(token: string) =>
   authedRequest<Record<string, unknown>>("/api/users/servidores/me", token);
 
 export const updateSoldadoField = (token: string, id: string, field: string, value: unknown) =>

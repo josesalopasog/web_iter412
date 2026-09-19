@@ -12,6 +12,7 @@ import Dashboard from "../pages/Dashboard";
 import Profile from "../pages/Profile";
 import ChangePassword from "../pages/ChangePassword";
 import Logs from "../pages/ActivityLog";
+import Participant from "../pages/Participant";
 
 import "./App.css";
 import RegisterServidores from "../pages/Servidores";
@@ -48,8 +49,16 @@ const AppRoutes = () => {
     {
       path: "/dashboard",
       element: (
-        <ProtectedRoute allowedRoles={["ADMIN", "SUPERADMIN"]} redirectTo="/profile">
+        <ProtectedRoute allowedRoles={["ADMIN", "SUPERADMIN", "TREASURER"]} redirectTo="/profile">
           <Dashboard />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/participante/:tipo/:documento",
+      element: (
+        <ProtectedRoute allowedRoles={["ADMIN", "SUPERADMIN", "TREASURER"]} redirectTo="/profile">
+          <Participant />
         </ProtectedRoute>
       ),
     },

@@ -279,6 +279,14 @@ export const listServidores = asyncHandler(async (_req, res) => {
   res.json(servidores);
 });
 
+export const getServidorByDocument = asyncHandler(async (req, res) => {
+  const servidor = await Servidor.findOne({ documentNumber: String(req.params.documentNumber).trim() }).select(
+    "-passwordHash"
+  );
+  if (!servidor) throw new ApiError(404, "No se encontró un servidor con ese documento");
+  res.json(servidor);
+});
+
 export const getMyServidorProfile = asyncHandler(async (req, res) => {
   const servidor = await Servidor.findById(req.user!.sub).select("-passwordHash");
   if (!servidor) throw new ApiError(404, "No encontrado");

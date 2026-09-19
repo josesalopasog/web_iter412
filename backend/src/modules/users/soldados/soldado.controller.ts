@@ -223,6 +223,12 @@ export const createSoldadoFromForm = asyncHandler(async (req, res) => {
   });
 });
 
+export const getSoldadoByDocument = asyncHandler(async (req, res) => {
+  const soldado = await Soldado.findOne({ documentNumber: String(req.params.documentNumber).trim() });
+  if (!soldado) throw new ApiError(404, "No se encontró un soldado con ese documento");
+  res.json(soldado);
+});
+
 export const listSoldados = asyncHandler(async (_req, res) => {
   const soldados = await Soldado.find().sort({ createdAt: 1 });
   res.json(soldados);

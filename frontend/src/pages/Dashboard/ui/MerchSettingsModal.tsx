@@ -95,7 +95,7 @@ const MerchSettingsModal: React.FC<Props> = ({ settings, token, canEdit, onSaved
           </div>
 
           {!canEdit && (
-            <p className="configHint">Solo un SUPERADMIN o TREASURER puede editar estos valores.</p>
+            <p className="configHint">Solo un ADMIN, SUPERADMIN o TESORERO puede editar estos valores.</p>
           )}
           {error && <p className="configError">{error}</p>}
         </div>

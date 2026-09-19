@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { roleLabel } from "../../../auth/roleLabel";
 
 const ASSIGNABLE_ROLES = ["SERVIDOR", "ADMIN", "TREASURER", "SUPERADMIN"];
 
@@ -51,7 +52,7 @@ const RoleDropdown: React.FC<Props> = ({ role, canChange, isSaving, onChange }) 
         disabled={isSaving}
         title={canChange ? undefined : "Solo un SUPERADMIN puede cambiar el rol"}
       >
-        {role}
+        {roleLabel(role)}
         {canChange && <span className={`dbDropdownCaret ${open ? "open" : ""}`}>▾</span>}
       </button>
 
@@ -72,7 +73,7 @@ const RoleDropdown: React.FC<Props> = ({ role, canChange, isSaving, onChange }) 
                   if (r !== role) onChange(r);
                 }}
               >
-                {r}
+                {roleLabel(r)}
               </button>
             ))}
           </div>,

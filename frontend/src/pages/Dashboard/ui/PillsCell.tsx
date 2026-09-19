@@ -71,14 +71,14 @@ const PillsCell: React.FC<Props> = ({ value, options, onChange }) => {
   };
 
   return (
-    <td className="pillsCell">
-      <div className="pillsWrap" ref={wrapRef}>
+    <td className="dbPillsCell">
+      <div className="dbPillsWrap" ref={wrapRef}>
         {value.map((code) => (
-          <span key={code} className="pill">
+          <span key={code} className="dbPill">
             {labelFor(code)}
             <button
               type="button"
-              className="pillRemove"
+              className="dbPillRemove"
               title="Quitar"
               disabled={isSaving}
               onClick={() => handleRemove(code)}
@@ -88,11 +88,11 @@ const PillsCell: React.FC<Props> = ({ value, options, onChange }) => {
           </span>
         ))}
 
-        <div className="pillAddWrap">
+        <div className="dbPillAddWrap">
           <button
             type="button"
             ref={addBtnRef}
-            className="pillAddBtn"
+            className="dbPillAddBtn"
             title="Agregar"
             disabled={isSaving || remaining.length === 0}
             onClick={() => setMenuOpen((o) => !o)}
@@ -106,12 +106,12 @@ const PillsCell: React.FC<Props> = ({ value, options, onChange }) => {
         menuPos &&
         createPortal(
           <div
-            className="pillAddMenu"
+            className="dbPillAddMenu"
             ref={menuRef}
             style={{ bottom: menuPos.bottom, left: menuPos.left }}
           >
             {remaining.map((o) => (
-              <button key={o.code} type="button" className="pillAddOption" onClick={() => handleAdd(o.code)}>
+              <button key={o.code} type="button" className="dbPillAddOption" onClick={() => handleAdd(o.code)}>
                 {o.label}
               </button>
             ))}
