@@ -1,0 +1,197 @@
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.registerFab-container {
+  position: fixed;
+  /* Ancla el borde derecho 50px más adentro que el botón de volver arriba (su ancho + 12px de
+     separación); como el botón crece hacia la izquierda al expandirse, este ancla no se mueve. */
+  right: calc(clamp(14px, 3vw, 28px) + 50px);
+  bottom: clamp(14px, 3vw, 28px);
+  z-index: 2000;
+  opacity: 0;
+  transform: translateY(12px) scale(0.9);
+  visibility: hidden;
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+}
+
+.registerFab-container.is-visible {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+}
+
+.registerFab-container.is-visible:active {
+  transform: scale(0.94);
+}
+
+/* Envoltorio del anillo: sin overflow, así nunca se recorta. Al ser inline-block sin ancho
+   propio, se ajusta solo (cada frame) al tamaño real de .registerFab, que es quien anima. */
+.registerFab-ring {
+  display: inline-block;
+  position: relative;
+  border-radius: 999px;
+  color: grey;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s ease-in-out;
+}
+
+.registerFab-ring::after,
+.registerFab-ring::before {
+  background-image: conic-gradient(
+    from var(--angle),
+    #4ff034,
+    #ff0000,
+    #7030a0,
+    #ff0000,
+    #4ff034
+  );
+  content: "";
+  position: absolute;
+  inset: -3px;
+  z-index: -1;
+  border-radius: 999px;
+  animation: registerFab-spin 4s linear infinite;
+}
+
+.registerFab-ring::before {
+  filter: blur(0.15rem);
+  opacity: 0.5;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.registerFab-ring:hover,
+.registerFab-ring:focus-visible {
+  color: black;
+}
+
+.registerFab-ring:hover::before,
+.registerFab-ring:focus-visible::before {
+  opacity: 1;
+}
+
+/* El botón real: hijos en flujo normal (icono + texto) para que su ancho intrínseco empuje el
+   max-width y así anime de círculo a píldora; overflow:hidden recorta el texto al colapsar. */
+.registerFab {
+  display: inline-flex;
+  align-items: center;
+  min-width: 38px;
+  max-width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  overflow: hidden;
+  background-color: white;
+  color: inherit;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+  transition: max-width 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease-in-out;
+}
+
+.registerFab-ring.is-expanded .registerFab {
+  max-width: 320px;
+}
+
+.registerFab-icon {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+}
+
+.registerFab-icon svg {
+  width: 17px;
+  height: 17px;
+  flex: none;
+}
+
+.registerFab-label {
+  flex: none;
+  display: flex;
+  align-items: center;
+  padding: 0 6px 0 18px;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+/* Botón "-" dentro de la píldora, a la derecha del texto: minimiza sin tocar fuera. Colapsado
+   pesa 0 (igual que el ícono "+" del otro extremo), para no estorbar el círculo inicial. */
+.registerFab-minimize {
+  flex: none;
+  width: 0;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  opacity: 0;
+  cursor: pointer;
+  transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+}
+
+.registerFab-minimize svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+
+.registerFab-minimize:hover {
+  color: #7030a0;
+}
+
+.registerFab-ring.is-expanded .registerFab-icon {
+  width: 0;
+  opacity: 0;
+}
+
+.registerFab-ring.is-expanded .registerFab-label {
+  opacity: 1;
+  transition-delay: 0.15s;
+}
+
+.registerFab-ring.is-expanded .registerFab-minimize {
+  width: 32px;
+  opacity: 1;
+  transition-delay: 0.15s;
+}
+
+@keyframes registerFab-spin {
+  from {
+    --angle: 0deg;
+  }
+  to {
+    --angle: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .registerFab-container {
+    transition: opacity 0.15s ease, visibility 0.15s;
+  }
+
+  .registerFab {
+    transition: max-width 0.15s ease, box-shadow 0.3s ease-in-out;
+  }
+
+  .registerFab-icon {
+    transition: width 0.15s ease, opacity 0.15s ease;
+  }
+
+  .registerFab-ring::after,
+  .registerFab-ring::before {
+    animation: none;
+  }
+
+  .registerFab-container.is-visible:active {
+    transform: none;
+  }
+}

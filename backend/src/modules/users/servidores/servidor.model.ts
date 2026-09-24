@@ -16,6 +16,8 @@ const ServidorSchema = new Schema(
 
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     passwordHash: { type: String, required: true },
+    // Se incrementa para invalidar todas las sesiones (cambio de contraseña, "cerrar todas las sesiones").
+    tokenVersion: { type: Number, required: true, default: 0 },
 
     firstNames: { type: String, required: true, trim: true },
     lastNames: { type: String, required: true, trim: true },

@@ -1,6 +1,6 @@
 import type { RegisterSoldadoPayload } from "../pages/Register/form/types";
 
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000";
+import { API_URL } from "./http";
 
 export type RegisterSoldadoResponse = {
   id: string;

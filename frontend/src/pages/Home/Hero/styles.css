@@ -102,3 +102,33 @@
 }
 
 
+
+/* Entrada suave del hero al cargar la página */
+@keyframes hero-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+.hero > * {
+  animation: hero-fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero > *:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.hero > *:nth-child(3) {
+  animation-delay: 0.24s;
+}
+
+.hero > *:nth-child(n + 4) {
+  animation-delay: 0.36s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero > * {
+    animation: none;
+  }
+}

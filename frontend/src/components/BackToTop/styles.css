@@ -1,0 +1,114 @@
+/* Mismo estilo que el botón "Quiero Inscribirme" (AnimatedBorder): borde arcoíris girando. */
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.backToTop-container {
+  position: fixed;
+  right: clamp(14px, 3vw, 28px);
+  bottom: clamp(14px, 3vw, 28px);
+  z-index: 2000;
+  opacity: 0;
+  transform: translateY(12px) scale(0.9);
+  visibility: hidden;
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+}
+
+.backToTop-container.is-visible {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+}
+
+/* El "presionado" se anima aquí (en el contenedor) y no en .backToTop: cualquier transform en
+   .backToTop crearía un contexto de apilamiento propio y taparía el fondo blanco con el anillo
+   de color (ver comentario más abajo). */
+.backToTop-container.is-visible:active {
+  transform: scale(0.94);
+}
+
+.backToTop {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: grey;
+  background-color: white;
+  /* position:relative sin z-index ni transform propios: así el fondo blanco pinta por encima del
+     pseudo con z-index negativo, dejando solo un anillo visible, igual que en AnimatedBorder.
+     (Un transform aquí -p. ej. en :active- crearía un contexto de apilamiento y el degradado
+     taparía todo el círculo en vez de quedar como anillo). */
+  position: relative;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+  transition: color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.backToTop::after,
+.backToTop::before {
+  background-image: conic-gradient(
+    from var(--angle),
+    #4ff034,
+    #ff0000,
+    #7030a0,
+    #ff0000,
+    #4ff034
+  );
+  content: "";
+  position: absolute;
+  inset: -3px;
+  z-index: -1;
+  border-radius: 50%;
+  animation: backToTop-spin 4s linear infinite;
+}
+
+.backToTop::before {
+  filter: blur(0.15rem);
+  opacity: 0.5;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.backToTop svg {
+  width: 16px;
+  height: 16px;
+}
+
+.backToTop:hover,
+.backToTop:focus-visible {
+  color: black;
+}
+
+.backToTop:hover::before,
+.backToTop:focus-visible::before {
+  opacity: 1;
+}
+
+@keyframes backToTop-spin {
+  from {
+    --angle: 0deg;
+  }
+  to {
+    --angle: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backToTop-container {
+    transition: opacity 0.15s ease, visibility 0.15s;
+  }
+
+  .backToTop::after,
+  .backToTop::before {
+    animation: none;
+  }
+
+  .backToTop-container.is-visible:active {
+    transform: none;
+  }
+}

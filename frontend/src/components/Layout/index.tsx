@@ -1,12 +1,14 @@
 import type { ReactNode } from "react";
 import Header from "../Header";
-import Footer from "../Footer";
 import DropdownMenu from "../DropdownMenu";
+import BackToTop from "../BackToTop";
 
 interface LayoutProps {
   children: ReactNode;
 }
 
+// El Footer se renderiza una sola vez, de forma centralizada, en App.tsx (para que aparezca
+// en todas las páginas, no solo en las que usan este Layout).
 const Layout = ({ children }: LayoutProps) => {
   return (
     <>
@@ -15,7 +17,7 @@ const Layout = ({ children }: LayoutProps) => {
       <main className="layout-main">
         {children}
       </main>
-      <Footer />
+      <BackToTop />
     </>
   );
 };

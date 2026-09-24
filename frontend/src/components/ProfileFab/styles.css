@@ -1,0 +1,120 @@
+/* Mismo diseño que los demás botones flotantes: círculo blanco con un anillo arcoíris girando.
+   Siempre visible (no depende del scroll); lo que se mueve es su posición (ver más abajo), igual
+   que BackButton, cuyo lugar ocupa aquí en Home. */
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.profileFab-container {
+  position: fixed;
+  right: clamp(14px, 3vw, 28px);
+  bottom: clamp(14px, 3vw, 28px);
+  z-index: 2000;
+  animation: profileFab-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  /* Se corre suavemente al lugar de al lado en cuanto aparecen "Quiero Inscribirme"/volver arriba,
+     y se desvanece igual de suave mientras el primero está expandido (.is-yielding). */
+  transition: right 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease, transform 0.25s ease;
+}
+
+.profileFab-container.beside-right-cluster {
+  /* Dos cupos de 38px + 12px de separación: se corre más allá de ambos botones. */
+  right: calc(clamp(14px, 3vw, 28px) + 100px);
+}
+
+.profileFab-container:active {
+  transform: scale(0.94);
+}
+
+/* Mientras "Quiero Inscribirme" está expandido, su ancho variable puede llegar hasta acá:
+   en vez de perseguirlo con un cálculo exacto, este botón se aparta un momento. */
+.profileFab-container.is-yielding {
+  opacity: 0;
+  transform: translateY(8px) scale(0.9);
+  pointer-events: none;
+}
+
+.profileFab {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: grey;
+  background-color: white;
+  /* position:relative sin z-index ni transform propios: así el fondo blanco pinta por encima del
+     pseudo con z-index negativo, dejando solo un anillo visible (ver BackToTop para el detalle). */
+  position: relative;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+  transition: color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.profileFab::after,
+.profileFab::before {
+  background-image: conic-gradient(
+    from var(--angle),
+    #4ff034,
+    #ff0000,
+    #7030a0,
+    #ff0000,
+    #4ff034
+  );
+  content: "";
+  position: absolute;
+  inset: -3px;
+  z-index: -1;
+  border-radius: 50%;
+  animation: profileFab-spin 4s linear infinite;
+}
+
+.profileFab::before {
+  filter: blur(0.15rem);
+  opacity: 0.5;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.profileFab svg {
+  width: 18px;
+  height: 18px;
+}
+
+.profileFab:hover,
+.profileFab:focus-visible {
+  color: black;
+}
+
+.profileFab:hover::before,
+.profileFab:focus-visible::before {
+  opacity: 1;
+}
+
+@keyframes profileFab-spin {
+  from {
+    --angle: 0deg;
+  }
+  to {
+    --angle: 360deg;
+  }
+}
+
+@keyframes profileFab-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.9);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profileFab-container {
+    animation: none;
+  }
+
+  .profileFab::after,
+  .profileFab::before {
+    animation: none;
+  }
+}

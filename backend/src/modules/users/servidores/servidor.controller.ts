@@ -6,6 +6,7 @@ import { softDelete } from "../softDelete.js";
 import { createLog } from "../../activityLog/createLog.js";
 import { getSettings } from "../../settings/settings.service.js";
 import { getTotalSubsidyUsed } from "../subsidyPool.js";
+import { issueSession } from "../../auth/auth.utils.js";
 import { Servidor } from "./servidor.model.js";
 import type { RegistrationServidoresDTO } from "./servidor.types.js"
 
@@ -275,20 +276,20 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
 });
 
 export const listServidores = asyncHandler(async (_req, res) => {
-  const servidores = await Servidor.find().select("-passwordHash").sort({ createdAt: 1 });
+  const servidores = await Servidor.find().select("-passwordHash -tokenVersion").sort({ createdAt: 1 });
   res.json(servidores);
 });
 
 export const getServidorByDocument = asyncHandler(async (req, res) => {
   const servidor = await Servidor.findOne({ documentNumber: String(req.params.documentNumber).trim() }).select(
-    "-passwordHash"
+    "-passwordHash -tokenVersion"
   );
   if (!servidor) throw new ApiError(404, "No se encontró un servidor con ese documento");
   res.json(servidor);
 });
 
 export const getMyServidorProfile = asyncHandler(async (req, res) => {
-  const servidor = await Servidor.findById(req.user!.sub).select("-passwordHash");
+  const servidor = await Servidor.findById(req.user!.sub).select("-passwordHash -tokenVersion");
   if (!servidor) throw new ApiError(404, "No encontrado");
   res.json(servidor);
 });
@@ -321,6 +322,8 @@ export const updateServidor = asyncHandler(async (req, res) => {
       throw new ApiError(400, "La contraseña debe tener al menos 8 caracteres");
     }
     servidor.passwordHash = await bcrypt.hash(value, 10);
+    // Invalida las sesiones abiertas de esa persona con la contraseña anterior.
+    servidor.tokenVersion = (servidor.tokenVersion ?? 0) + 1;
   } else if (field === "email") {
     servidor.email = String(value).toLowerCase();
   } else if (field === "services") {
@@ -389,6 +392,7 @@ export const updateServidor = asyncHandler(async (req, res) => {
 
   const result = servidor.toObject();
   delete (result as any).passwordHash;
+  delete (result as any).tokenVersion;
   res.json(result);
 });
 
@@ -445,6 +449,7 @@ export const updateMyServidor = asyncHandler(async (req, res) => {
 
   const result = servidor.toObject();
   delete (result as any).passwordHash;
+  delete (result as any).tokenVersion;
   res.json(result);
 });
 
@@ -462,14 +467,18 @@ export const changeMyPassword = asyncHandler(async (req, res) => {
   if (!servidor) throw new ApiError(404, "No encontrado");
 
   const isValid = await bcrypt.compare(oldPassword, servidor.passwordHash);
-  if (!isValid) throw new ApiError(401, "La contraseña actual no es correcta");
+  if (!isValid) throw new ApiError(400, "La contraseña actual no es correcta");
 
   servidor.passwordHash = await bcrypt.hash(newPassword, 10);
+  // Cierra las sesiones en otros dispositivos; esta sesión continúa con tokens nuevos.
+  servidor.tokenVersion = (servidor.tokenVersion ?? 0) + 1;
   await servidor.save();
 
   await createLog(req.user!, "CAMBIAR_CONTRASEÑA_PROPIA", "Cambió su propia contraseña");
 
-  res.json({ ok: true });
+  const token = issueSession(res, String(servidor._id), servidor.tokenVersion);
+
+  res.json({ ok: true, token });
 });
 
 export const updateServidorRole = asyncHandler(async (req, res) => {
@@ -494,6 +503,7 @@ export const updateServidorRole = asyncHandler(async (req, res) => {
 
   const result = servidor.toObject();
   delete (result as any).passwordHash;
+  delete (result as any).tokenVersion;
   res.json(result);
 });
 
@@ -519,6 +529,7 @@ export const resetServidorMerch = asyncHandler(async (req, res) => {
 
   const result = servidor.toObject();
   delete (result as any).passwordHash;
+  delete (result as any).tokenVersion;
   res.json(result);
 });
 

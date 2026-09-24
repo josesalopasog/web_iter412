@@ -7,26 +7,30 @@ import authRouter from "./modules/auth/auth.routes.js";
 import logsRouter from "./modules/activityLog/log.routes.js";
 import settingsRouter from "./modules/settings/settings.routes.js";
 import { ApiError } from "./utils/errors.js";
+import { env } from "./config/env.js";
 
 export const createApp = () => {
   const app = express();
 
+  // Detrás de un proxy, sin esto req.ip es la IP del proxy y todos los usuarios comparten el rate limit.
+  app.set("trust proxy", env.TRUST_PROXY_HOPS);
+
   app.use(helmet());
 
-  const allowedOrigins = [
+  const allowedOrigins = new Set([
     "https://iter412.com",
     "https://www.iter412.com",
     "http://localhost:5173",
-  ];
+    env.FRONTEND_ORIGIN,
+    ...env.CORS_ORIGIN.split(",").map((o) => o.trim()),
+  ]);
 
   app.use(
     cors({
-      origin: (origin, cb) => {
-        if (!origin) return cb(null, true);
-        if (allowedOrigins.includes(origin)) return cb(null, true);
-        return cb(new Error(`CORS blocked for origin: ${origin}`));
-      },
-      credentials: false,
+      // Origen no permitido: sin cabeceras CORS (el navegador lo bloquea) en lugar de un 500.
+      origin: (origin, cb) => cb(null, !origin || allowedOrigins.has(origin)),
+      // Necesario para que el navegador envíe/reciba la cookie httpOnly de refresh.
+      credentials: true,
     })
   );
 

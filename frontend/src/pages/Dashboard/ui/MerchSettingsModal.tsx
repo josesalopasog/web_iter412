@@ -5,7 +5,6 @@ import { formatNumberCO, parseDigits } from "./paymentConfig";
 
 type Props = {
   settings: AppSettings;
-  token: string;
   canEdit: boolean;
   onSaved: (updated: AppSettings) => void;
   onClose: () => void;
@@ -37,7 +36,7 @@ const FIELDS: MerchField[] = [
   "extraSizePrice",
 ];
 
-const MerchSettingsModal: React.FC<Props> = ({ settings, token, canEdit, onSaved, onClose }) => {
+const MerchSettingsModal: React.FC<Props> = ({ settings, canEdit, onSaved, onClose }) => {
   const [draft, setDraft] = useState<AppSettings>(settings);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,7 +51,7 @@ const MerchSettingsModal: React.FC<Props> = ({ settings, token, canEdit, onSaved
       for (const f of FIELDS) {
         if (draft[f] !== settings[f]) payload[f] = draft[f];
       }
-      const updated = await updateMerchSettings(token, payload);
+      const updated = await updateMerchSettings(payload);
       onSaved(updated);
       setDraft(updated);
     } catch (err: unknown) {

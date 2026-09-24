@@ -1,6 +1,8 @@
+import LogoLink from "../../components/LogoLink";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
+import PageLoader from "../../components/Spinner";
 import {
   listSoldados,
   listServidores,
@@ -53,7 +55,8 @@ const isMujer = (gender?: string) => gender === "Mujer" || gender === "Femenino"
 const isHombre = (gender?: string) => gender === "Hombre" || gender === "Masculino";
 
 const Dashboard = () => {
-  const { user, token, logout } = useAuth();
+  const { user, logout } = useAuth();
+  const userId = user?.sub;
   const navigate = useNavigate();
   const isSuperAdmin = user?.role === "SUPERADMIN";
   const canEditSettings = user?.role === "SUPERADMIN" || user?.role === "TREASURER";
@@ -71,20 +74,20 @@ const Dashboard = () => {
   const [showSettingsModal, setShowSettingsModal] = useState(false);
 
   const fetchAll = async () => {
-    if (!token) return;
+    if (!userId) return;
     setIsLoading(true);
     setErrorMsg(null);
     try {
       const [soldadosData, servidoresData, settingsData] = await Promise.all([
-        listSoldados(token),
-        listServidores(token),
-        getSettings(token),
+        listSoldados(),
+        listServidores(),
+        getSettings(),
       ]);
       setSoldados(soldadosData);
       setServidores(servidoresData);
       setSettings(settingsData);
       if (isSuperAdmin) {
-        setEliminados(await listEliminados(token));
+        setEliminados(await listEliminados());
       }
     } catch (error: unknown) {
       setErrorMsg(error instanceof Error ? error.message : "Error cargando los datos");
@@ -96,7 +99,7 @@ const Dashboard = () => {
   useEffect(() => {
     fetchAll();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+  }, [userId]);
 
   const buildStats = (
     rows: (SoldadoRecord | ServidorRecord)[],
@@ -151,39 +154,39 @@ const Dashboard = () => {
   );
 
   const handleEditSoldado = async (id: string, field: string, value: string) => {
-    const updated = await updateSoldadoField(token!, id, field, value);
+    const updated = await updateSoldadoField(id, field, value);
     setSoldados((prev) => prev.map((s) => (s._id === id ? updated : s)));
   };
 
   const handleEditServidor = async (id: string, field: string, value: unknown) => {
-    const updated = await updateServidorField(token!, id, field, value);
+    const updated = await updateServidorField(id, field, value);
     setServidores((prev) => prev.map((s) => (s._id === id ? updated : s)));
   };
 
   const handleRoleChange = async (id: string, role: string) => {
-    const updated = await updateServidorRole(token!, id, role);
+    const updated = await updateServidorRole(id, role);
     setServidores((prev) => prev.map((s) => (s._id === id ? updated : s)));
   };
 
   const handleDeleteSoldado = async (id: string) => {
-    await deleteSoldado(token!, id);
+    await deleteSoldado(id);
     setSoldados((prev) => prev.filter((s) => s._id !== id));
-    if (isSuperAdmin) setEliminados(await listEliminados(token!));
+    if (isSuperAdmin) setEliminados(await listEliminados());
   };
 
   const handleDeleteServidor = async (id: string) => {
-    await deleteServidor(token!, id);
+    await deleteServidor(id);
     setServidores((prev) => prev.filter((s) => s._id !== id));
-    if (isSuperAdmin) setEliminados(await listEliminados(token!));
+    if (isSuperAdmin) setEliminados(await listEliminados());
   };
 
   const handleResetMerch = async (id: string) => {
-    const updated = await resetServidorMerch(token!, id);
+    const updated = await resetServidorMerch(id);
     setServidores((prev) => prev.map((s) => (s._id === id ? updated : s)));
   };
 
   const handleRestore = async (id: string) => {
-    await restoreEliminado(token!, id);
+    await restoreEliminado(id);
     await fetchAll();
   };
 
@@ -191,7 +194,7 @@ const Dashboard = () => {
     <div className="dashboardPage">
       <header className="dashboardHeader">
         <div className="dashboardHeaderLeft">
-          <img src="/logo.png" alt="ITER 4.12" className="dashboardLogo" />
+          <LogoLink className="dashboardLogo" />
           <div className="dashboardTitle">
             <h1>Dashboard</h1>
           </div>
@@ -232,7 +235,7 @@ const Dashboard = () => {
         {errorMsg && <p className="loginError">{errorMsg}</p>}
 
         {isLoading ? (
-          <p className="emptyState">Cargando datos...</p>
+          <PageLoader variant="inline" label="Cargando datos" />
         ) : (
           <>
             {view !== "eliminados" && view !== "pedido" && (
@@ -293,7 +296,6 @@ const Dashboard = () => {
                 rows={servidores}
                 showEliminados={isSuperAdmin}
                 settings={settings}
-                token={token!}
                 canEditSettings={canEditMerchSettings}
                 onViewChange={setView}
                 onEditField={handleEditServidor}
@@ -316,7 +318,6 @@ const Dashboard = () => {
       {showSettingsModal && (
         <SettingsModal
           settings={settings}
-          token={token!}
           canEdit={canEditSettings}
           totalSubsidyUsed={totalSubsidyUsed}
           onSaved={setSettings}

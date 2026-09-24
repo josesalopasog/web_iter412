@@ -1,6 +1,6 @@
 import type { RegistrationServidoresDTO } from "../pages/Servidores/form/types";
 
-const API_URL = import.meta.env.VITE_API_URL;
+import { API_URL } from "./http";
 
 export const registerServidor = async (payload: RegistrationServidoresDTO) => {
   const res = await fetch(`${API_URL}/api/users/servidores`, {

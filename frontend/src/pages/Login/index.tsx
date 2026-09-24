@@ -1,3 +1,4 @@
+import LogoLink from "../../components/LogoLink";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
@@ -5,7 +6,7 @@ import PasswordInput from "../../components/PasswordInput";
 import "./styles.css";
 
 const Login = () => {
-  const { login } = useAuth();
+  const { login, sessionExpired } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -32,7 +33,7 @@ const Login = () => {
   return (
     <div className="loginPage">
       <div className="loginCard">
-        <img src="/logo.png" alt="ITER 4.12" className="loginLogo" />
+        <LogoLink className="loginLogo" />
         <h1>Iniciar sesión</h1>
         <p className="loginSub">Acceso para servidores de ITER 4.12</p>
 
@@ -65,6 +66,11 @@ const Login = () => {
             />
           </div>
 
+          {sessionExpired && !errorMsg && (
+            <p className="loginError" role="status">
+              Tu sesión expiró. Inicia sesión de nuevo.
+            </p>
+          )}
           {errorMsg && <p className="loginError">{errorMsg}</p>}
 
           <button className="btnPrimary" type="submit" disabled={isLoading}>

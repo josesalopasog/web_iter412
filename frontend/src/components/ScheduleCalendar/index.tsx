@@ -67,7 +67,9 @@ const ScheduleCalendar = () => {
   );
 
   return (
-    <>
+    // translate="no": los traductores automáticos del navegador reescriben el DOM de FullCalendar
+    // y React acaba duplicando los textos ("mesmes", "3030").
+    <div translate="no" className="notranslate">
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
         initialView="dayGridMonth"
@@ -92,7 +94,7 @@ const ScheduleCalendar = () => {
           list: "Lista",
         }}
       />
-    </>
+    </div>
   );
 };
 

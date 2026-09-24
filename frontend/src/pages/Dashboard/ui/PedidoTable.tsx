@@ -32,7 +32,6 @@ type Props = {
   rows: ServidorRecord[];
   showEliminados: boolean;
   settings: AppSettings;
-  token: string;
   canEditSettings: boolean;
   onViewChange: (view: View) => void;
   onEditField: (id: string, field: string, value: unknown) => Promise<void>;
@@ -80,7 +79,6 @@ const PedidoTable: React.FC<Props> = ({
   rows,
   showEliminados,
   settings,
-  token,
   canEditSettings,
   onViewChange,
   onEditField,
@@ -354,7 +352,6 @@ const PedidoTable: React.FC<Props> = ({
       {showSettings && (
         <MerchSettingsModal
           settings={settings}
-          token={token}
           canEdit={canEditSettings}
           onSaved={onSettingsSaved}
           onClose={() => setShowSettings(false)}

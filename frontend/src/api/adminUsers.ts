@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000";
+import { authedRequest, setAccessToken } from "./http";
 
 export type SoldadoRecord = {
   _id: string;
@@ -53,98 +53,75 @@ export type LogRecord = {
   createdAt: string;
 };
 
-const authedRequest = async <T>(
-  path: string,
-  token: string,
-  init?: RequestInit
-): Promise<T> => {
-  const res = await fetch(`${API_URL}${path}`, {
-    ...init,
-    headers: {
-      Authorization: `Bearer ${token}`,
-      ...(init?.body ? { "Content-Type": "application/json" } : {}),
-      ...init?.headers,
-    },
-  });
+export const listSoldados = () =>
+  authedRequest<SoldadoRecord[]>("/api/users/soldados");
 
-  const data = await res.json().catch(() => ({}));
+export const listServidores = () =>
+  authedRequest<ServidorRecord[]>("/api/users/servidores");
 
-  if (!res.ok) {
-    const msg = typeof data?.message === "string" ? data.message : "Error de solicitud";
-    throw new Error(msg);
-  }
-
-  return data as T;
-};
-
-export const listSoldados = (token: string) =>
-  authedRequest<SoldadoRecord[]>("/api/users/soldados", token);
-
-export const listServidores = (token: string) =>
-  authedRequest<ServidorRecord[]>("/api/users/servidores", token);
-
-export const getServidorByDocument = (token: string, documentNumber: string) =>
+export const getServidorByDocument = (documentNumber: string) =>
   authedRequest<Record<string, unknown>>(
     `/api/users/servidores/by-document/${encodeURIComponent(documentNumber)}`,
-    token
   );
 
-export const getSoldadoByDocument = (token: string, documentNumber: string) =>
+export const getSoldadoByDocument = (documentNumber: string) =>
   authedRequest<Record<string, unknown>>(
     `/api/users/soldados/by-document/${encodeURIComponent(documentNumber)}`,
-    token
   );
 
-export const getMyServidorProfile =(token: string) =>
-  authedRequest<Record<string, unknown>>("/api/users/servidores/me", token);
+export const getMyServidorProfile =() =>
+  authedRequest<Record<string, unknown>>("/api/users/servidores/me");
 
-export const updateSoldadoField = (token: string, id: string, field: string, value: unknown) =>
-  authedRequest<SoldadoRecord>(`/api/users/soldados/${id}`, token, {
+export const updateSoldadoField = (id: string, field: string, value: unknown) =>
+  authedRequest<SoldadoRecord>(`/api/users/soldados/${id}`, {
     method: "PATCH",
     body: JSON.stringify({ field, value }),
   });
 
-export const updateServidorField = (token: string, id: string, field: string, value: unknown) =>
-  authedRequest<ServidorRecord>(`/api/users/servidores/${id}`, token, {
+export const updateServidorField = (id: string, field: string, value: unknown) =>
+  authedRequest<ServidorRecord>(`/api/users/servidores/${id}`, {
     method: "PATCH",
     body: JSON.stringify({ field, value }),
   });
 
-export const updateMyServidorField = (token: string, field: string, value: unknown) =>
-  authedRequest<ServidorRecord>("/api/users/servidores/me", token, {
+export const updateMyServidorField = (field: string, value: unknown) =>
+  authedRequest<ServidorRecord>("/api/users/servidores/me", {
     method: "PATCH",
     body: JSON.stringify({ field, value }),
   });
 
-export const changeMyPassword = (token: string, oldPassword: string, newPassword: string) =>
-  authedRequest<{ ok: true }>("/api/users/servidores/me/password", token, {
+export const changeMyPassword = async (oldPassword: string, newPassword: string) => {
+  const result = await authedRequest<{ ok: true; token: string }>("/api/users/servidores/me/password", {
     method: "PATCH",
     body: JSON.stringify({ oldPassword, newPassword }),
   });
+  // El cambio de contraseña revoca los tokens anteriores; esta sesión sigue con el nuevo.
+  setAccessToken(result.token);
+};
 
-export const updateServidorRole = (token: string, id: string, role: string) =>
-  authedRequest<ServidorRecord>(`/api/users/servidores/${id}/role`, token, {
+export const updateServidorRole = (id: string, role: string) =>
+  authedRequest<ServidorRecord>(`/api/users/servidores/${id}/role`, {
     method: "PATCH",
     body: JSON.stringify({ role }),
   });
 
-export const deleteSoldado = (token: string, id: string) =>
-  authedRequest<{ ok: true }>(`/api/users/soldados/${id}`, token, { method: "DELETE" });
+export const deleteSoldado = (id: string) =>
+  authedRequest<{ ok: true }>(`/api/users/soldados/${id}`, { method: "DELETE" });
 
-export const deleteServidor = (token: string, id: string) =>
-  authedRequest<{ ok: true }>(`/api/users/servidores/${id}`, token, { method: "DELETE" });
+export const deleteServidor = (id: string) =>
+  authedRequest<{ ok: true }>(`/api/users/servidores/${id}`, { method: "DELETE" });
 
-export const resetServidorMerch = (token: string, id: string) =>
-  authedRequest<ServidorRecord>(`/api/users/servidores/${id}/reset-merch`, token, {
+export const resetServidorMerch = (id: string) =>
+  authedRequest<ServidorRecord>(`/api/users/servidores/${id}/reset-merch`, {
     method: "PATCH",
   });
 
-export const listEliminados = (token: string) =>
-  authedRequest<EliminadoRecord[]>("/api/users/eliminados", token);
+export const listEliminados = () =>
+  authedRequest<EliminadoRecord[]>("/api/users/eliminados");
 
-export const restoreEliminado = (token: string, id: string) =>
-  authedRequest<Record<string, unknown>>(`/api/users/eliminados/${id}/restore`, token, {
+export const restoreEliminado = (id: string) =>
+  authedRequest<Record<string, unknown>>(`/api/users/eliminados/${id}/restore`, {
     method: "POST",
   });
 
-export const listLogs = (token: string) => authedRequest<LogRecord[]>("/api/logs", token);
+export const listLogs = () => authedRequest<LogRecord[]>("/api/logs");

@@ -1,3 +1,4 @@
+import LogoLink from "../components/LogoLink";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "./AuthContext";
@@ -12,7 +13,7 @@ const AlreadyLoggedInNotice = () => {
   return (
     <div className="loginPage">
       <div className="loginCard">
-        <img src="/logo.png" alt="ITER 4.12" className="loginLogo" />
+        <LogoLink className="loginLogo" />
         <h1>Ya iniciaste sesión</h1>
         <p className="loginSub">Primero debes cerrar sesión para continuar.</p>
 

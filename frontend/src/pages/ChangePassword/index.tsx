@@ -1,3 +1,4 @@
+import LogoLink from "../../components/LogoLink";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
@@ -8,7 +9,7 @@ import "../Login/styles.css";
 import "./styles.css";
 
 const ChangePassword = () => {
-  const { token, user } = useAuth();
+  const { user } = useAuth();
   const isSuperadmin = user?.role === "SUPERADMIN";
 
   const [oldPassword, setOldPassword] = useState("");
@@ -27,15 +28,14 @@ const ChangePassword = () => {
   const [adminSuccessMsg, setAdminSuccessMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isSuperadmin || !token) return;
-    listServidores(token)
+    if (!isSuperadmin) return;
+    listServidores()
       .then((rows) => {
         setServidores(rows);
         setSelectedId((prev) => prev || rows[0]?._id || "");
       })
       .catch(() => {});
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuperadmin, token]);
+  }, [isSuperadmin]);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -53,8 +53,8 @@ const ChangePassword = () => {
 
     setIsSaving(true);
     try {
-      await changeMyPassword(token!, oldPassword, newPassword);
-      setSuccessMsg("Contraseña actualizada correctamente.");
+      await changeMyPassword(oldPassword, newPassword);
+      setSuccessMsg("Contraseña actualizada. Por seguridad se cerró tu sesión en otros dispositivos.");
       setOldPassword("");
       setNewPassword("");
       setConfirmPassword("");
@@ -85,7 +85,7 @@ const ChangePassword = () => {
 
     setIsSavingAdmin(true);
     try {
-      await updateServidorField(token!, selectedId, "password", adminNewPassword);
+      await updateServidorField(selectedId, "password", adminNewPassword);
       setAdminSuccessMsg("Contraseña actualizada correctamente.");
       setAdminNewPassword("");
       setAdminConfirmPassword("");
@@ -100,7 +100,7 @@ const ChangePassword = () => {
     <div className="loginPage">
       <div className="loginStack">
         <div className="loginCard">
-          <img src="/logo.png" alt="ITER 4.12" className="loginLogo" />
+          <LogoLink className="loginLogo" />
           <h1>Cambiar contraseña</h1>
           <p className="loginSub">Actualiza la contraseña de tu cuenta</p>
 

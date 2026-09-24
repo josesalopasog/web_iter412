@@ -1,6 +1,7 @@
 import instagram_logo from "../../../assets/svg/Instagram.svg";
 import whatsapp_logo from "../../../assets/svg/WhatsApp.svg";
 import { useMemo, useState } from "react";
+import Reveal from "../../../components/Reveal";
 
 import "./styles.css";
 
@@ -37,15 +38,21 @@ const Contact = () => {
     <section id="contact" aria-label="Contacto">
       <div className="container">
         <div className="section-head">
-          <h2>Contacto</h2>
-          <h3>¿Quieres saber más o unirte a nosotros?</h3>
-          <p className="sub">
-            Envíanos un mensaje y se abrirá tu correo con el texto listo para
-            enviar.
-          </p>
+          <Reveal>
+            <h2>Contacto</h2>
+          </Reveal>
+          <Reveal delay={80}>
+            <h3>¿Quieres saber más o unirte a nosotros?</h3>
+          </Reveal>
+          <Reveal delay={160}>
+            <p className="sub">
+              Envíanos un mensaje y se abrirá tu correo con el texto listo para
+              enviar.
+            </p>
+          </Reveal>
         </div>
 
-        <div>
+        <Reveal delay={220}>
           <div className="card">
             <h3>📨 Enviar correo</h3>
 
@@ -128,8 +135,8 @@ const Contact = () => {
               <a href={`mailto:${TO_EMAIL}`}>{TO_EMAIL}</a>
             </p>
           </div>
-        </div>
-        <div className="pills-container">
+        </Reveal>
+        <Reveal className="pills-container" delay={300}>
           <a
             className="pill"
             href="https://www.instagram.com/iter4.12bogota/"
@@ -164,7 +171,7 @@ const Contact = () => {
               <strong>WhatsApp</strong> 318-443-8046
             </span>
           </a>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

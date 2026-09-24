@@ -8,7 +8,6 @@ import type { SettingsChange } from "./ConfirmSettingsModal";
 
 type Props = {
   settings: AppSettings;
-  token: string;
   canEdit: boolean;
   totalSubsidyUsed: number;
   onSaved: (updated: AppSettings) => void;
@@ -132,7 +131,7 @@ const ReadOnlyField: React.FC<{ label: string; value: string }> = ({ label, valu
   </div>
 );
 
-const SettingsModal: React.FC<Props> = ({ settings, token, canEdit, totalSubsidyUsed, onSaved, onClose }) => {
+const SettingsModal: React.FC<Props> = ({ settings, canEdit, totalSubsidyUsed, onSaved, onClose }) => {
   const [draft, setDraft] = useState<AppSettings>(settings);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -159,7 +158,7 @@ const SettingsModal: React.FC<Props> = ({ settings, token, canEdit, totalSubsidy
     try {
       const payload: Partial<AppSettings> = {};
       for (const field of changedFields) payload[field] = draft[field];
-      const updated = await updateSettings(token, payload);
+      const updated = await updateSettings(payload);
       onSaved(updated);
       setDraft(updated);
       setShowConfirm(false);

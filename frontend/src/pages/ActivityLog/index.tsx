@@ -1,6 +1,8 @@
+import LogoLink from "../../components/LogoLink";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
+import PageLoader from "../../components/Spinner";
 import { listLogs } from "../../api/adminUsers";
 import type { LogRecord } from "../../api/adminUsers";
 import { LogoutIcon, UserIcon } from "../../assets/icons";
@@ -21,7 +23,8 @@ const formatDate = (iso: string) => {
 };
 
 const Logs = () => {
-  const { token, logout } = useAuth();
+  const { user, logout } = useAuth();
+  const userId = user?.sub;
   const navigate = useNavigate();
   const [logs, setLogs] = useState<LogRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -29,20 +32,20 @@ const Logs = () => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   useEffect(() => {
-    if (!token) return;
-    listLogs(token)
+    if (!userId) return;
+    listLogs()
       .then(setLogs)
       .catch((error: unknown) =>
         setErrorMsg(error instanceof Error ? error.message : "Error cargando el registro")
       )
       .finally(() => setIsLoading(false));
-  }, [token]);
+  }, [userId]);
 
   return (
     <div className="dashboardPage">
       <header className="dashboardHeader">
         <div className="dashboardHeaderLeft">
-          <img src="/logo.png" alt="ITER 4.12" className="dashboardLogo" />
+          <LogoLink className="dashboardLogo" />
           <div className="dashboardTitle">
             <h1>Registro de actividad</h1>
           </div>
@@ -79,7 +82,7 @@ const Logs = () => {
         {errorMsg && <p className="loginError">{errorMsg}</p>}
 
         {isLoading ? (
-          <p className="emptyState">Cargando...</p>
+          <PageLoader variant="inline" />
         ) : (
           <div className="tableSection">
             <div className="tableSectionHead">

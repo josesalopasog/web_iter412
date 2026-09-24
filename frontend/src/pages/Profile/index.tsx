@@ -1,6 +1,8 @@
+import LogoLink from "../../components/LogoLink";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
+import PageLoader from "../../components/Spinner";
 import { getMyServidorProfile, updateMyServidorField } from "../../api/adminUsers";
 import { LogoutIcon } from "../../assets/icons";
 import ServidorProfileForm from "./ui/ServidorProfileForm";
@@ -9,7 +11,8 @@ import { roleLabel } from "../../auth/roleLabel";
 import "./styles.css";
 
 const Profile = () => {
-  const { user, token, logout } = useAuth();
+  const { user, logout } = useAuth();
+  const userId = user?.sub;
   const navigate = useNavigate();
   const isAdmin = user?.role === "ADMIN" || user?.role === "SUPERADMIN" || user?.role === "TREASURER";
   const isSuperadmin = user?.role === "SUPERADMIN";
@@ -19,21 +22,21 @@ const Profile = () => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const loadProfile = () => {
-    if (!token) return;
-    getMyServidorProfile(token)
+    if (!userId) return;
+    getMyServidorProfile()
       .then(setData)
       .catch((error: unknown) =>
         setErrorMsg(error instanceof Error ? error.message : "Error cargando tu perfil")
       );
   };
 
-  useEffect(loadProfile, [token]);
+  useEffect(loadProfile, [userId]);
 
   return (
     <div className="profilePage">
       <header className="profileHeader">
         <div className="profileHeaderLeft">
-          <img src="/logo.png" alt="ITER 4.12" className="profileLogo" />
+          <LogoLink className="profileLogo" />
           <h1>Mi perfil</h1>
         </div>
         <div className="profileHeaderRight">
@@ -73,14 +76,14 @@ const Profile = () => {
 
         {errorMsg && <p className="loginError">{errorMsg}</p>}
 
-        {!data && !errorMsg && <p className="emptyState">Cargando...</p>}
+        {!data && !errorMsg && <PageLoader variant="inline" />}
 
         {data && (
           <ServidorProfileForm
             data={data}
             rowLabel="Mi perfil"
             canEditEmail={isSuperadmin}
-            save={(field, value) => updateMyServidorField(token!, field, value).then(() => undefined)}
+            save={(field, value) => updateMyServidorField(field, value).then(() => undefined)}
             onSaved={loadProfile}
           />
         )}

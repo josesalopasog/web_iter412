@@ -12,13 +12,14 @@ import {
   deleteServidor,
 } from "./servidor.controller.js";
 import { requireAuth, requireRole } from "../../../middlewares/auth.middleware.js";
+import { changePasswordRateLimiter } from "../../../middlewares/rateLimit.middleware.js";
 
 const router = Router();
 
 router.post("/", createServidorFromForm);
 router.get("/me", requireAuth, getMyServidorProfile);
 router.patch("/me", requireAuth, updateMyServidor);
-router.patch("/me/password", requireAuth, changeMyPassword);
+router.patch("/me/password", requireAuth, changePasswordRateLimiter, changeMyPassword);
 router.get("/", requireAuth, requireRole("ADMIN", "SUPERADMIN", "TREASURER"), listServidores);
 router.get(
   "/by-document/:documentNumber",

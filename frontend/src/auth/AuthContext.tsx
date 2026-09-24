@@ -1,89 +1,120 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { login as loginRequest } from "../api/auth";
-import { getMyServidorProfile } from "../api/adminUsers";
+import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
+import {
+  login as loginRequest,
+  logout as logoutRequest,
+  logoutAllDevices as logoutAllRequest,
+} from "../api/auth";
+import { refreshSession, setAccessToken, setSessionExpiredHandler } from "../api/http";
 import type { AuthUser } from "./types";
 
-const STORAGE_KEY = "iter412_auth";
+// Solo indica que este navegador tuvo una sesión: no contiene ningún dato sensible.
+// Evita pedir un refresh (y ver un 401) a cada visitante anónimo de la página pública.
+const SESSION_HINT_KEY = "iter412_session";
+// Clave antigua, cuando el JWT completo se guardaba en localStorage.
+const LEGACY_STORAGE_KEY = "iter412_auth";
 
-type StoredAuth = {
-  token: string;
-  user: AuthUser;
+const readSessionHint = () => {
+  try {
+    localStorage.removeItem(LEGACY_STORAGE_KEY);
+    return localStorage.getItem(SESSION_HINT_KEY) === "1";
+  } catch {
+    // Almacenamiento bloqueado (incógnito estricto, etc.): intentamos igual con la cookie.
+    return true;
+  }
+};
+
+const writeSessionHint = (active: boolean) => {
+  try {
+    if (active) localStorage.setItem(SESSION_HINT_KEY, "1");
+    else localStorage.removeItem(SESSION_HINT_KEY);
+  } catch {
+    // Sin almacenamiento: la sesión sigue funcionando con la cookie.
+  }
 };
 
 type AuthContextValue = {
-  token: string | null;
   user: AuthUser | null;
   isLoading: boolean;
+  /** true si la sesión terminó sola (expiró o fue revocada), para avisarlo en el login. */
+  sessionExpired: boolean;
   login: (email: string, password: string) => Promise<AuthUser>;
-  logout: () => void;
+  logout: () => Promise<void>;
+  logoutAllDevices: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [sessionExpired, setSessionExpired] = useState(false);
 
   useEffect(() => {
-    const bootstrap = async () => {
-      let stored: StoredAuth | null = null;
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) stored = JSON.parse(raw) as StoredAuth;
-      } catch {
-        localStorage.removeItem(STORAGE_KEY);
-      }
+    setSessionExpiredHandler(() => {
+      setAccessToken(null);
+      writeSessionHint(false);
+      setUser(null);
+      setSessionExpired(true);
+    });
+    return () => setSessionExpiredHandler(null);
+  }, []);
 
-      if (!stored) {
+  useEffect(() => {
+    let cancelled = false;
+
+    const bootstrap = async () => {
+      if (!readSessionHint()) {
         setIsLoading(false);
         return;
       }
 
-      setToken(stored.token);
-      setUser(stored.user);
-
       try {
-        const profile = await getMyServidorProfile(stored.token);
-        const refreshedUser: AuthUser = {
-          sub: stored.user.sub,
-          email: String(profile.email ?? stored.user.email),
-          role: (profile.role as AuthUser["role"]) ?? stored.user.role,
-          firstNames: String(profile.firstNames ?? stored.user.firstNames),
-          lastNames: String(profile.lastNames ?? stored.user.lastNames),
-          preferredName: String(profile.preferredName ?? stored.user.preferredName),
-        };
-        setUser(refreshedUser);
-        localStorage.setItem(
-          STORAGE_KEY,
-          JSON.stringify({ token: stored.token, user: refreshedUser })
-        );
+        const session = await refreshSession();
+        if (cancelled) return;
+        if (session) {
+          setUser(session.user);
+        } else {
+          writeSessionHint(false);
+        }
       } catch {
-        // Keep the cached session if the refresh fails (e.g. offline).
+        // Sin conexión: se queda sin sesión en memoria; la cookie sigue vigente para el próximo intento.
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     };
 
     bootstrap();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = useCallback(async (email: string, password: string) => {
     const result = await loginRequest(email, password);
-    setToken(result.token);
+    writeSessionHint(true);
+    setSessionExpired(false);
     setUser(result.user);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(result));
     return result.user;
-  };
+  }, []);
 
-  const logout = () => {
-    setToken(null);
+  const logout = useCallback(async () => {
+    writeSessionHint(false);
     setUser(null);
-    localStorage.removeItem(STORAGE_KEY);
-  };
+    setSessionExpired(false);
+    await logoutRequest();
+  }, []);
+
+  const logoutAllDevices = useCallback(async () => {
+    await logoutAllRequest();
+    writeSessionHint(false);
+    setUser(null);
+    setSessionExpired(false);
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ token, user, isLoading, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, isLoading, sessionExpired, login, logout, logoutAllDevices }}
+    >
       {children}
     </AuthContext.Provider>
   );

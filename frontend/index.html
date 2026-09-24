@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -43,9 +43,45 @@
 
     <!-- Canonical -->
     <link rel="canonical" href="https://iter412.com" />
-    
+    <style>
+      /* Pantalla de carga inicial: se muestra antes de que cargue el JS */
+      #splash {
+        position: fixed;
+        inset: 0;
+        z-index: 100000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fafafa;
+        transition: opacity 0.4s ease;
+      }
+      #splash.splash-hide {
+        opacity: 0;
+        pointer-events: none;
+      }
+      #splash .splash-ring {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: conic-gradient(from 0deg, rgba(22, 163, 74, 0) 0%, #16a34a 30%, #dc2626 65%, #7c3aed 100%);
+        -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 5px));
+        mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 5px));
+        animation: splash-rotate 0.9s linear infinite;
+      }
+      @keyframes splash-rotate {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #splash .splash-ring {
+          animation-duration: 2.4s;
+        }
+      }
+    </style>
   </head>
   <body>
+    <div id="splash" role="status" aria-label="Cargando"><div class="splash-ring"></div></div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -1,6 +1,8 @@
+import LogoLink from "../../components/LogoLink";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
+import PageLoader from "../../components/Spinner";
 import {
   getServidorByDocument,
   getSoldadoByDocument,
@@ -15,7 +17,8 @@ import "../Profile/styles.css";
 
 const Participant = () => {
   const { tipo, documento } = useParams<{ tipo: string; documento: string }>();
-  const { user, token, logout } = useAuth();
+  const { user, logout } = useAuth();
+  const userId = user?.sub;
   const navigate = useNavigate();
   const isSuperadmin = user?.role === "SUPERADMIN";
   const isServidor = tipo === "servidores";
@@ -25,16 +28,16 @@ const Participant = () => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const load = () => {
-    if (!token || !documento) return;
+    if (!userId || !documento) return;
     const request = isServidor ? getServidorByDocument : getSoldadoByDocument;
-    request(token, documento)
+    request(documento)
       .then(setData)
       .catch((error: unknown) =>
         setErrorMsg(error instanceof Error ? error.message : "Error cargando las respuestas")
       );
   };
 
-  useEffect(load, [token, documento, isServidor]);
+  useEffect(load, [userId, documento, isServidor]);
 
   const fullName = data ? `${String(data.firstNames ?? "")} ${String(data.lastNames ?? "")}`.trim() : "";
   const id = data ? String(data._id) : "";
@@ -43,7 +46,7 @@ const Participant = () => {
     <div className="profilePage">
       <header className="profileHeader">
         <div className="profileHeaderLeft">
-          <img src="/logo.png" alt="ITER 4.12" className="profileLogo" />
+          <LogoLink className="profileLogo" />
           <h1>Respuestas del participante</h1>
         </div>
         <div className="profileHeaderRight">
@@ -75,14 +78,14 @@ const Participant = () => {
         )}
 
         {errorMsg && <p className="loginError">{errorMsg}</p>}
-        {!data && !errorMsg && <p className="emptyState">Cargando...</p>}
+        {!data && !errorMsg && <PageLoader variant="inline" />}
 
         {data && isServidor && (
           <ServidorProfileForm
             data={data}
             rowLabel={fullName}
             canEditEmail={isSuperadmin}
-            save={(field, value) => updateServidorField(token!, id, field, value).then(() => undefined)}
+            save={(field, value) => updateServidorField(id, field, value).then(() => undefined)}
             onSaved={load}
           />
         )}
@@ -92,7 +95,7 @@ const Participant = () => {
             data={data}
             rowLabel={fullName}
             canEditEmail={isSuperadmin}
-            save={(field, value) => updateSoldadoField(token!, id, field, value).then(() => undefined)}
+            save={(field, value) => updateSoldadoField(id, field, value).then(() => undefined)}
             onSaved={load}
           />
         )}

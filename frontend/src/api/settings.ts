@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000";
+import { API_URL, authedRequest } from "./http";
 
 export type AppSettings = {
   soldadoPrice: number;
@@ -39,27 +39,8 @@ export type PublicSettings = {
   finalPaymentMonth: number;
 };
 
-const authedRequest = async <T>(path: string, token: string, init?: RequestInit): Promise<T> => {
-  const res = await fetch(`${API_URL}${path}`, {
-    ...init,
-    headers: {
-      Authorization: `Bearer ${token}`,
-      ...(init?.body ? { "Content-Type": "application/json" } : {}),
-      ...init?.headers,
-    },
-  });
 
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
-    const msg = typeof data?.message === "string" ? data.message : "Error de solicitud";
-    throw new Error(msg);
-  }
-
-  return data as T;
-};
-
-export const getSettings = (token: string) => authedRequest<AppSettings>("/api/settings", token);
+export const getSettings = () => authedRequest<AppSettings>("/api/settings");
 
 export const getPublicSettings = async (): Promise<PublicSettings> => {
   const res = await fetch(`${API_URL}/api/settings/public`);
@@ -71,14 +52,14 @@ export const getPublicSettings = async (): Promise<PublicSettings> => {
   return data as PublicSettings;
 };
 
-export const updateSettings = (token: string, changes: Partial<AppSettings>) =>
-  authedRequest<AppSettings>("/api/settings", token, {
+export const updateSettings = (changes: Partial<AppSettings>) =>
+  authedRequest<AppSettings>("/api/settings", {
     method: "PATCH",
     body: JSON.stringify(changes),
   });
 
-export const updateMerchSettings = (token: string, changes: Partial<AppSettings>) =>
-  authedRequest<AppSettings>("/api/settings/merch-prices", token, {
+export const updateMerchSettings = (changes: Partial<AppSettings>) =>
+  authedRequest<AppSettings>("/api/settings/merch-prices", {
     method: "PATCH",
     body: JSON.stringify(changes),
   });

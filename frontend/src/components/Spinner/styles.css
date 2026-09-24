@@ -1,0 +1,64 @@
+.spinner {
+  --spinner-size: 56px;
+  --spinner-thickness: 6px;
+  width: var(--spinner-size);
+  height: var(--spinner-size);
+  border-radius: 50%;
+  /* Cola que se desvanece: verde → rojo → morado, con la "cabeza" en morado. */
+  background: conic-gradient(from 0deg, rgba(22, 163, 74, 0) 0%, #16a34a 30%, #dc2626 65%, #7c3aed 100%);
+  -webkit-mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - var(--spinner-thickness)),
+    #000 calc(100% - var(--spinner-thickness) + 1px)
+  );
+  mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - var(--spinner-thickness)),
+    #000 calc(100% - var(--spinner-thickness) + 1px)
+  );
+  animation: spinner-rotate 0.9s linear infinite;
+}
+
+@keyframes spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.pageLoader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.pageLoader--fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #fafafa;
+  animation: pageLoader-in 0.2s ease both;
+}
+
+.pageLoader--inline {
+  width: 100%;
+  padding: 48px 0;
+}
+
+@keyframes pageLoader-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 2.4s;
+  }
+  .pageLoader--fullscreen {
+    animation: none;
+  }
+}
