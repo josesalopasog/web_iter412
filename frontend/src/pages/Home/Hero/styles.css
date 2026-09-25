@@ -9,17 +9,10 @@
   text-align: center;
 }
 
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.55)),
-    url("../../../assets/images/hero-bg-2.png");
-  background-size: cover;
-  background-position: center;
-  transform: scale(1.02);
-}
+/* El fondo fotográfico se reemplazó por la escena 2.5D de <HeroBackground /> (primer hijo de
+   .hero). El velo oscuro para que el texto siga siendo legible vive ahí (.hero-background::after),
+   así queda por encima de las capas de la escena pero por debajo de este contenido real, sin
+   necesidad de z-index manual. */
 
 .hero-content {
   position: relative;
@@ -111,24 +104,33 @@
   }
 }
 
-.hero > * {
+/* Por clase (no por posición): <HeroBackground /> se agregó como primer hijo de .hero para
+   pintarse detrás de todo, y eso corría los nth-child de este contenido; así queda intacto sin
+   importar en qué punto del DOM quede el fondo. Mismos elementos, mismos tiempos que antes. */
+.hero > .hero-content,
+.hero > .animated-border-container,
+.hero > .hero-badge,
+.hero > .scroll-hint {
   animation: hero-fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.hero > *:nth-child(2) {
+.hero > .animated-border-container {
   animation-delay: 0.12s;
 }
 
-.hero > *:nth-child(3) {
+.hero > .hero-badge {
   animation-delay: 0.24s;
 }
 
-.hero > *:nth-child(n + 4) {
+.hero > .scroll-hint {
   animation-delay: 0.36s;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero > * {
+  .hero > .hero-content,
+  .hero > .animated-border-container,
+  .hero > .hero-badge,
+  .hero > .scroll-hint {
     animation: none;
   }
 }

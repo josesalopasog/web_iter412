@@ -1,0 +1,227 @@
+/* Fondo 2.5D del Hero: una pila de capas absolutas (misma caja que .hero), cada una movida por
+   JS (parallax, ver HeroBackground.tsx) y con una entrada por fundido escalonada en CSS.
+   El orden aquí abajo es el orden de aparición en el DOM = el orden de profundidad (la última
+   capa declarada se pinta encima de las anteriores). */
+
+.hero-background {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  /* Detrás de los bordes difuminados de sky.png, para que no se vea un salto a blanco. */
+  background: linear-gradient(180deg, #1b2340 0%, #3a2c55 45%, #6b3f52 78%, #8a5a4a 100%);
+}
+
+/* Velo oscuro por encima de toda la escena (pero por debajo del contenido real del Hero, que
+   viene después en el DOM): mantiene el texto blanco legible, igual que el overlay original. */
+.hero-background::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.45));
+}
+
+.hb-layer {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+  opacity: 0;
+  animation: hb-fade-in 0.55s ease-out forwards;
+}
+
+.hb-layer img {
+  display: block;
+  pointer-events: none;
+  user-select: none;
+}
+
+@keyframes hb-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---------- 1. Cielo: capa más profunda, cubre todo el Hero ---------- */
+.hb-sky {
+  animation-delay: 0s;
+}
+.hb-sky img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---------- 5, 13: montaña lejana y jóvenes ----------
+   Van a ancho completo (mountains_front NO: ver más abajo, tiene su propio tamaño). Medido en
+   los .svg que exportó el usuario desde Figma (cada uno trae el viewBox con el tamaño exacto con
+   que lo puso ahí, relativo a sky.svg que es el lienzo de referencia: 1819 de ancho): mountains_back
+   y youth_silhouette sí van a 100% de ancho. */
+.hb-mountains-back {
+  animation-delay: 0.3s;
+}
+.hb-mountains-back img {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: auto;
+  min-width: 100%;
+  max-width: none;
+  transform: translateX(-50%);
+}
+
+/* ---------- 8. Montaña cercana con la capilla ----------
+   A diferencia de mountains_back (fondo completo), en el .svg de Figma mountains_front es más
+   chica: su alto es ~50.5% del alto de mountains_back (306 vs 606, medidos en el mismo lienzo de
+   referencia). Por eso va por altura -no por ancho fijo, que con su proporción tan panorámica
+   (3:1) la dejaba demasiado baja (~7% del alto del Hero en vez de proporcional a la franja del
+   terreno)- calculada como esa misma fracción de los "34vh" de mountains_back: 34 × 0.505 ≈ 17vh.
+   Va anclada a la izquierda porque la capilla siempre aparece de ese lado en las referencias. */
+.hb-mountains-front {
+  animation-delay: 0.5s;
+}
+.hb-mountains-front img {
+  position: absolute;
+  left: 0;
+  /* La multitud (youth) empieza a tener contenido opaco desde ~21vh sobre el borde inferior; si
+     mountains_front va a bottom:0 queda tapada por completo detrás de la gente. La subo para que
+     la capilla se vea por encima de sus cabezas, no detrás. */
+  bottom: 8vh;
+  /* mountains_front comparte el mismo lienzo nativo de 2172×724 que mountains_back (son capas del
+     mismo documento de Figma), pero ahí el usuario la dejó en un cuadro más chico: mide 918px de
+     ancho contra los 1819px del lienzo de referencia (sky) ≈ 50.5%. Al pasar de SVG a webp ya no
+     hay un "cuadro" con ese tamaño propio -la imagen trae su resolución nativa completa-, así que
+     hay que fijar ese mismo 50.5% a mano o se vería el doble de grande. */
+  width: 80%;
+  max-width: 1500px;
+  min-width: 800px;
+}
+
+/* ---------- 6-7. Pinceles: acento verde (izq.) / morado (der.) ----------
+   A diferencia de las capas de arriba, estos NO van a tamaño completo del lienzo compartido: el
+   .png real es una pincelada diagonal que, pasada su franja superior, se abre y cruza hacia el
+   centro (por eso antes, a tamaño completo, tapaba el valle). En vez de eso, se recorta con
+   object-fit:cover solo la esquina superior de esa pincelada -la parte que en la maqueta de Figma
+   del usuario queda bien confinada al costado- y se estira a un tamaño propio, independiente de
+   las montañas: medí en esa maqueta que ocupa ~40% del ancho y ~23% de la altura, centrado
+   verticalmente alrededor del 42% de la pantalla (a la altura de los brazos de la cruz, no del
+   valle). */
+.hb-brush-green,
+.hb-brush-purple {
+  animation-delay: 0.3s;
+}
+.hb-brush-green img,
+.hb-brush-purple img {
+  position: absolute;
+  top: 28%;
+  width: 43vw;
+  max-width: 1000px;
+  object-fit: cover;
+}
+.hb-brush-green img {
+  left: 0;
+  object-position: 0% 20%;
+}
+.hb-brush-purple img {
+  right: 0;
+  object-position: 100% 20%;
+}
+
+/* ---------- 9. Cruz: foco visual, con flotar propio además del parallax ---------- */
+.hb-cross {
+  animation-delay: 0.64s;
+}
+.hb-cross-img {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  /* En el .svg de Figma la cruz mide de alto ~66% del lienzo de referencia (796x673 sobre un
+     lienzo de 1819x1024): por eso va por altura, no por ancho, para calcarle esa proporción sin
+     importar qué tan ancho sea el Hero. */
+  width: 100%;
+  max-width: 800px;
+  min-width: 400px;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 0 50px rgba(220, 38, 38, 0.4)) drop-shadow(0 0 110px rgba(255, 200, 120, 0.35));
+  animation: hb-cross-float 6s ease-in-out infinite;
+}
+
+@keyframes hb-cross-float {
+  0% {
+    translate: 0 0;
+  }
+  25% {
+    translate: 0 -6px;
+  }
+  50% {
+    translate: 0 0;
+  }
+  75% {
+    translate: 0 6px;
+  }
+  100% {
+    translate: 0 0;
+  }
+}
+
+/* ---------- 10-11. Árboles en primer plano ---------- */
+/* Estos dos sí son recortes propios (no comparten el lienzo de arriba): van por tamaño de altura
+   también, para quedar a la misma escala que esa franja sin importar el ancho del Hero. */
+.hb-trees-left,
+.hb-trees-right {
+  animation-delay: 0.78s;
+}
+/* Igual que mountains_front (ver arriba): el .svg tenía su propio cuadro más chico que su
+   resolución nativa (664px y 600px contra el lienzo de referencia de 1819px ≈ 36.5% y 33%); al
+   pasar a webp a resolución nativa hay que fijar ese mismo ancho a mano. */
+.hb-trees-left img {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 70%;
+  max-width: 700px;
+  min-width: 400px;
+
+}
+.hb-trees-right img {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 80%;
+  max-width: 1000px;
+  min-width: 400px;
+}
+
+/* ---------- 12. Jóvenes: capa más al frente, justo detrás del contenido real ---------- */
+/* Mismo lienzo/registro que montaña lejana (ver arriba): mismo rectángulo exacto. */
+.hb-youth {
+  animation-delay: 1.05s;
+}
+.hb-youth img {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: auto;
+  width: 100%;
+  min-width: 1500px;
+  
+  transform: translateX(-50%);
+}
+
+
+/* ---------- Responsive ---------- */
+/* El parallax por mouse ya se reduce/desactiva en JS (tablet/móvil); esto solo reacomoda tamaños
+   para que los pinceles y la cruz no compitan con el título en pantallas angostas. */
+
+/* ---------- Movimiento reducido: fondo estático, sin parallax ni animaciones ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .hb-layer {
+    animation: none;
+    opacity: 1;
+  }
+  .hb-cross-img {
+    animation: none;
+  }
+}

@@ -1,9 +1,11 @@
 import AnimatedBorder from "../../../components/AnimatedBorder";
+import HeroBackground from "./HeroBackground";
 import "./styles.css";
 
 const Hero = () => {
   return (
     <section id="home" className="hero" aria-label="Inicio">
+      <HeroBackground />
       <div className="hero-content">
         <h1>ITER 4.12 - ¡Por Dios y Para Dios!</h1>
         <p>

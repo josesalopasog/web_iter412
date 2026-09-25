@@ -1,6 +1,11 @@
-import ScheduleCalendar from "../../../components/ScheduleCalendar";
+import { lazy, Suspense } from "react";
 import Reveal from "../../../components/Reveal";
+import { PageLoader } from "../../../components/Spinner";
 import "./styles.css";
+
+// FullCalendar (react + daygrid + timegrid + list + interaction) pesa ~180KB gzip: se carga solo
+// cuando esta sección entra en pantalla, en vez de ir en el bundle inicial de la Home.
+const ScheduleCalendar = lazy(() => import("../../../components/ScheduleCalendar"));
 
 const Schedule = () => {
   return (
@@ -37,7 +42,9 @@ const Schedule = () => {
           </Reveal>
           <Reveal delay={280}>
             <div className="card span-8">
-              <ScheduleCalendar />
+              <Suspense fallback={<PageLoader variant="inline" label="Cargando calendario" />}>
+                <ScheduleCalendar />
+              </Suspense>
             </div>
           </Reveal>
         </div>
