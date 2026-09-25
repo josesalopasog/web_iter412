@@ -22,6 +22,7 @@ const Profile = lazy(() => import("../pages/Profile"));
 const ChangePassword = lazy(() => import("../pages/ChangePassword"));
 const Logs = lazy(() => import("../pages/ActivityLog"));
 const Participant = lazy(() => import("../pages/Participant"));
+const ManageSchedule = lazy(() => import("../pages/ManageSchedule"));
 
 const AppRoutes = () => {
   const routes = [
@@ -89,6 +90,14 @@ const AppRoutes = () => {
       element: (
         <ProtectedRoute allowedRoles={["SUPERADMIN"]} redirectTo="/profile">
           <Logs />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/eventos",
+      element: (
+        <ProtectedRoute allowedRoles={["ADMIN", "SUPERADMIN"]} redirectTo="/profile">
+          <ManageSchedule />
         </ProtectedRoute>
       ),
     },

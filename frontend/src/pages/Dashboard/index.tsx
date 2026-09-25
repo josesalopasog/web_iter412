@@ -18,7 +18,7 @@ import {
 import type { SoldadoRecord, ServidorRecord, EliminadoRecord } from "../../api/adminUsers";
 import { getSettings } from "../../api/settings";
 import type { AppSettings } from "../../api/settings";
-import { UserIcon, LogoutIcon, LogsIcon } from "../../assets/icons";
+import { UserIcon, LogoutIcon, LogsIcon, CalendarIcon } from "../../assets/icons";
 import StatsCards from "./ui/StatsCards";
 import SettingsModal from "./ui/SettingsModal";
 import UsersTable from "./ui/UsersTable";
@@ -59,6 +59,7 @@ const Dashboard = () => {
   const userId = user?.sub;
   const navigate = useNavigate();
   const isSuperAdmin = user?.role === "SUPERADMIN";
+  const canManageSchedule = user?.role === "SUPERADMIN" || user?.role === "ADMIN";
   const canEditSettings = user?.role === "SUPERADMIN" || user?.role === "TREASURER";
   const canEditMerchSettings =
     user?.role === "SUPERADMIN" || user?.role === "TREASURER" || user?.role === "ADMIN";
@@ -210,6 +211,16 @@ const Dashboard = () => {
           >
             <UserIcon className="w-5 h-5" />
           </button>
+          {canManageSchedule && (
+            <button
+              className="iconBtn"
+              type="button"
+              title="Cronograma de reuniones"
+              onClick={() => navigate("/eventos")}
+            >
+              <CalendarIcon className="w-5 h-5" />
+            </button>
+          )}
           {isSuperAdmin && (
             <button
               className="iconBtn"

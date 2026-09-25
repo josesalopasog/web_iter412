@@ -6,6 +6,7 @@ import usersRouter from "./modules/users/index.js";
 import authRouter from "./modules/auth/auth.routes.js";
 import logsRouter from "./modules/activityLog/log.routes.js";
 import settingsRouter from "./modules/settings/settings.routes.js";
+import eventsRouter from "./modules/events/event.routes.js";
 import { ApiError } from "./utils/errors.js";
 import { env } from "./config/env.js";
 
@@ -44,6 +45,7 @@ export const createApp = () => {
   app.use("/api/auth", authRouter);
   app.use("/api/logs", logsRouter);
   app.use("/api/settings", settingsRouter);
+  app.use("/api/events", eventsRouter);
 
   app.use((_req, res) => res.status(404).json({ message: "Not Found" }));
 

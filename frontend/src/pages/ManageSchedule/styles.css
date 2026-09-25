@@ -1,0 +1,269 @@
+.eventsPageTitle {
+  margin: 0 0 20px;
+  font-size: 1.8rem;
+  font-family: "CalSans";
+  font-weight: normal;
+  letter-spacing: normal;
+  color: #111;
+}
+
+/* Resumen a color de los eventos programados, mismo lenguaje visual que .statCard en Dashboard
+   (tarjetas con degradé), pero con nombres propios para no chocar con esas reglas (ver el
+   comentario grande más abajo, junto a .eventBtnGhost/.eventBtnPrimary). */
+.eventStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 26px;
+}
+
+.eventStatCard {
+  border-radius: 18px;
+  padding: 18px 20px;
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+}
+
+.eventStatValue {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-top: 6px;
+}
+
+.eventStatLabel {
+  font-size: 0.85rem;
+  opacity: 0.95;
+}
+
+.eventStatTotal {
+  background: linear-gradient(135deg, #6a00ff, #7030a0);
+}
+
+.eventStatOpen {
+  background: linear-gradient(135deg, #4ff034, #16a34a);
+}
+
+.eventStatClosed {
+  background: linear-gradient(135deg, #ff4d8d, #dc2626);
+}
+
+.eventStatRetiro {
+  background: linear-gradient(135deg, #c084fc, #7e22ce);
+}
+
+.eventStatOther {
+  background: linear-gradient(135deg, #60a5fa, #2563eb);
+}
+
+/* Modal (mismo look que Servidores/Register: Dashboard/styles.css no trae estas clases base). */
+@keyframes modalOverlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalCardPopIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: modalOverlayFadeIn 0.18s ease;
+}
+
+.modalCard {
+  width: min(480px, 96%);
+  border-radius: 18px;
+  padding: 14px;
+  background: #fff;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+  animation: modalCardPopIn 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modalHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modalHead h3 {
+  margin: 0;
+}
+
+.modalClose {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 8px 10px;
+  border-radius: 12px;
+}
+
+.modalClose:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.modalBody {
+  margin: 10px 0 0 0;
+  padding: 4px 0;
+  line-height: 1.6;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modalOverlay,
+  .modalCard {
+    animation: none;
+  }
+}
+
+/* Botones propios de esta página, con nombre distinto a .btnGhost/.btnPrimary: esos nombres ya
+   los usa Dashboard/styles.css en botones compuestos (.btnGhost.settingsBtn, .searchRowToggleBtn)
+   que fijan su propio width/height/padding; si esta hoja de estilos define aquí un .btnGhost
+   base, como el CSS no está scopeado por página, esas reglas quedan compitiendo por
+   especificidad empatada y el orden de carga (cuál página se visitó primero) decide quién gana,
+   rompiendo el tamaño de esos botones en el Dashboard. Con nombres propios no hay colisión. */
+.eventBtnPrimary {
+  border: 1px solid #111;
+  background: #111;
+  color: #fff;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.eventBtnPrimary:hover {
+  background: #1f1f1f;
+  border-color: #1f1f1f;
+}
+
+.eventBtnPrimary:disabled {
+  background: #e5e7eb;
+  border-color: #e5e7eb;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.eventBtnGhost {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #111;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.eventBtnGhost:hover {
+  background: #f3f4f6;
+}
+
+.eventBtnGhost:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.eventRow {
+  cursor: pointer;
+}
+
+.eventErrorMsg {
+  color: #dc2626;
+  font-weight: 600;
+  margin: 0 0 16px;
+}
+
+/* Formulario de agregar/editar evento */
+.eventForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.eventFormGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px 16px;
+}
+
+.eventFormFieldWide {
+  grid-column: span 4;
+}
+
+.eventFormCheckbox {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.eventFormCheckbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+}
+
+.eventFormTextarea {
+  min-height: 72px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.eventFormActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.eventsTableSection {
+  margin-top: 20px;
+}
+
+@media (max-width: 900px) {
+  .eventFormGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .eventFormFieldWide {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 560px) {
+  .eventFormGrid {
+    grid-template-columns: 1fr;
+  }
+  .eventFormFieldWide {
+    grid-column: span 1;
+  }
+}

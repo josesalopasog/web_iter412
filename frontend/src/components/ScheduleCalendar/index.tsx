@@ -1,25 +1,19 @@
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import interactionPlugin from "@fullcalendar/interaction";
 
-import { SCHEDULE } from "../../data/schedule.data";
-import type { ScheduleEvent } from "../../types/types";
-import { usePublicSettings } from "../../hooks/usePublicSettings";
+import { listPublicEvents } from "../../api/events";
+import type { EventRecord } from "../../api/events";
 import "./styles.css";
 
-const RETREAT_EVENT_ID = "evt-retiro-noviembre";
+const todayISO = () => new Date().toISOString().slice(0, 10);
 
-const pad2 = (n: number) => String(n).padStart(2, "0");
-const toISODate = (year: number, month: number, day: number) => `${year}-${pad2(month)}-${pad2(day)}`;
-
-const transformEvents = (events: ScheduleEvent[]) => {
+const transformEvents = (events: EventRecord[]) => {
   return events.map((event) => {
-    const startISO = event.start
-      ? `${event.dateISO}T${event.start}:00`
-      : event.dateISO;
+    const startISO = event.start ? `${event.dateISO}T${event.start}:00` : event.dateISO;
 
     const endISO =
       event.endDateISO && event.end
@@ -39,7 +33,7 @@ const transformEvents = (events: ScheduleEvent[]) => {
     }
 
     return {
-      id: event.id,
+      id: event._id,
       title: event.title,
       start: startISO,
       end: endISO,
@@ -50,21 +44,21 @@ const transformEvents = (events: ScheduleEvent[]) => {
 };
 
 const ScheduleCalendar = () => {
-  const { retreatMonth, retreatYear, fridayDate, sundayDate } = usePublicSettings();
+  const [events, setEvents] = useState<EventRecord[]>([]);
 
-  const schedule = useMemo(
-    () =>
-      SCHEDULE.map((event) =>
-        event.id === RETREAT_EVENT_ID
-          ? {
-              ...event,
-              dateISO: toISODate(retreatYear, retreatMonth, fridayDate),
-              endDateISO: toISODate(retreatYear, retreatMonth, sundayDate),
-            }
-          : event
-      ),
-    [retreatMonth, retreatYear, fridayDate, sundayDate]
-  );
+  useEffect(() => {
+    let cancelled = false;
+    listPublicEvents()
+      .then((data) => {
+        if (!cancelled) setEvents(data);
+      })
+      .catch(() => {
+        // sin conexión o sin eventos: el calendario simplemente queda vacío
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     // translate="no": los traductores automáticos del navegador reescriben el DOM de FullCalendar
@@ -73,6 +67,9 @@ const ScheduleCalendar = () => {
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
         initialView="dayGridMonth"
+        // Solo presente y futuro: los eventos que ya pasaron se eliminan solos en el backend, y
+        // aquí además se bloquea poder navegar hacia meses anteriores.
+        validRange={{ start: todayISO() }}
         headerToolbar={{
           left: "prev,next today",
           center: "title",
@@ -81,7 +78,7 @@ const ScheduleCalendar = () => {
         locale="es"
         firstDay={0}
         height="auto"
-        events={transformEvents(schedule)}
+        events={transformEvents(events)}
         nowIndicator
         eventDisplay="block"
         displayEventTime={true}
