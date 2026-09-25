@@ -1,0 +1,88 @@
+/* Nombres propios (idleGuard*): este componente se monta en TODAS las páginas protegidas
+   (Dashboard, Profile, Eventos, etc.), así que su CSS carga desde el inicio con el bundle
+   principal. Reusar .modalOverlay/.btnGhost genéricos aquí los pisaría en cada una de esas
+   páginas — el mismo problema que ya pasó con el CSS de ManageSchedule. */
+@keyframes idleGuardFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.idleGuardOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: idleGuardFadeIn 0.18s ease;
+}
+
+.idleGuardCard {
+  width: min(400px, 96%);
+  border-radius: 18px;
+  padding: 22px;
+  background: #fff;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+  text-align: center;
+}
+
+.idleGuardCard h3 {
+  margin: 0 0 10px;
+  font-size: 1.2rem;
+}
+
+.idleGuardCard p {
+  margin: 0;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.idleGuardActions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.idleGuardBtnGhost {
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #111;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.idleGuardBtnGhost:hover {
+  background: #f3f4f6;
+}
+
+.idleGuardBtnPrimary {
+  border: 1px solid #6a00ff;
+  background: #6a00ff;
+  color: #fff;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.idleGuardBtnPrimary:hover {
+  background: #5a00d6;
+  border-color: #5a00d6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .idleGuardOverlay {
+    animation: none;
+  }
+}

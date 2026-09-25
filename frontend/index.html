@@ -44,7 +44,9 @@
     <!-- Canonical -->
     <link rel="canonical" href="https://iter412.com" />
     <style>
-      /* Pantalla de carga inicial: se muestra antes de que cargue el JS */
+      /* Pantalla de carga inicial: se muestra antes de que cargue el JS. Mismo logo y misma
+         animación que <Spinner> (frontend/src/components/Spinner), duplicada aquí a propósito
+         porque este bloque se pinta antes de que exista el bundle de React. */
       #splash {
         position: fixed;
         inset: 0;
@@ -59,29 +61,62 @@
         opacity: 0;
         pointer-events: none;
       }
-      #splash .splash-ring {
-        width: 56px;
-        height: 56px;
-        border-radius: 50%;
-        background: conic-gradient(from 0deg, rgba(22, 163, 74, 0) 0%, #16a34a 30%, #dc2626 65%, #7c3aed 100%);
-        -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 5px));
-        mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 5px));
-        animation: splash-rotate 0.9s linear infinite;
+      #splash .splash-logo {
+        position: relative;
+        display: inline-block;
+        width: 72px;
+        height: 72px;
       }
-      @keyframes splash-rotate {
-        to {
-          transform: rotate(360deg);
+      #splash .splash-logo img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      #splash .splash-base {
+        filter: grayscale(1) brightness(1.5) opacity(0.45);
+      }
+      #splash .splash-shine {
+        -webkit-mask-image: linear-gradient(115deg, transparent 42%, #fff 50%, transparent 58%);
+        mask-image: linear-gradient(115deg, transparent 42%, #fff 50%, transparent 58%);
+        -webkit-mask-size: 320% 320%;
+        mask-size: 320% 320%;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        animation: splash-sweep 2.4s ease-in-out infinite;
+      }
+      @keyframes splash-sweep {
+        0% {
+          -webkit-mask-position: -60% 50%;
+          mask-position: -60% 50%;
+        }
+        55% {
+          -webkit-mask-position: 160% 50%;
+          mask-position: 160% 50%;
+        }
+        100% {
+          -webkit-mask-position: 160% 50%;
+          mask-position: 160% 50%;
         }
       }
       @media (prefers-reduced-motion: reduce) {
-        #splash .splash-ring {
-          animation-duration: 2.4s;
+        #splash .splash-shine {
+          animation: none;
+          -webkit-mask-image: none;
+          mask-image: none;
+          opacity: 0.85;
         }
       }
     </style>
   </head>
   <body>
-    <div id="splash" role="status" aria-label="Cargando"><div class="splash-ring"></div></div>
+    <div id="splash" role="status" aria-label="Cargando">
+      <div class="splash-logo">
+        <img class="splash-base" src="/loading-logo.webp" alt="" />
+        <img class="splash-shine" src="/loading-logo.webp" alt="" />
+      </div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

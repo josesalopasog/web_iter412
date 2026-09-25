@@ -1,27 +1,50 @@
 .spinner {
-  --spinner-size: 56px;
-  --spinner-thickness: 6px;
-  width: var(--spinner-size);
-  height: var(--spinner-size);
-  border-radius: 50%;
-  /* Cola que se desvanece: verde → rojo → morado, con la "cabeza" en morado. */
-  background: conic-gradient(from 0deg, rgba(22, 163, 74, 0) 0%, #16a34a 30%, #dc2626 65%, #7c3aed 100%);
-  -webkit-mask: radial-gradient(
-    farthest-side,
-    transparent calc(100% - var(--spinner-thickness)),
-    #000 calc(100% - var(--spinner-thickness) + 1px)
-  );
-  mask: radial-gradient(
-    farthest-side,
-    transparent calc(100% - var(--spinner-thickness)),
-    #000 calc(100% - var(--spinner-thickness) + 1px)
-  );
-  animation: spinner-rotate 0.9s linear infinite;
+  position: relative;
+  display: inline-block;
 }
 
-@keyframes spinner-rotate {
-  to {
-    transform: rotate(360deg);
+.spinner-base,
+.spinner-shine {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Reposo: el logo siempre visible en gris claro. */
+.spinner-base {
+  filter: grayscale(1) brightness(1.5) opacity(0.45);
+}
+
+/* El mismo logo a todo color, pero solo se ve donde lo deja pasar la franja de la máscara: la
+   franja está inclinada en diagonal (115deg), pero se desliza de izquierda a derecha -solo se
+   anima la posición X, la Y queda fija-, así el color "recorre" el logo de lado a lado en vez de
+   aparecer/desaparecer parejo en todo el dibujo. */
+.spinner-shine {
+  /* Blanco (no negro): las máscaras CSS por luminancia tratan el negro igual que lo transparente
+     (oculto), así que la franja "visible" tiene que ser clara para que de verdad se muestre. */
+  -webkit-mask-image: linear-gradient(115deg, transparent 42%, #fff 50%, transparent 58%);
+  mask-image: linear-gradient(115deg, transparent 42%, #fff 50%, transparent 58%);
+  -webkit-mask-size: 320% 320%;
+  mask-size: 320% 320%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  animation: spinner-sweep 2.4s ease-in-out infinite;
+}
+
+@keyframes spinner-sweep {
+  0% {
+    -webkit-mask-position: -60% 50%;
+    mask-position: -60% 50%;
+  }
+  55% {
+    -webkit-mask-position: 160% 50%;
+    mask-position: 160% 50%;
+  }
+  100% {
+    -webkit-mask-position: 160% 50%;
+    mask-position: 160% 50%;
   }
 }
 
@@ -55,8 +78,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .spinner {
-    animation-duration: 2.4s;
+  .spinner-shine {
+    animation: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+    opacity: 0.85;
   }
   .pageLoader--fullscreen {
     animation: none;

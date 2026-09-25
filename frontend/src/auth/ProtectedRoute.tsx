@@ -2,6 +2,7 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import PageLoader from "../components/Spinner";
+import IdleLogoutGuard from "../components/IdleLogoutGuard";
 import type { UserRole } from "./types";
 
 type Props = {
@@ -21,7 +22,7 @@ const ProtectedRoute: React.FC<Props> = ({ children, allowedRoles, redirectTo })
     return <Navigate to={redirectTo ?? "/login"} replace />;
   }
 
-  return <>{children}</>;
+  return <IdleLogoutGuard>{children}</IdleLogoutGuard>;
 };
 
 export default ProtectedRoute;

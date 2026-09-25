@@ -40,6 +40,8 @@ type AuthContextValue = {
   login: (email: string, password: string) => Promise<AuthUser>;
   logout: () => Promise<void>;
   logoutAllDevices: () => Promise<void>;
+  /** Igual que logout(), pero deja sessionExpired=true (se cerró sola, no fue el usuario). */
+  idleLogout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -111,9 +113,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setSessionExpired(false);
   }, []);
 
+  const idleLogout = useCallback(async () => {
+    writeSessionHint(false);
+    setUser(null);
+    setSessionExpired(true);
+    await logoutRequest();
+  }, []);
+
   return (
     <AuthContext.Provider
-      value={{ user, isLoading, sessionExpired, login, logout, logoutAllDevices }}
+      value={{ user, isLoading, sessionExpired, login, logout, logoutAllDevices, idleLogout }}
     >
       {children}
     </AuthContext.Provider>
