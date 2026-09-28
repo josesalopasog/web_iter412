@@ -65,6 +65,9 @@ const ServidorSchema = new Schema(
 
     formationOther: { type: String, required: true, trim: true },
 
+    // "Cuéntanos tu testimonio": se edita desde /profile y se muestra (al azar) en la página principal.
+    testimony: { type: String, trim: true, default: "" },
+
     acceptTerms: { type: Boolean, required: true },
     acceptDataPolicy: { type: Boolean, required: true },
   },

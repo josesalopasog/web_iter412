@@ -1,0 +1,372 @@
+/* ---------- Carruseles: fotos de retiros + testimonios de servidores ---------- */
+#testimonios {
+  padding: 36px 0 44px;
+}
+
+.momentsGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  gap: 28px;
+  align-items: stretch;
+}
+
+.momentsGrid.is-photosOnly {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.retreatColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.retreatCarousel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 22px;
+  background: #e5e7eb;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+  aspect-ratio: 3 / 2;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.retreatTrack {
+  display: flex;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.retreatSlide {
+  position: relative;
+  flex: 0 0 100%;
+  margin: 0;
+  height: 100%;
+}
+
+.retreatSlide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.retreatCaption {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.carouselArrow {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  color: #111;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding-bottom: 3px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.carouselArrow.is-prev {
+  left: 12px;
+}
+
+.carouselArrow.is-next {
+  right: 12px;
+}
+
+.retreatColumn:hover .carouselArrow,
+.carouselArrow:focus-visible {
+  opacity: 1;
+}
+
+.carouselArrow:hover {
+  background: #fff;
+}
+
+/* En táctil no hay hover: flechas siempre visibles (y se puede deslizar). */
+@media (hover: none) {
+  .carouselArrow {
+    opacity: 1;
+    width: 34px;
+    height: 34px;
+  }
+}
+
+.carouselDots {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.carouselDot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: #111;
+  opacity: 0.25;
+  cursor: pointer;
+  transition: opacity 0.2s ease, width 0.3s ease;
+}
+
+.carouselDot.is-active {
+  opacity: 1;
+  width: 22px;
+}
+
+.testimonialCarousel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 18px;
+  padding: 32px 30px 24px;
+  border-radius: 22px;
+  background: #ececec;
+}
+
+.testimonialStack {
+  display: grid;
+}
+
+.testimonialSlide {
+  grid-area: 1 / 1;
+  margin: 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity 0.5s ease, transform 0.5s ease, visibility 0s linear 0.5s;
+}
+
+.testimonialSlide.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 0.5s ease, transform 0.5s ease, visibility 0s;
+}
+
+.testimonialText {
+  margin: 0;
+  font-family: "CityBlueprint", "Inkfree", cursive;
+  font-size: clamp(1.4rem, 2.3vw, 2rem);
+  line-height: 1.35;
+  color: #222;
+}
+
+.testimonialAuthor {
+  margin: 16px 0 0;
+  text-align: right;
+  font-family: "CityBlueprint", "Inkfree", cursive;
+  font-size: 1.15rem;
+  color: #444;
+}
+
+@media (max-width: 900px) {
+  .momentsGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .testimonialCarousel {
+    padding: 24px 22px 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .retreatTrack,
+  .testimonialSlide,
+  .testimonialSlide.is-active {
+    transition: none;
+  }
+}
+
+/* ---------- Foto ampliada (lightbox) ---------- */
+.retreatZoomBtn {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: zoom-in;
+}
+
+.retreatZoomBtn:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: -6px;
+}
+
+.photoLightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 56px 16px 24px;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+  cursor: zoom-out;
+  animation: photoLightboxFade 0.2s ease-out;
+}
+
+.photoLightboxFigure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: min(1280px, 100%);
+  cursor: default;
+  animation: photoLightboxPop 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.photoLightboxFigure img {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100vh - 120px);
+  max-height: calc(100dvh - 120px);
+  object-fit: contain;
+  border-radius: 14px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+}
+
+.photoLightboxFigure figcaption {
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+.photoLightboxClose {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.photoLightboxClose:hover,
+.photoLightboxClose:focus-visible {
+  background: rgba(255, 255, 255, 0.3);
+  outline: none;
+}
+
+.photoLightboxFigure img {
+  animation: photoLightboxPop 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.photoLightboxFigure figcaption {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.photoLightboxCount {
+  font-weight: 400;
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+.photoLightboxArrow {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 1;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 2rem;
+  line-height: 1;
+  padding-bottom: 4px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background 0.2s ease;
+}
+
+.photoLightboxArrow.is-prev {
+  left: 16px;
+}
+
+.photoLightboxArrow.is-next {
+  right: 16px;
+}
+
+.photoLightboxArrow:hover,
+.photoLightboxArrow:focus-visible {
+  background: rgba(255, 255, 255, 0.3);
+  outline: none;
+}
+
+/* En pantallas angostas las flechas van abajo para no tapar la foto. */
+@media (max-width: 700px) {
+  .photoLightbox {
+    padding-bottom: 84px;
+  }
+
+  .photoLightboxArrow {
+    top: auto;
+    bottom: 20px;
+    translate: none;
+    width: 44px;
+    height: 44px;
+  }
+
+  .photoLightboxArrow.is-prev {
+    left: calc(50% - 56px);
+  }
+
+  .photoLightboxArrow.is-next {
+    right: calc(50% - 56px);
+  }
+}
+
+@keyframes photoLightboxFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes photoLightboxPop {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .photoLightbox,
+  .photoLightboxFigure,
+  .photoLightboxFigure img {
+    animation: none;
+  }
+}

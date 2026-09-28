@@ -53,6 +53,7 @@ const EDITABLE_FIELDS = new Set([
   "wentToOtherSedes",
   "otherSedesDetail",
   "formationOther",
+  "testimony",
   "registrationNumber",
   "paymentAmount",
   "subsidyAmount",
@@ -104,6 +105,29 @@ const computeMerchMax = (
     if (SIZED_MERCH_ITEMS.has(item) && servidor.merchSize === "OTRO") max += settings.extraSizePrice;
   }
   return max;
+};
+
+export const TESTIMONY_MIN_WORDS = 20;
+export const TESTIMONY_MAX_WORDS = 35;
+const TESTIMONY_MAX_CHARS = 400;
+const TESTIMONIALS_SAMPLE_SIZE = 7;
+
+const countWords = (text: string) => text.split(/\s+/).filter(Boolean).length;
+
+// Vacío = borrar el testimonio (deja de salir en la página principal). Si tiene texto, debe
+// quedar entre 20 y 35 palabras.
+const parseTestimony = (value: unknown): string => {
+  if (typeof value !== "string") throw new ApiError(400, "El testimonio debe ser texto");
+  const text = value.replace(/\s+/g, " ").trim();
+  if (!text) return "";
+  const words = countWords(text);
+  if (words < TESTIMONY_MIN_WORDS || words > TESTIMONY_MAX_WORDS || text.length > TESTIMONY_MAX_CHARS) {
+    throw new ApiError(
+      400,
+      `El testimonio debe tener entre ${TESTIMONY_MIN_WORDS} y ${TESTIMONY_MAX_WORDS} palabras (tiene ${words})`
+    );
+  }
+  return text;
 };
 
 const ASSIGNABLE_ROLES = new Set(["SERVIDOR", "ADMIN", "TREASURER", "SUPERADMIN"]);
@@ -280,6 +304,18 @@ export const listServidores = asyncHandler(async (_req, res) => {
   res.json(servidores);
 });
 
+// Público: hasta 7 testimonios al azar para el carrusel de la página principal. Solo expone el
+// texto y el apodo ("Le dicen" / preferredName), nunca datos personales.
+export const listRandomTestimonials = asyncHandler(async (_req, res) => {
+  const docs = await Servidor.aggregate<{ _id: unknown; testimony: string; preferredName: string }>([
+    { $match: { testimony: { $type: "string", $ne: "" } } },
+    { $sample: { size: TESTIMONIALS_SAMPLE_SIZE } },
+    { $project: { testimony: 1, preferredName: 1 } },
+  ]);
+  res.set("Cache-Control", "no-store");
+  res.json(docs.map((d) => ({ id: String(d._id), text: d.testimony, author: d.preferredName.trim() })));
+});
+
 export const getServidorByDocument = asyncHandler(async (req, res) => {
   const servidor = await Servidor.findOne({ documentNumber: String(req.params.documentNumber).trim() }).select(
     "-passwordHash -tokenVersion"
@@ -332,6 +368,8 @@ export const updateServidor = asyncHandler(async (req, res) => {
   } else if (ARRAY_FIELDS.has(field)) {
     if (!isValidStringArray(value)) throw new ApiError(400, "Selección inválida");
     (servidor as any)[field] = value;
+  } else if (field === "testimony") {
+    servidor.testimony = parseTestimony(value);
   } else if (field === "registrationNumber") {
     if (!isValidRegistrationNumber(value)) {
       throw new ApiError(400, "El número de registro debe ser un entero positivo");
@@ -423,6 +461,8 @@ export const updateMyServidor = asyncHandler(async (req, res) => {
   } else if (ARRAY_FIELDS.has(field)) {
     if (!isValidStringArray(value)) throw new ApiError(400, "Selección inválida");
     (servidor as any)[field] = value;
+  } else if (field === "testimony") {
+    servidor.testimony = parseTestimony(value);
   } else if (field === "registrationNumber") {
     if (!isValidRegistrationNumber(value)) {
       throw new ApiError(400, "El número de registro debe ser un entero positivo");

@@ -4,6 +4,7 @@ import Contact from "./Contact";
 import Hero from "./Hero";
 import Location from "./Location";
 import Schedule from "./Schedule";
+import Testimonials from "./Testimonials";
 import RegisterFab from "../../components/RegisterFab";
 import ProfileFab from "../../components/ProfileFab";
 
@@ -16,6 +17,7 @@ const Home = () => {
     <>
       <Hero />
       <About />
+      <Testimonials />
       <Location />
       <Schedule />
       <Contact />

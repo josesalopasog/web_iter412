@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   createServidorFromForm,
   listServidores,
+  listRandomTestimonials,
   getMyServidorProfile,
   getServidorByDocument,
   updateServidor,
@@ -17,6 +18,7 @@ import { changePasswordRateLimiter } from "../../../middlewares/rateLimit.middle
 const router = Router();
 
 router.post("/", createServidorFromForm);
+router.get("/testimonials", listRandomTestimonials);
 router.get("/me", requireAuth, getMyServidorProfile);
 router.patch("/me", requireAuth, updateMyServidor);
 router.patch("/me/password", requireAuth, changePasswordRateLimiter, changeMyPassword);

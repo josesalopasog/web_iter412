@@ -232,3 +232,72 @@
     min-width: 0;
   }
 }
+
+/* ---------- "Cuéntanos tu testimonio" ---------- */
+.testimonyHint {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #6b7280;
+}
+
+.testimonyInput {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  min-height: 96px;
+  padding: 12px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  background: #fafafa;
+}
+
+.testimonyInput:focus {
+  outline: none;
+  border-color: #6a00ff;
+  box-shadow: 0 0 0 3px rgba(106, 0, 255, 0.15);
+  background: #fff;
+}
+
+.testimonyFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.testimonyCounter {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.testimonyCounter.is-ok {
+  color: #15803d;
+}
+
+.testimonyCounter.is-short {
+  color: #b45309;
+}
+
+.testimonyFooter .btnPrimary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.testimonyMessage {
+  margin: 10px 0 0;
+  font-size: 0.88rem;
+}
+
+.testimonyMessage.is-ok {
+  color: #15803d;
+}
+
+.testimonyMessage.is-error {
+  color: #b91c1c;
+}

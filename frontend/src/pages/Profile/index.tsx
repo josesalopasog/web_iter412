@@ -6,6 +6,7 @@ import PageLoader from "../../components/Spinner";
 import { getMyServidorProfile, updateMyServidorField } from "../../api/adminUsers";
 import { LogoutIcon } from "../../assets/icons";
 import ServidorProfileForm from "./ui/ServidorProfileForm";
+import TestimonyEditor from "./ui/TestimonyEditor";
 import ConfirmLogoutModal from "../../components/ConfirmLogoutModal";
 import { roleLabel } from "../../auth/roleLabel";
 import "./styles.css";
@@ -77,6 +78,13 @@ const Profile = () => {
         {errorMsg && <p className="loginError">{errorMsg}</p>}
 
         {!data && !errorMsg && <PageLoader variant="inline" />}
+
+        {data && (
+          <TestimonyEditor
+            initialValue={typeof data.testimony === "string" ? data.testimony : ""}
+            onSaved={loadProfile}
+          />
+        )}
 
         {data && (
           <ServidorProfileForm
