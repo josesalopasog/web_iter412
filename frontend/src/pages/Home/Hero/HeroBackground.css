@@ -141,13 +141,18 @@
 }
 
 /* Pantallas verticales (móvil): el centro lo ocupa el título, así que el corazón sube a la
-   altura de los brazos de la cruz. */
+   altura de los brazos de la cruz. Sin mínimos en px (que en un celular empujaban el morado
+   fuera del borde): todo en vw, dejando ~5% de margen a cada lado. */
 @media (max-width: 700px) {
   .hb-brush-green {
-    --tip-y: 44%;
+    --brush-w: 32vw;
+    --tip-x: calc(50% - 15vw);
+    --tip-y: calc(44% - 50px);
   }
   .hb-brush-purple {
-    --tip-y: calc(47% - 10px);
+    --brush-w: 40vw;
+    --tip-x: calc(50% + 12vw);
+    --tip-y: calc(47% - 60px);
   }
 }
 
@@ -187,6 +192,15 @@
   transform: translateX(-50%);
   filter: drop-shadow(0 0 50px rgba(220, 38, 38, 0.4)) drop-shadow(0 0 110px rgba(255, 200, 120, 0.35));
   animation: hb-cross-float 6s ease-in-out infinite;
+}
+
+/* Móvil: igual que en escritorio pero más pequeña (380px en vez de 450px), para que en un
+   celular de ~390px los brazos queden dentro de la pantalla. */
+@media (max-width: 700px) {
+  .hb-cross-img {
+    width: min(380px, 98vw);
+    min-width: 0;
+  }
 }
 
 @keyframes hb-cross-float {

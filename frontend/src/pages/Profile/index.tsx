@@ -12,6 +12,13 @@ import ConfirmLogoutModal from "../../components/ConfirmLogoutModal";
 import { roleLabel } from "../../auth/roleLabel";
 import "./styles.css";
 
+// Color de acento del perfil según el rol: morado SUPERADMIN, rojo ADMIN/TREASURER, verde SERVIDOR.
+const roleThemeClass = (role: string | undefined) => {
+  if (role === "SUPERADMIN") return "role-superadmin";
+  if (role === "ADMIN" || role === "TREASURER") return "role-admin";
+  return "role-servidor";
+};
+
 const Profile = () => {
   const { user, logout } = useAuth();
   const userId = user?.sub;
@@ -35,7 +42,7 @@ const Profile = () => {
   useEffect(loadProfile, [userId]);
 
   return (
-    <div className="profilePage">
+    <div className={`profilePage ${roleThemeClass(user?.role)}`}>
       <header className="profileHeader">
         <div className="profileHeaderLeft">
           <LogoLink className="profileLogo" />

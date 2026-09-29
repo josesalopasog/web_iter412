@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { BellIcon } from "../../../assets/icons";
+import { BellIcon, XMarkIcon } from "../../../assets/icons";
 import { highlightSection } from "../../../notifications/highlight";
 import { useNotifications } from "../../../notifications/useNotifications";
 import type { AppNotification } from "../../../notifications/types";
@@ -17,6 +18,9 @@ type Props = {
 const NotificationsBell = ({ userId }: Props) => {
   const { notifications, read, unreadCount, markRead } = useNotifications(userId);
   const [open, setOpen] = useState(false);
+  // En pantallas angostas el panel va fijo a la pantalla (ver .notifPanel en styles.css), justo
+  // debajo de la campana: el header puede partirse en dos filas, así que su borde se mide.
+  const [panelTop, setPanelTop] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -56,15 +60,34 @@ const NotificationsBell = ({ userId }: Props) => {
         aria-label={unreadCount ? `Notificaciones (${unreadCount} sin leer)` : "Notificaciones"}
         aria-haspopup="true"
         aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => {
+          setPanelTop((rootRef.current?.getBoundingClientRect().bottom ?? 0) + 10);
+          setOpen((v) => !v);
+        }}
       >
         <BellIcon className="w-5 h-5" />
         {unreadCount > 0 && <span className="notifBadge">{unreadCount > 9 ? "9+" : unreadCount}</span>}
       </button>
 
       {open && (
-        <div className="notifPanel" role="menu" aria-label="Notificaciones">
-          <div className="notifPanelHead">Notificaciones</div>
+        <div
+          className="notifPanel"
+          role="menu"
+          aria-label="Notificaciones"
+          style={{ "--notif-top": `${panelTop}px` } as CSSProperties}
+        >
+          <div className="notifPanelHead">
+            <span>Notificaciones</span>
+            <button
+              type="button"
+              className="notifCloseBtn"
+              onClick={() => setOpen(false)}
+              aria-label="Cerrar notificaciones"
+              title="Cerrar"
+            >
+              <XMarkIcon className="w-5 h-5" />
+            </button>
+          </div>
           {notifications.length === 0 ? (
             <p className="notifEmpty">No tienes notificaciones.</p>
           ) : (

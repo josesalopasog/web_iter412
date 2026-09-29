@@ -137,9 +137,11 @@ section {
 @keyframes sectionHighlightFade {
   0%,
   45% {
-    box-shadow: 0 0 0 4px rgba(106, 0, 255, 0.55), 0 0 28px 6px rgba(168, 85, 247, 0.45);
+    box-shadow: 0 0 0 4px rgba(var(--role-accent-rgb, 106, 0, 255), 0.55),
+      0 0 28px 6px rgba(var(--role-accent-rgb, 106, 0, 255), 0.4);
   }
   100% {
-    box-shadow: 0 0 0 4px rgba(106, 0, 255, 0), 0 0 28px 6px rgba(168, 85, 247, 0);
+    box-shadow: 0 0 0 4px rgba(var(--role-accent-rgb, 106, 0, 255), 0),
+      0 0 28px 6px rgba(var(--role-accent-rgb, 106, 0, 255), 0);
   }
 }
