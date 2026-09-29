@@ -7,6 +7,7 @@ import { getMyServidorProfile, updateMyServidorField } from "../../api/adminUser
 import { LogoutIcon } from "../../assets/icons";
 import ServidorProfileForm from "./ui/ServidorProfileForm";
 import TestimonyEditor from "./ui/TestimonyEditor";
+import NotificationsBell from "./ui/NotificationsBell";
 import ConfirmLogoutModal from "../../components/ConfirmLogoutModal";
 import { roleLabel } from "../../auth/roleLabel";
 import "./styles.css";
@@ -50,6 +51,7 @@ const Profile = () => {
               Dashboard
             </button>
           )}
+          <NotificationsBell userId={userId} />
           <button
             className="iconBtn"
             type="button"

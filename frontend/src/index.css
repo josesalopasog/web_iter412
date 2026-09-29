@@ -127,3 +127,19 @@ section {
     animation: none;
   }
 }
+
+/* Resaltado temporal al abrir una notificación (notifications/highlight.ts): aparece de golpe y
+   se desvanece solo. */
+.sectionHighlight {
+  animation: sectionHighlightFade 2.6s ease-out;
+}
+
+@keyframes sectionHighlightFade {
+  0%,
+  45% {
+    box-shadow: 0 0 0 4px rgba(106, 0, 255, 0.55), 0 0 28px 6px rgba(168, 85, 247, 0.45);
+  }
+  100% {
+    box-shadow: 0 0 0 4px rgba(106, 0, 255, 0), 0 0 28px 6px rgba(168, 85, 247, 0);
+  }
+}

@@ -41,7 +41,7 @@ const Schedule = () => {
             </ul>
           </Reveal>
           <Reveal delay={280}>
-            <div className="card span-8">
+            <div id="calendario" className="card span-8">
               <Suspense fallback={<PageLoader variant="inline" label="Cargando calendario" />}>
                 <ScheduleCalendar />
               </Suspense>

@@ -99,34 +99,74 @@
   min-width: 800px;
 }
 
-/* ---------- 6-7. Pinceles: acento verde (izq.) / morado (der.) ----------
-   A diferencia de las capas de arriba, estos NO van a tamaño completo del lienzo compartido: el
-   .png real es una pincelada diagonal que, pasada su franja superior, se abre y cruza hacia el
-   centro (por eso antes, a tamaño completo, tapaba el valle). En vez de eso, se recorta con
-   object-fit:cover solo la esquina superior de esa pincelada -la parte que en la maqueta de Figma
-   del usuario queda bien confinada al costado- y se estira a un tamaño propio, independiente de
-   las montañas: medí en esa maqueta que ocupa ~40% del ancho y ~23% de la altura, centrado
-   verticalmente alrededor del 42% de la pantalla (a la altura de los brazos de la cruz, no del
-   valle). */
+/* ---------- 6-7. Pinceles: las dos mitades de un corazón a los lados de la cruz ----------
+   Composición de la referencia del usuario: la cruz al centro y cada mitad del corazón a un
+   lado, bien separadas en pantallas anchas. Tamaño y separación van en vw, así en pantallas más
+   angostas las mitades se van acercando a la cruz ("se van uniendo").
+   Medidas de los .webp (1346×1169): la punta inferior está al 90% del ancho en el verde y al 12%
+   en el morado, y al ~98% del alto en ambos; --tip-x / --tip-y ubican esa punta. */
 .hb-brush-green,
 .hb-brush-purple {
   animation-delay: 0.3s;
 }
+.hb-brush-green {
+  --brush-w: clamp(130px, 29vw, 540px);
+  --tip-x: calc(50% - clamp(46px, 19.5vw, 370px));
+  --tip-y: 60%;
+}
+.hb-brush-purple {
+  --brush-w: clamp(180px, 40vw, 740px);
+  --tip-x: calc(50% + clamp(54px, 16.5vw, 320px));
+  --tip-y: calc(64% - 10px);
+}
 .hb-brush-green img,
 .hb-brush-purple img {
   position: absolute;
-  top: 28%;
-  width: 43vw;
-  max-width: 1000px;
-  object-fit: cover;
+  width: var(--brush-w);
+  height: auto;
+  top: calc(var(--tip-y) - var(--brush-w) * 0.851);
+  filter: drop-shadow(0 0 30px rgba(0, 0, 0, 0.25));
+  animation: hb-heartbeat 4.8s ease-in-out 1.4s infinite;
 }
 .hb-brush-green img {
-  left: 0;
-  object-position: 0% 20%;
+  left: calc(var(--tip-x) - var(--brush-w) * 0.9);
+  /* Late alrededor de su punta, para que las mitades no se separen al latir. */
+  transform-origin: 90% 98%;
+  /* Girada 5° sobre su punta. */
+  rotate: 5deg;
 }
 .hb-brush-purple img {
-  right: 0;
-  object-position: 100% 20%;
+  left: calc(var(--tip-x) - var(--brush-w) * 0.121);
+  transform-origin: 12% 98%;
+}
+
+/* Pantallas verticales (móvil): el centro lo ocupa el título, así que el corazón sube a la
+   altura de los brazos de la cruz. */
+@media (max-width: 700px) {
+  .hb-brush-green {
+    --tip-y: 44%;
+  }
+  .hb-brush-purple {
+    --tip-y: calc(47% - 10px);
+  }
+}
+
+/* Latido suave: dos pulsos cortos y una pausa larga. */
+@keyframes hb-heartbeat {
+  0%,
+  30%,
+  100% {
+    scale: 1;
+  }
+  8% {
+    scale: 1.035;
+  }
+  16% {
+    scale: 1;
+  }
+  22% {
+    scale: 1.025;
+  }
 }
 
 /* ---------- 9. Cruz: foco visual, con flotar propio además del parallax ---------- */
@@ -135,14 +175,15 @@
 }
 .hb-cross-img {
   position: absolute;
-  top: 10%;
+  /* Un poco más arriba que antes (10%) para que al agrandarla crezca parejo y no solo hacia abajo. */
+  top: 7%;
   left: 50%;
   /* En el .svg de Figma la cruz mide de alto ~66% del lienzo de referencia (796x673 sobre un
      lienzo de 1819x1024): por eso va por altura, no por ancho, para calcarle esa proporción sin
      importar qué tan ancho sea el Hero. */
   width: 100%;
-  max-width: 800px;
-  min-width: 400px;
+  max-width: 900px;
+  min-width: 450px;
   transform: translateX(-50%);
   filter: drop-shadow(0 0 50px rgba(220, 38, 38, 0.4)) drop-shadow(0 0 110px rgba(255, 200, 120, 0.35));
   animation: hb-cross-float 6s ease-in-out infinite;
@@ -221,7 +262,9 @@
     animation: none;
     opacity: 1;
   }
-  .hb-cross-img {
+  .hb-cross-img,
+  .hb-brush-green img,
+  .hb-brush-purple img {
     animation: none;
   }
 }

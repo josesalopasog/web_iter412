@@ -301,3 +301,132 @@
 .testimonyMessage.is-error {
   color: #b91c1c;
 }
+
+/* ---------- Notificaciones ---------- */
+.notifRoot {
+  position: relative;
+}
+
+.notifBellBtn {
+  position: relative;
+}
+
+.notifBadge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #dc2626;
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  box-shadow: 0 0 0 2px #fff;
+}
+
+.notifPanel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 50;
+  width: min(360px, calc(100vw - 32px));
+  max-height: min(460px, calc(100vh - 120px));
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
+  animation: notifPanelIn 0.18s ease-out;
+}
+
+.notifPanelHead {
+  position: sticky;
+  top: 0;
+  padding: 14px 16px 10px;
+  background: #fff;
+  font-weight: 700;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.notifEmpty {
+  margin: 0;
+  padding: 18px 16px;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.notifList {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+}
+
+.notifItem {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 12px;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  transition: background 0.15s ease;
+}
+
+.notifItem:hover,
+.notifItem:focus-visible {
+  background: #f5f3ff;
+  outline: none;
+}
+
+.notifDot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.notifItem.is-unread .notifDot {
+  background: #6a00ff;
+}
+
+.notifContent {
+  display: grid;
+  gap: 3px;
+}
+
+.notifTitle {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.notifItem.is-unread .notifTitle {
+  font-weight: 700;
+  color: #111;
+}
+
+.notifBody {
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: #6b7280;
+}
+
+.notifDate {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+@keyframes notifPanelIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: none; }
+}
