@@ -52,6 +52,7 @@ type Props =
   | {
       view: "soldados";
       rows: SoldadoRecord[];
+      newIds: Set<string>;
       currentUserRole: string;
       showEliminados: boolean;
       price: number;
@@ -65,6 +66,7 @@ type Props =
   | {
       view: "servidores";
       rows: ServidorRecord[];
+      newIds: Set<string>;
       currentUserRole: string;
       showEliminados: boolean;
       price: number;
@@ -276,6 +278,16 @@ const UsersTable: React.FC<Props> = (props) => {
     });
     return sorted;
   }, [filteredRows, sortConfig]);
+
+  // Orden en que se "colorean" las inscripciones nuevas: primero la más antigua de ellas.
+  const newRowOrder = useMemo(() => {
+    const order = new Map<string, number>();
+    (props.rows as (SoldadoRecord | ServidorRecord)[])
+      .filter((row) => props.newIds.has(row._id))
+      .sort((a, b) => String(a.createdAt ?? "").localeCompare(String(b.createdAt ?? "")))
+      .forEach((row, i) => order.set(row._id, i));
+    return order;
+  }, [props.rows, props.newIds]);
 
   const confirmDelete = async () => {
     if (!deleteTarget) return;
@@ -550,7 +562,15 @@ const UsersTable: React.FC<Props> = (props) => {
                 </tr>
               ) : (
                 sortedRows.map((r) => (
-                  <tr key={r._id}>
+                  <tr
+                    key={r._id}
+                    className={newRowOrder.has(r._id) ? "newRegistrationRow" : undefined}
+                    style={
+                      newRowOrder.has(r._id)
+                        ? ({ "--new-row-index": newRowOrder.get(r._id) } as React.CSSProperties)
+                        : undefined
+                    }
+                  >
                     <td className={`paymentColCell${showPaymentCols ? "" : " collapsed"}`}>
                       <div className={`colCollapseInner colCollapseInnerSmall${showPaymentCols ? "" : " collapsed"}`}>
                         <button

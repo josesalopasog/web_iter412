@@ -26,6 +26,7 @@ import EliminadosTable from "./ui/EliminadosTable";
 import PedidoTable from "./ui/PedidoTable";
 import type { View } from "./ui/ViewDropdown";
 import ConfirmLogoutModal from "../../components/ConfirmLogoutModal";
+import { takeNewRegistrations } from "./ui/newRegistrations";
 import "./styles.css";
 
 const DEFAULT_SETTINGS: AppSettings = {
@@ -73,6 +74,9 @@ const Dashboard = () => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  // Inscripciones que llegaron desde la última carga (punto junto al #). Se acumulan mientras la
+  // página esté abierta: un refetch (p. ej. tras restaurar) no las apaga.
+  const [newIds, setNewIds] = useState<Set<string>>(() => new Set());
 
   const fetchAll = async () => {
     if (!userId) return;
@@ -87,6 +91,11 @@ const Dashboard = () => {
       setSoldados(soldadosData);
       setServidores(servidoresData);
       setSettings(settingsData);
+      const fresh = [
+        ...takeNewRegistrations(userId, "soldados", soldadosData),
+        ...takeNewRegistrations(userId, "servidores", servidoresData),
+      ];
+      if (fresh.length) setNewIds((prev) => new Set([...prev, ...fresh]));
       if (isSuperAdmin) {
         setEliminados(await listEliminados());
       }
@@ -146,6 +155,17 @@ const Dashboard = () => {
   );
 
   const activeStats = view === "soldados" ? soldadoStats : servidorStats;
+
+  // Cuántas de las inscripciones de cada tarjeta son nuevas (para el "+N" animado).
+  const activeAdded = useMemo(() => {
+    const rows: (SoldadoRecord | ServidorRecord)[] = view === "soldados" ? soldados : servidores;
+    const fresh = rows.filter((r) => newIds.has(r._id));
+    return {
+      total: fresh.length,
+      hombres: fresh.filter((r) => isHombre(r.gender)).length,
+      mujeres: fresh.filter((r) => isMujer(r.gender)).length,
+    };
+  }, [view, soldados, servidores, newIds]);
 
   const totalSubsidyUsed = useMemo(
     () =>
@@ -269,6 +289,7 @@ const Dashboard = () => {
                   mujeresPaid={activeStats.mujeresPaid}
                   mujeresDue={activeStats.mujeresDue}
                   mujeresSubsidy={activeStats.mujeresSubsidy}
+                  added={activeAdded}
                 />
               </div>
             )}
@@ -277,6 +298,7 @@ const Dashboard = () => {
               <UsersTable
                 view="soldados"
                 rows={soldados}
+                newIds={newIds}
                 currentUserRole={user?.role ?? ""}
                 showEliminados={isSuperAdmin}
                 price={settings.soldadoPrice}
@@ -293,6 +315,7 @@ const Dashboard = () => {
               <UsersTable
                 view="servidores"
                 rows={servidores}
+                newIds={newIds}
                 currentUserRole={user?.role ?? ""}
                 showEliminados={isSuperAdmin}
                 price={settings.servidorPrice}

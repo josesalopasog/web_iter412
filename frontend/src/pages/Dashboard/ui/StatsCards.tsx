@@ -1,4 +1,5 @@
 import { formatCOP } from "./paymentConfig";
+import StatValue from "./StatValue";
 
 type Props = {
   view: "soldados" | "servidores";
@@ -14,6 +15,8 @@ type Props = {
   mujeresPaid: number;
   mujeresDue: number;
   mujeresSubsidy: number;
+  /** Inscripciones nuevas (aún no vistas) dentro de cada total: se animan con "+N". */
+  added: { total: number; hombres: number; mujeres: number };
 };
 
 const StatsCards: React.FC<Props> = ({
@@ -30,6 +33,7 @@ const StatsCards: React.FC<Props> = ({
   mujeresPaid,
   mujeresDue,
   mujeresSubsidy,
+  added,
 }) => {
   const totalLabel = view === "soldados" ? "Total soldados" : "Total servidores";
 
@@ -37,7 +41,7 @@ const StatsCards: React.FC<Props> = ({
     <div className="statsGrid">
       <div className="statCard total">
         <div className="statLabel">{totalLabel}</div>
-        <div className="statValue">{total}</div>
+        <StatValue key={`${view}-total`} value={total} added={added.total} />
         <div className="statPaymentRow">
           <span>Pagado {formatCOP(totalPaid)}</span>
           <span>Subsidiado {formatCOP(totalSubsidy)}</span>
@@ -46,7 +50,7 @@ const StatsCards: React.FC<Props> = ({
       </div>
       <div className="statCard hombres">
         <div className="statLabel">Hombres</div>
-        <div className="statValue">{hombres}</div>
+        <StatValue key={`${view}-hombres`} value={hombres} added={added.hombres} />
         <div className="statPaymentRow">
           <span>Pagado {formatCOP(hombresPaid)}</span>
           <span>Subsidiado {formatCOP(hombresSubsidy)}</span>
@@ -55,7 +59,7 @@ const StatsCards: React.FC<Props> = ({
       </div>
       <div className="statCard mujeres">
         <div className="statLabel">Mujeres</div>
-        <div className="statValue">{mujeres}</div>
+        <StatValue key={`${view}-mujeres`} value={mujeres} added={added.mujeres} />
         <div className="statPaymentRow">
           <span>Pagado {formatCOP(mujeresPaid)}</span>
           <span>Subsidiado {formatCOP(mujeresSubsidy)}</span>

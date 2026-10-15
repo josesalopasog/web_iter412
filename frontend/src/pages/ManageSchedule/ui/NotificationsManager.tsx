@@ -85,7 +85,7 @@ const NotificationsManager = () => {
   };
 
   return (
-    <section className="notifManager">
+    <div className="notifManager">
       <h2 className="eventsPageTitle">Administrar notificaciones</h2>
 
       {errorMsg && <p className="eventErrorMsg">{errorMsg}</p>}
@@ -230,7 +230,7 @@ const NotificationsManager = () => {
           </div>
         </div>
       )}
-    </section>
+    </div>
   );
 };
 
