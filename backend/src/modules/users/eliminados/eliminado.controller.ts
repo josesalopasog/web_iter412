@@ -4,6 +4,7 @@ import { createLog } from "../../activityLog/createLog.js";
 import { Eliminado } from "./eliminado.model.js";
 import { Soldado } from "../soldados/soldado.model.js";
 import { Servidor } from "../servidores/servidor.model.js";
+import { compactRegistrationNumbers, provisionalRegistrationNumber } from "../registrationNumbers.js";
 
 export const listEliminados = asyncHandler(async (_req, res) => {
   const eliminados = await Eliminado.find().sort({ deletedAt: -1 });
@@ -18,16 +19,15 @@ export const restoreEliminado = asyncHandler(async (req, res) => {
   const data = { ...(eliminado.data as Record<string, unknown>) };
   data._id = eliminado.originalId;
 
-  const numberTaken =
-    eliminado.registrationNumber != null &&
-    (await Model.exists({ registrationNumber: eliminado.registrationNumber }));
+  // Vuelve a su posición original (los de abajo se corren un puesto); sin número, queda al final.
+  data.registrationNumber = eliminado.registrationNumber
+    ? await provisionalRegistrationNumber(Model, eliminado.registrationNumber)
+    : (await Model.countDocuments()) + 1;
 
-  if (!eliminado.registrationNumber || numberTaken) {
-    data.registrationNumber = (await Model.countDocuments()) + 1;
-  }
-
-  const restored = await Model.create(data);
+  const created = await Model.create(data);
   await eliminado.deleteOne();
+  await compactRegistrationNumbers(Model);
+  const restored = await Model.findById(created._id);
 
   await createLog(
     req.user!,

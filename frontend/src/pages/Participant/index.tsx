@@ -1,6 +1,6 @@
 import LogoLink from "../../components/LogoLink";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import PageLoader from "../../components/Spinner";
 import {
@@ -38,6 +38,17 @@ const Participant = () => {
   };
 
   useEffect(load, [userId, documento, isServidor]);
+
+  // Enlaces desde el dashboard (p. ej. talla "Otro") traen #campo: se lleva a esa respuesta y se resalta.
+  const { hash } = useLocation();
+  const hasData = Boolean(data);
+  useEffect(() => {
+    if (!hasData || !hash) return;
+    const target = document.getElementById(decodeURIComponent(hash.slice(1)));
+    if (!target) return;
+    target.scrollIntoView({ behavior: "smooth", block: "center" });
+    target.classList.add("profileRowHighlight");
+  }, [hasData, hash]);
 
   const fullName = data ? `${String(data.firstNames ?? "")} ${String(data.lastNames ?? "")}`.trim() : "";
   const id = data ? String(data._id) : "";

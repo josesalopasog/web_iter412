@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { getPreviousPath } from "./navHistory";
 import "./styles.css";
 
 // Mismo umbral que usa BackToTop para aparecer: así sabemos si realmente está en pantalla.
@@ -37,13 +38,13 @@ const BackButton = ({ besideUpButton = false }: BackButtonProps) => {
     return () => window.removeEventListener("scroll", onScroll);
   }, [besideUpButton]);
 
-  // location.key es "default" cuando no hay una entrada previa dentro de la app (p. ej. se entró
-  // directo por un link compartido) -- ahí es más útil ir al inicio que dejar el botón sin efecto.
-  const canGoBack = location.key !== "default";
-
+  // Vuelve literalmente a la ruta anterior (p. ej. /profile → /dashboard). Si se entró directo a
+  // esta página no hay anterior: las respuestas del participante se abren desde el dashboard en
+  // otra pestaña, así que vuelven ahí; el resto va al inicio.
   const handleClick = () => {
-    if (canGoBack) navigate(-1);
-    else navigate("/");
+    const previous = getPreviousPath();
+    if (previous) navigate(previous);
+    else navigate(location.pathname.startsWith("/participante/") ? "/dashboard" : "/");
   };
 
   const showBeside = besideUpButton && upButtonVisible;

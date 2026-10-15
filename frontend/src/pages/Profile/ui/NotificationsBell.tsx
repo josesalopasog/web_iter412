@@ -16,7 +16,7 @@ type Props = {
 };
 
 const NotificationsBell = ({ userId }: Props) => {
-  const { notifications, read, unreadCount, markRead } = useNotifications(userId);
+  const { notifications, read, unreadCount, markRead, dismiss } = useNotifications(userId);
   const [open, setOpen] = useState(false);
   // En pantallas angostas el panel va fijo a la pantalla (ver .notifPanel en styles.css), justo
   // debajo de la campana: el header puede partirse en dos filas, así que su borde se mide.
@@ -95,7 +95,7 @@ const NotificationsBell = ({ userId }: Props) => {
               {notifications.map((n) => {
                 const unread = !read.has(n.id);
                 return (
-                  <li key={n.id}>
+                  <li key={n.id} className="notifListItem">
                     <button
                       type="button"
                       role="menuitem"
@@ -108,6 +108,15 @@ const NotificationsBell = ({ userId }: Props) => {
                         <span className="notifBody">{n.body}</span>
                         <span className="notifDate">{formatShortDate(n.dateISO)}</span>
                       </span>
+                    </button>
+                    <button
+                      type="button"
+                      className="notifDismissBtn"
+                      onClick={() => dismiss(n.id)}
+                      aria-label={`Eliminar notificación: ${n.title}`}
+                      title="Eliminar notificación"
+                    >
+                      <XMarkIcon className="w-4 h-4" />
                     </button>
                   </li>
                 );

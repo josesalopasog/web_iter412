@@ -3,6 +3,7 @@ import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { ApiError } from "../../../utils/errors.js";
 import { sendRegistrationConfirmationEmail } from "../../../services/mailer.service.js";
 import { softDelete } from "../softDelete.js";
+import { compactRegistrationNumbers, provisionalRegistrationNumber } from "../registrationNumbers.js";
 import { createLog } from "../../activityLog/createLog.js";
 import { getSettings } from "../../settings/settings.service.js";
 import { getTotalSubsidyUsed } from "../subsidyPool.js";
@@ -300,7 +301,7 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
 });
 
 export const listServidores = asyncHandler(async (_req, res) => {
-  const servidores = await Servidor.find().select("-passwordHash -tokenVersion").sort({ createdAt: 1 });
+  const servidores = await Servidor.find().select("-passwordHash -tokenVersion").sort({ registrationNumber: 1 });
   res.json(servidores);
 });
 
@@ -374,7 +375,11 @@ export const updateServidor = asyncHandler(async (req, res) => {
     if (!isValidRegistrationNumber(value)) {
       throw new ApiError(400, "El número de registro debe ser un entero positivo");
     }
-    servidor.registrationNumber = Number(value);
+    servidor.registrationNumber = await provisionalRegistrationNumber(
+      Servidor,
+      Number(value),
+      servidor.registrationNumber
+    );
   } else if (field === "paymentAmount") {
     const { servidorPrice } = await getSettings();
     const effectiveMax = Math.max(0, servidorPrice - (servidor.subsidyAmount ?? 0));
@@ -412,6 +417,11 @@ export const updateServidor = asyncHandler(async (req, res) => {
       throw new ApiError(409, "Ese número de registro ya está en uso");
     }
     throw error;
+  }
+
+  if (field === "registrationNumber") {
+    await compactRegistrationNumbers(Servidor);
+    servidor.registrationNumber = (await Servidor.findById(servidor._id).select("registrationNumber"))!.registrationNumber;
   }
 
   if (field === "password") {
@@ -467,7 +477,11 @@ export const updateMyServidor = asyncHandler(async (req, res) => {
     if (!isValidRegistrationNumber(value)) {
       throw new ApiError(400, "El número de registro debe ser un entero positivo");
     }
-    servidor.registrationNumber = Number(value);
+    servidor.registrationNumber = await provisionalRegistrationNumber(
+      Servidor,
+      Number(value),
+      servidor.registrationNumber
+    );
   } else {
     (servidor as any)[field] = field === "email" ? String(value).toLowerCase() : value;
   }
@@ -479,6 +493,11 @@ export const updateMyServidor = asyncHandler(async (req, res) => {
       throw new ApiError(409, "Ese número de registro ya está en uso");
     }
     throw error;
+  }
+
+  if (field === "registrationNumber") {
+    await compactRegistrationNumbers(Servidor);
+    servidor.registrationNumber = (await Servidor.findById(servidor._id).select("registrationNumber"))!.registrationNumber;
   }
 
   await createLog(
@@ -579,6 +598,7 @@ export const deleteServidor = asyncHandler(async (req, res) => {
 
   await softDelete(servidor, "servidores", req.user!);
   await servidor.deleteOne();
+  await compactRegistrationNumbers(Servidor);
 
   await createLog(
     req.user!,

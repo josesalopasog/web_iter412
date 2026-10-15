@@ -7,9 +7,11 @@ type Props = {
   isDirty: boolean;
   canEdit: boolean;
   onCommit: (value: string) => void;
+  /** Cómo se muestra el valor cuando no se está editando (por defecto, el texto tal cual). */
+  renderValue?: (value: string) => React.ReactNode;
 };
 
-const EditableCell: React.FC<Props> = ({ column, value, isDirty, canEdit, onCommit }) => {
+const EditableCell: React.FC<Props> = ({ column, value, isDirty, canEdit, onCommit, renderValue }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(value);
 
@@ -40,7 +42,13 @@ const EditableCell: React.FC<Props> = ({ column, value, isDirty, canEdit, onComm
         onDoubleClick={startEdit}
         title={canEdit ? "Doble clic para editar" : undefined}
       >
-        {column.id === "password" ? (isDirty ? "Nueva contraseña pendiente" : "••••••••") : value || "-"}
+        {column.id === "password"
+          ? isDirty
+            ? "Nueva contraseña pendiente"
+            : "••••••••"
+          : renderValue
+            ? renderValue(value)
+            : value || "-"}
       </td>
     );
   }

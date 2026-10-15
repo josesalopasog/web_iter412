@@ -250,6 +250,17 @@
   margin-top: 20px;
 }
 
+/* Administrar notificaciones (debajo de la tabla de eventos) */
+.notifManager {
+  margin-top: 40px;
+}
+
+.notifManagerBody {
+  max-width: 360px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 @media (max-width: 900px) {
   .eventFormGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

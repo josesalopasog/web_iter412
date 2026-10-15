@@ -485,11 +485,15 @@
   padding: 6px;
 }
 
+.notifListItem {
+  position: relative;
+}
+
 .notifItem {
   display: flex;
   gap: 10px;
   width: 100%;
-  padding: 10px;
+  padding: 10px 34px 10px 10px;
   border: none;
   border-radius: 12px;
   background: none;
@@ -503,6 +507,32 @@
 .notifItem:hover,
 .notifItem:focus-visible {
   background: var(--role-soft);
+  outline: none;
+}
+
+/* X de cada notificación (esquina superior derecha): la quita de la lista. */
+.notifDismissBtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.notifDismissBtn:hover,
+.notifDismissBtn:focus-visible {
+  background: rgba(0, 0, 0, 0.06);
+  color: #111;
   outline: none;
 }
 
@@ -549,4 +579,22 @@
 @keyframes notifPanelIn {
   from { opacity: 0; transform: translateY(-6px); }
   to { opacity: 1; transform: none; }
+}
+
+/* Respuesta enlazada desde el dashboard (/participante/...#campo) */
+.profileRowHighlight {
+  border-radius: 8px;
+  animation: profileRowHighlight 2.4s ease-out;
+  background: #f5f3ff;
+  box-shadow: inset 3px 0 0 #6a00ff;
+}
+
+@keyframes profileRowHighlight {
+  0%,
+  40% {
+    background: #ede9fe;
+  }
+  100% {
+    background: #f5f3ff;
+  }
 }

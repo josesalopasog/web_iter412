@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { listPublicEvents } from "../api/events";
 import type { EventRecord } from "../api/events";
+import { listCustomNotifications } from "../api/notifications";
 import { ANNOUNCEMENTS } from "./announcements";
 import type { AppNotification } from "./types";
 
@@ -30,25 +31,68 @@ const retreatToNotification = (event: EventRecord): AppNotification => {
   };
 };
 
-// Lo leído se guarda en este navegador, por usuario. (Si luego se quiere que se sincronice entre
-// dispositivos, esto pasaría a guardarse en el backend.)
+// Lo leído y lo eliminado (la X de cada notificación) se guarda en este navegador, por usuario.
+// (Si luego se quiere que se sincronice entre dispositivos, esto pasaría a guardarse en el backend.)
 const storageKey = (userId: string) => `iter412:notificaciones-leidas:${userId}`;
+const dismissedKey = (userId: string) => `iter412:notificaciones-eliminadas:${userId}`;
 
-const loadRead = (userId: string): Set<string> => {
+const loadSet = (key: string): Set<string> => {
   try {
-    const raw = localStorage.getItem(storageKey(userId));
+    const raw = localStorage.getItem(key);
     return new Set(raw ? (JSON.parse(raw) as string[]) : []);
   } catch {
     return new Set();
   }
 };
 
+const saveSet = (key: string, set: Set<string>) => {
+  try {
+    localStorage.setItem(key, JSON.stringify([...set]));
+  } catch {
+    // sin almacenamiento disponible: el cambio dura solo mientras la página esté abierta
+  }
+};
+
+const loadRead = (userId: string) => loadSet(storageKey(userId));
+
 export const useNotifications = (userId: string | undefined) => {
   const [retreats, setRetreats] = useState<AppNotification[]>([]);
+  const [custom, setCustom] = useState<AppNotification[]>([]);
   const [read, setRead] = useState<Set<string>>(() => (userId ? loadRead(userId) : new Set()));
+  const [dismissed, setDismissed] = useState<Set<string>>(() =>
+    userId ? loadSet(dismissedKey(userId)) : new Set()
+  );
 
+  // Si cambia el usuario, se recarga lo leído/eliminado de esa persona (durante el render, sin efecto).
+  const [loadedFor, setLoadedFor] = useState(userId);
+  if (loadedFor !== userId) {
+    setLoadedFor(userId);
+    setRead(userId ? loadRead(userId) : new Set());
+    setDismissed(userId ? loadSet(dismissedKey(userId)) : new Set());
+  }
+
+  // Notificaciones personalizadas que publican los admins (ya vienen sin las vencidas).
   useEffect(() => {
-    if (userId) setRead(loadRead(userId));
+    if (!userId) return;
+    let cancelled = false;
+    listCustomNotifications()
+      .then((items) => {
+        if (cancelled) return;
+        setCustom(
+          items.map((n) => ({
+            id: `aviso-${n._id}`,
+            dateISO: n.createdAt.slice(0, 10),
+            title: n.title,
+            body: n.body,
+          }))
+        );
+      })
+      .catch(() => {
+        // sin conexión: se muestran las demás
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [userId]);
 
   useEffect(() => {
@@ -72,8 +116,11 @@ export const useNotifications = (userId: string | undefined) => {
   }, []);
 
   const notifications = useMemo(
-    () => [...ANNOUNCEMENTS, ...retreats].sort((a, b) => b.dateISO.localeCompare(a.dateISO)),
-    [retreats]
+    () =>
+      [...ANNOUNCEMENTS, ...retreats, ...custom]
+        .filter((n) => !dismissed.has(n.id))
+        .sort((a, b) => b.dateISO.localeCompare(a.dateISO)),
+    [retreats, custom, dismissed]
   );
 
   const unreadCount = notifications.filter((n) => !read.has(n.id)).length;
@@ -84,16 +131,25 @@ export const useNotifications = (userId: string | undefined) => {
       setRead((prev) => {
         if (prev.has(id)) return prev;
         const nextSet = new Set(prev).add(id);
-        try {
-          localStorage.setItem(storageKey(userId), JSON.stringify([...nextSet]));
-        } catch {
-          // sin almacenamiento disponible: queda leída solo mientras la página esté abierta
-        }
+        saveSet(storageKey(userId), nextSet);
         return nextSet;
       });
     },
     [userId]
   );
 
-  return { notifications, read, unreadCount, markRead };
+  // La X: la quita de la lista de esta persona (no la borra para los demás).
+  const dismiss = useCallback(
+    (id: string) => {
+      if (!userId) return;
+      setDismissed((prev) => {
+        const nextSet = new Set(prev).add(id);
+        saveSet(dismissedKey(userId), nextSet);
+        return nextSet;
+      });
+    },
+    [userId]
+  );
+
+  return { notifications, read, unreadCount, markRead, dismiss };
 };

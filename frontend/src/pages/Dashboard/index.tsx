@@ -156,12 +156,15 @@ const Dashboard = () => {
 
   const handleEditSoldado = async (id: string, field: string, value: string) => {
     const updated = await updateSoldadoField(id, field, value);
-    setSoldados((prev) => prev.map((s) => (s._id === id ? updated : s)));
+    // Mover el # corre a los demás: se recarga la lista completa.
+    if (field === "registrationNumber") setSoldados(await listSoldados());
+    else setSoldados((prev) => prev.map((s) => (s._id === id ? updated : s)));
   };
 
   const handleEditServidor = async (id: string, field: string, value: unknown) => {
     const updated = await updateServidorField(id, field, value);
-    setServidores((prev) => prev.map((s) => (s._id === id ? updated : s)));
+    if (field === "registrationNumber") setServidores(await listServidores());
+    else setServidores((prev) => prev.map((s) => (s._id === id ? updated : s)));
   };
 
   const handleRoleChange = async (id: string, role: string) => {
@@ -171,13 +174,14 @@ const Dashboard = () => {
 
   const handleDeleteSoldado = async (id: string) => {
     await deleteSoldado(id);
-    setSoldados((prev) => prev.filter((s) => s._id !== id));
+    // El backend renumera el # de los que estaban debajo, así que se recarga la lista.
+    setSoldados(await listSoldados());
     if (isSuperAdmin) setEliminados(await listEliminados());
   };
 
   const handleDeleteServidor = async (id: string) => {
     await deleteServidor(id);
-    setServidores((prev) => prev.filter((s) => s._id !== id));
+    setServidores(await listServidores());
     if (isSuperAdmin) setEliminados(await listEliminados());
   };
 

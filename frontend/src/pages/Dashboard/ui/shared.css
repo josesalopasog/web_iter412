@@ -1,0 +1,84 @@
+/* Estilos compartidos entre el dashboard y las páginas de perfil / respuestas del participante
+   (barra de cambios pendientes, menús flotantes). Las rutas cargan con lazy(), así que cada
+   componente que los usa importa este archivo en vez de depender de Dashboard/styles.css. */
+
+.dbDropdownMenu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 160px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  z-index: 20;
+}
+
+.filterMenu {
+  min-width: 180px;
+  padding: 8px;
+}
+
+.filterMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px;
+  font-size: 0.88rem;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.filterMenuItem:hover {
+  background: #f9fafb;
+}
+
+/* ===== Pending changes bar ===== */
+.pendingBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: #fefce8;
+  border: 1px solid #fde68a;
+  border-radius: 14px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #854d0e;
+}
+
+.pendingBarActions {
+  display: flex;
+  gap: 10px;
+}
+
+.pendingChangesList {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.pendingChangesList li {
+  margin-bottom: 8px;
+  font-size: 0.88rem;
+}
+
+.pendingChangesList .oldValue {
+  color: #dc2626;
+  text-decoration: line-through;
+}
+
+.pendingChangesList .newValue {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.portalMenu {
+  position: fixed !important;
+  z-index: 5000;
+}

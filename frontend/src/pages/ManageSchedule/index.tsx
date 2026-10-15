@@ -10,6 +10,7 @@ import type { EventRecord, EventInput } from "../../api/events";
 import EventForm from "./ui/EventForm";
 import EventStatsCards from "./ui/EventStatsCards";
 import ConfirmDeleteEventModal from "./ui/ConfirmDeleteEventModal";
+import NotificationsManager from "./ui/NotificationsManager";
 import "../Dashboard/styles.css";
 import "./styles.css";
 
@@ -185,6 +186,8 @@ const ManageSchedule = () => {
             </div>
           </div>
         )}
+
+        <NotificationsManager />
       </div>
 
       {deletingEvent && (

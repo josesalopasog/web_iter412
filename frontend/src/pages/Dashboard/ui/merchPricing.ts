@@ -101,3 +101,37 @@ export const computeOrderTotal = (row: ServidorRecord, settings: AppSettings): n
   }
   return total;
 };
+
+export const MERCH_OPTIONS = [
+  ...OUTER_ITEMS,
+  { code: "CANGURO", label: MERCH_LABELS.CANGURO },
+  { code: "TULA", label: MERCH_LABELS.TULA },
+  { code: "GORRA", label: MERCH_LABELS.GORRA },
+];
+
+type EditField = (id: string, field: string, value: unknown) => Promise<void>;
+
+// Mantiene "needsShirt" sincronizado con los colores elegidos.
+export const saveShirtColors = async (row: ServidorRecord, next: string[], onEditField: EditField) => {
+  const wasEmpty = asStringArray(row.shirtColors).length === 0;
+  const isEmpty = next.length === 0;
+  await onEditField(row._id, "shirtColors", next);
+  if (wasEmpty && !isEmpty) await onEditField(row._id, "needsShirt", "SI");
+  else if (!wasEmpty && isEmpty) await onEditField(row._id, "needsShirt", "NO");
+};
+
+// Al agregar un buso/chaqueta sin talla, se le asigna M por defecto.
+export const saveMerchItems = async (row: ServidorRecord, next: string[], onEditField: EditField) => {
+  const current = asStringArray(row.merchItems);
+  const added = next.filter((item) => !current.includes(item));
+  const needsDefaultSize = added.some((item) => SIZED_MERCH_ITEMS.has(item)) && !row.merchSize;
+
+  await onEditField(row._id, "merchItems", next);
+  if (needsDefaultSize) await onEditField(row._id, "merchSize", "M");
+};
+
+// Campo donde queda escrita la talla cuando la respuesta es "OTRO".
+export const SIZE_OTHER_FIELD: Record<string, string> = {
+  shirtSize: "shirtSizeOther",
+  merchSize: "merchSizeOther",
+};

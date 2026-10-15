@@ -17,9 +17,19 @@ import type { SortDirection } from "./SortableHeader";
 import FilterableHeader from "./FilterableHeader";
 import PaymentCell from "./PaymentCell";
 import PillsCell from "./PillsCell";
+import type { PillOption } from "./PillsCell";
 import DropupCell from "./DropupCell";
 import { formatEnumLabel } from "../../Profile/ui/format";
-import { asStringArray } from "./merchPricing";
+import {
+  MERCH_OPTIONS,
+  SHIRT_COLORS,
+  SIZE_OTHER_FIELD,
+  asStringArray,
+  saveMerchItems,
+  saveShirtColors,
+} from "./merchPricing";
+import SizeValue from "./SizeValue";
+import { openParticipantAnswers } from "./participantLink";
 import SubsidyCell from "./SubsidyCell";
 import { formatCOP } from "./paymentConfig";
 import {
@@ -87,6 +97,12 @@ const formatDate = (iso: string) => {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return "-";
   return date.toLocaleDateString("es-CO", { day: "numeric", month: "short", year: "numeric" });
+};
+
+// Camiseta / merch se ven igual que en la vista de pedido (con sus etiquetas, p. ej. GORRA → Cachucha).
+const MERCH_PILL_OPTIONS: Record<string, PillOption[]> = {
+  shirtColors: SHIRT_COLORS,
+  merchItems: MERCH_OPTIONS,
 };
 
 const formatRegNum = (n: number | null | undefined) =>
@@ -172,7 +188,13 @@ const UsersTable: React.FC<Props> = (props) => {
     if (col.id === "gender") return normalizeGender(row.gender as string | undefined) || "";
     if (col.id === "registrationNumber") return formatRegNum(row.registrationNumber);
     const value = row[col.id];
-    if (Array.isArray(value)) return value.map((v) => formatEnumLabel(String(v))).join(", ");
+    if (Array.isArray(value)) {
+      const pillOptions = MERCH_PILL_OPTIONS[col.id];
+      return value
+        .filter((v) => v !== "NINGUNA")
+        .map((v) => pillOptions?.find((o) => o.code === v)?.label ?? formatEnumLabel(String(v)))
+        .join(", ");
+    }
     return value != null ? String(value) : "";
   };
 
@@ -284,14 +306,8 @@ const UsersTable: React.FC<Props> = (props) => {
 
   const editServidorField = props.view === "servidores" ? props.onEditField : null;
 
-  const handleOpenAnswers = (row: SoldadoRecord | ServidorRecord) => {
-    const documento = String(row.documentNumber ?? "").trim();
-    if (!documento) {
-      alert("Este registro no tiene número de documento");
-      return;
-    }
-    window.open(`/participante/${props.view}/${encodeURIComponent(documento)}`, "_blank", "noopener");
-  };
+  const handleOpenAnswers = (row: SoldadoRecord | ServidorRecord) =>
+    openParticipantAnswers(props.view, String(row.documentNumber ?? ""));
 
   const handleRequestDelete = (row: SoldadoRecord | ServidorRecord) => {
     setDeleteTarget({
@@ -307,7 +323,10 @@ const UsersTable: React.FC<Props> = (props) => {
     if (colId === "paymentAmount") return formatCOP(typeof row.paymentAmount === "number" ? row.paymentAmount : 0);
     if (colId === "subsidyAmount") return formatCOP(typeof row.subsidyAmount === "number" ? row.subsidyAmount : 0);
     const col = columns.find((c) => c.id === colId);
-    return col ? renderCellValue(col, row) : "";
+    if (!col) return "";
+    const otherField = SIZE_OTHER_FIELD[colId];
+    if (otherField && row[colId] === "OTRO") return `OTRO: ${String(row[otherField] ?? "")}`;
+    return renderCellValue(col, row);
   };
 
   const handleExport = (selectedIds: string[]) => {
@@ -609,6 +628,22 @@ const UsersTable: React.FC<Props> = (props) => {
                     )}
                     {activeColumns.map((col) => {
                       const canEditCol = col.editable && (!col.restrictedTo || col.restrictedTo === props.currentUserRole);
+                      const merchPillOptions = MERCH_PILL_OPTIONS[col.id];
+                      if (merchPillOptions && editServidorField) {
+                        const servidor = r as ServidorRecord;
+                        return (
+                          <PillsCell
+                            key={col.id}
+                            value={asStringArray(r[col.id]).filter((item) => item !== "NINGUNA")}
+                            options={merchPillOptions}
+                            onChange={(next) =>
+                              col.id === "shirtColors"
+                                ? saveShirtColors(servidor, next, editServidorField)
+                                : saveMerchItems(servidor, next, editServidorField)
+                            }
+                          />
+                        );
+                      }
                       if (col.type === "pills" && editServidorField) {
                         return (
                           <PillsCell
@@ -632,14 +667,27 @@ const UsersTable: React.FC<Props> = (props) => {
                       }
                       const key = `${r._id}::${col.id}`;
                       const pending = pendingEdits[key];
+                      const otherField = props.view === "servidores" ? SIZE_OTHER_FIELD[col.id] : undefined;
                       return (
                         <EditableCell
                           key={col.id}
                           column={col}
                           value={pending ? pending.newValue : renderCellValue(col, r)}
                           isDirty={Boolean(pending)}
-                          canEdit={col.editable && (!col.restrictedTo || col.restrictedTo === props.currentUserRole)}
+                          canEdit={canEditCol}
                           onCommit={(value) => handleCommitEdit(r, col, value)}
+                          renderValue={
+                            otherField
+                              ? (value) => (
+                                  <SizeValue
+                                    value={value}
+                                    otherAnswer={String(r[otherField] ?? "")}
+                                    documentNumber={String(r.documentNumber ?? "")}
+                                    otherField={otherField}
+                                  />
+                                )
+                              : undefined
+                          }
                         />
                       );
                     })}

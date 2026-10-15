@@ -8,7 +8,7 @@ import type { View } from "./ViewDropdown";
 import EditableCell from "./EditableCell";
 import PaymentCell from "./PaymentCell";
 import PillsCell from "./PillsCell";
-import type { PillOption } from "./PillsCell";
+import SizeValue from "./SizeValue";
 import PendingChangesModal from "./PendingChangesModal";
 import type { PendingChange } from "./PendingChangesModal";
 import PedidoStatsCards from "./PedidoStatsCards";
@@ -18,14 +18,15 @@ import PedidoExportModal from "./PedidoExportModal";
 import { downloadXlsx } from "./exportXlsx";
 import { formatCOP } from "./paymentConfig";
 import {
-  MERCH_LABELS,
   MERCH_CATALOG,
+  MERCH_OPTIONS,
   SHIRT_COLORS,
-  OUTER_ITEMS,
-  SIZED_MERCH_ITEMS,
+  SIZE_OTHER_FIELD,
   asStringArray,
   computeOrderTotal,
   computeMerchCatalogCounts,
+  saveShirtColors,
+  saveMerchItems,
 } from "./merchPricing";
 
 type Props = {
@@ -64,13 +65,6 @@ const renderFieldValue = (id: EditableFieldId, row: ServidorRecord): string => {
   const value = row[id];
   return value != null ? String(value) : "";
 };
-
-const MERCH_OPTIONS: PillOption[] = [
-  ...OUTER_ITEMS,
-  { code: "CANGURO", label: MERCH_LABELS.CANGURO },
-  { code: "TULA", label: MERCH_LABELS.TULA },
-  { code: "GORRA", label: MERCH_LABELS.GORRA },
-];
 
 const requestedMerch = (row: ServidorRecord) =>
   row.needsShirt === "SI" || asStringArray(row.merchItems).some((item) => item !== "NINGUNA");
@@ -116,23 +110,6 @@ const PedidoTable: React.FC<Props> = ({
     const rowsForSheet = exportItems.map((item, i) => [String(i + 1), item.label, String(item.count)]);
     downloadXlsx("resumen-pedido.xlsx", "Pedido", ["Ítem", "Descripción", "Cantidad"], rowsForSheet);
     setShowExport(false);
-  };
-
-  const handleShirtColorsChange = async (row: ServidorRecord, next: string[]) => {
-    const wasEmpty = asStringArray(row.shirtColors).length === 0;
-    const isEmpty = next.length === 0;
-    await onEditField(row._id, "shirtColors", next);
-    if (wasEmpty && !isEmpty) await onEditField(row._id, "needsShirt", "SI");
-    else if (!wasEmpty && isEmpty) await onEditField(row._id, "needsShirt", "NO");
-  };
-
-  const handleMerchItemsChange = async (row: ServidorRecord, next: string[]) => {
-    const current = asStringArray(row.merchItems);
-    const added = next.filter((item) => !current.includes(item));
-    const needsDefaultSize = added.some((item) => SIZED_MERCH_ITEMS.has(item)) && !row.merchSize;
-
-    await onEditField(row._id, "merchItems", next);
-    if (needsDefaultSize) await onEditField(row._id, "merchSize", "M");
   };
 
   const handleCommitEdit = (row: ServidorRecord, col: ColumnDef, newValue: string) => {
@@ -268,6 +245,7 @@ const PedidoTable: React.FC<Props> = ({
                     const col = findColumn(id);
                     const key = `${r._id}::${id}`;
                     const pending = pendingEdits[key];
+                    const otherField = SIZE_OTHER_FIELD[id];
                     return (
                       <EditableCell
                         key={id}
@@ -276,6 +254,18 @@ const PedidoTable: React.FC<Props> = ({
                         isDirty={Boolean(pending)}
                         canEdit
                         onCommit={(value) => handleCommitEdit(r, col, value)}
+                        renderValue={
+                          otherField
+                            ? (value) => (
+                                <SizeValue
+                                  value={value}
+                                  otherAnswer={String(r[otherField] ?? "")}
+                                  documentNumber={String(r.documentNumber ?? "")}
+                                  otherField={otherField}
+                                />
+                              )
+                            : undefined
+                        }
                       />
                     );
                   };
@@ -317,13 +307,13 @@ const PedidoTable: React.FC<Props> = ({
                       <PillsCell
                         value={asStringArray(r.shirtColors)}
                         options={SHIRT_COLORS}
-                        onChange={(next) => handleShirtColorsChange(r, next)}
+                        onChange={(next) => saveShirtColors(r, next, onEditField)}
                       />
                       {editCell("shirtSize")}
                       <PillsCell
                         value={asStringArray(r.merchItems).filter((item) => item !== "NINGUNA")}
                         options={MERCH_OPTIONS}
-                        onChange={(next) => handleMerchItemsChange(r, next)}
+                        onChange={(next) => saveMerchItems(r, next, onEditField)}
                       />
                       {editCell("merchSize")}
                     </tr>

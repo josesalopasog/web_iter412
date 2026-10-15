@@ -9,6 +9,8 @@ type Props = {
   isDirty: boolean;
   canEdit: boolean;
   onCommit: (value: string) => void;
+  /** id del renglón, para poder enlazar directo a esta respuesta (/participante/...#id). */
+  anchorId?: string;
 };
 
 const EditableProfileField: React.FC<Props> = ({
@@ -19,6 +21,7 @@ const EditableProfileField: React.FC<Props> = ({
   isDirty,
   canEdit,
   onCommit,
+  anchorId,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(value);
@@ -41,7 +44,7 @@ const EditableProfileField: React.FC<Props> = ({
 
   if (fieldType === "select") {
     return (
-      <div className="profileRow">
+      <div className="profileRow" id={anchorId}>
         <span className="profileLabel">{label}</span>
         <select
           className={["cellInput", isDirty && "dirtyCell"].filter(Boolean).join(" ")}
@@ -61,7 +64,7 @@ const EditableProfileField: React.FC<Props> = ({
 
   if (fieldType === "date") {
     return (
-      <div className="profileRow">
+      <div className="profileRow" id={anchorId}>
         <span className="profileLabel">{label}</span>
         <input
           className={["cellInput", isDirty && "dirtyCell"].filter(Boolean).join(" ")}
@@ -75,7 +78,7 @@ const EditableProfileField: React.FC<Props> = ({
   }
 
   return (
-    <div className="profileRow">
+    <div className="profileRow" id={anchorId}>
       <span className="profileLabel">{label}</span>
       {isEditing ? (
         <input

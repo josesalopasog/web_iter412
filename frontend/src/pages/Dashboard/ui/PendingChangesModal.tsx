@@ -1,3 +1,5 @@
+import "./shared.css";
+
 export type PendingChange = {
   key: string;
   rowLabel: string;

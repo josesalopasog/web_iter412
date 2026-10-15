@@ -130,19 +130,6 @@
   transform: rotate(180deg);
 }
 
-.dbDropdownMenu {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  min-width: 160px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
-  overflow: hidden;
-  z-index: 20;
-}
-
 .dbDropdownItem {
   display: block;
   width: 100%;
@@ -623,31 +610,12 @@
   color: #6a00ff;
 }
 
-.filterMenu {
-  min-width: 180px;
-  padding: 8px;
-}
-
 .filterMenuActions {
   display: flex;
   gap: 12px;
   padding: 4px 8px 8px;
   border-bottom: 1px solid #f1f1f1;
   margin-bottom: 6px;
-}
-
-.filterMenuItem {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 8px;
-  font-size: 0.88rem;
-  cursor: pointer;
-  border-radius: 8px;
-}
-
-.filterMenuItem:hover {
-  background: #f9fafb;
 }
 
 .columnSearchRow th {
@@ -734,7 +702,8 @@
 .dbPillsWrap {
   position: relative;
   display: flex;
-  flex-wrap: wrap;
+  /* La fila nunca crece en alto: si hay muchas pills, la columna se ensancha. */
+  flex-wrap: nowrap;
   align-items: center;
   gap: 6px;
 }
@@ -827,50 +796,6 @@
 .dbPillAddOption:hover {
   background: #f5f3ff;
   color: #6a00ff;
-}
-
-/* ===== Pending changes bar ===== */
-.pendingBar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-top: 16px;
-  padding: 14px 18px;
-  background: #fefce8;
-  border: 1px solid #fde68a;
-  border-radius: 14px;
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: #854d0e;
-}
-
-.pendingBarActions {
-  display: flex;
-  gap: 10px;
-}
-
-.pendingChangesList {
-  margin: 10px 0 0;
-  padding-left: 18px;
-  max-height: 260px;
-  overflow-y: auto;
-}
-
-.pendingChangesList li {
-  margin-bottom: 8px;
-  font-size: 0.88rem;
-}
-
-.pendingChangesList .oldValue {
-  color: #dc2626;
-  text-decoration: line-through;
-}
-
-.pendingChangesList .newValue {
-  color: #16a34a;
-  font-weight: 600;
 }
 
 /* ===== Payment column (delete + pago), inline in the users table ===== */
@@ -1154,11 +1079,6 @@
   background: #f9fafb;
 }
 
-.portalMenu {
-  position: fixed !important;
-  z-index: 5000;
-}
-
 /* ===== Column picker ===== */
 .columnPicker {
   position: relative;
@@ -1312,4 +1232,22 @@
 .dbPillAddOption.active {
   font-weight: 700;
   color: #6a00ff;
+}
+
+/* ===== Talla "Otro" (camiseta / merch) ===== */
+.dbOtherSizeLink {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: #6a00ff;
+  font-weight: 600;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.dbOtherSizeLink:hover {
+  color: #5b21b6;
+  text-decoration-style: solid;
 }

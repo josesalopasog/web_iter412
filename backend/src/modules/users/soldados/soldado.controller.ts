@@ -2,6 +2,7 @@ import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { ApiError } from "../../../utils/errors.js";
 import { sendRegistrationConfirmationEmail } from "../../../services/mailer.service.js";
 import { softDelete } from "../softDelete.js";
+import { compactRegistrationNumbers, provisionalRegistrationNumber } from "../registrationNumbers.js";
 import { createLog } from "../../activityLog/createLog.js";
 import { getSettings } from "../../settings/settings.service.js";
 import { getTotalSubsidyUsed } from "../subsidyPool.js";
@@ -230,7 +231,7 @@ export const getSoldadoByDocument = asyncHandler(async (req, res) => {
 });
 
 export const listSoldados = asyncHandler(async (_req, res) => {
-  const soldados = await Soldado.find().sort({ createdAt: 1 });
+  const soldados = await Soldado.find().sort({ registrationNumber: 1 });
   res.json(soldados);
 });
 
@@ -253,7 +254,11 @@ export const updateSoldado = asyncHandler(async (req, res) => {
     if (!isValidRegistrationNumber(value)) {
       throw new ApiError(400, "El número de registro debe ser un entero positivo");
     }
-    soldado.registrationNumber = Number(value);
+    soldado.registrationNumber = await provisionalRegistrationNumber(
+      Soldado,
+      Number(value),
+      soldado.registrationNumber
+    );
   } else if (field === "paymentAmount") {
     const { soldadoPrice } = await getSettings();
     const effectiveMax = Math.max(0, soldadoPrice - (soldado.subsidyAmount ?? 0));
@@ -286,6 +291,11 @@ export const updateSoldado = asyncHandler(async (req, res) => {
     throw error;
   }
 
+  if (field === "registrationNumber") {
+    await compactRegistrationNumbers(Soldado);
+    soldado.registrationNumber = (await Soldado.findById(soldado._id).select("registrationNumber"))!.registrationNumber;
+  }
+
   await createLog(
     req.user!,
     "EDITAR_SOLDADO",
@@ -301,6 +311,7 @@ export const deleteSoldado = asyncHandler(async (req, res) => {
 
   await softDelete(soldado, "soldados", req.user!);
   await soldado.deleteOne();
+  await compactRegistrationNumbers(Soldado);
 
   await createLog(
     req.user!,

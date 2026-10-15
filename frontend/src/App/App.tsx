@@ -11,6 +11,7 @@ import RequireLoggedOut from "../auth/RequireLoggedOut";
 import { useAuth } from "../auth/AuthContext";
 import PageLoader from "../components/Spinner";
 import BackButton from "../components/BackButton";
+import { useTrackNavHistory } from "../components/BackButton/navHistory";
 import Footer from "../components/Footer";
 import Login from "../pages/Login";
 
@@ -104,6 +105,7 @@ const AppRoutes = () => {
   ];
 
   const { pathname } = useLocation();
+  useTrackNavHistory();
   const page = useRoutes(routes);
   const { user } = useAuth();
   // Estas dos también están dentro de Layout, que ya pone su propio botón de "volver arriba".

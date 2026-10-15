@@ -5,6 +5,8 @@ import PendingChangesModal from "../../Dashboard/ui/PendingChangesModal";
 import type { PendingChange } from "../../Dashboard/ui/PendingChangesModal";
 import { formatEnumLabel } from "./format";
 import { SERVICES } from "./options";
+import "../../Dashboard/ui/shared.css";
+import { SIZED_MERCH_ITEMS } from "../../Dashboard/ui/merchPricing";
 
 const DOCUMENT_TYPES = ["TI", "CC", "PAS", "OTRO"];
 const YES_NO = ["SI", "NO"];
@@ -82,6 +84,17 @@ const ServidorProfileForm: React.FC<Props> = ({ data, rowLabel, canEditEmail, sa
     }
   };
 
+  // Igual que en el dashboard: elegir colores implica que necesita camiseta (y quitarlos todos, que no).
+  const handleShirtColorsChange = (newValues: string[]) => {
+    handleCommitEdit("shirtColors", "Colores", newValues);
+    if (newValues.length > 0 && fieldValue("needsShirt") !== "SI") {
+      handleCommitEdit("needsShirt", "¿Necesita camiseta?", "SI");
+    } else if (newValues.length === 0 && fieldValue("needsShirt") === "SI") {
+      handleCommitEdit("needsShirt", "¿Necesita camiseta?", "NO");
+      handleCommitEdit("shirtSize", "Talla camiseta", "");
+    }
+  };
+
   const handleMerchItemsChange = (newValues: string[]) => {
     const old = arrayFieldValue("merchItems");
     const added = newValues.filter((v) => !old.includes(v));
@@ -94,6 +107,9 @@ const ServidorProfileForm: React.FC<Props> = ({ data, rowLabel, canEditEmail, sa
     handleCommitEdit("merchItems", "Prendas/accesorios", final);
     if (final.length === 1 && final[0] === "NINGUNA") {
       handleCommitEdit("merchSize", "Talla prenda/accesorio", "");
+    } else if (added.some((v) => SIZED_MERCH_ITEMS.has(v)) && !fieldValue("merchSize")) {
+      // Al agregar un buso/chaqueta sin talla se deja M por defecto (como en la vista de pedido).
+      handleCommitEdit("merchSize", "Talla prenda/accesorio", "M");
     }
   };
 
@@ -131,6 +147,7 @@ const ServidorProfileForm: React.FC<Props> = ({ data, rowLabel, canEditEmail, sa
   ) => (
     <EditableProfileField
       key={field}
+      anchorId={field}
       label={label}
       value={fieldValue(field)}
       fieldType={opts?.fieldType}
@@ -184,12 +201,13 @@ const ServidorProfileForm: React.FC<Props> = ({ data, rowLabel, canEditEmail, sa
           options={SHIRT_COLORS}
           isDirty={Boolean(pendingEdits.shirtColors)}
           canEdit
-          onCommit={(values) => handleCommitEdit("shirtColors", "Colores", values)}
+          onCommit={handleShirtColorsChange}
         />
         {editableField("shirtSize", "Talla camiseta", {
           fieldType: "select",
           options: SHIRT_SIZES,
         })}
+        {fieldValue("shirtSize") === "OTRO" && editableField("shirtSizeOther", "¿Cuál talla de camiseta?")}
         <PillMultiSelectField
           label="Prendas/accesorios"
           value={arrayFieldValue("merchItems")}
@@ -202,6 +220,8 @@ const ServidorProfileForm: React.FC<Props> = ({ data, rowLabel, canEditEmail, sa
           fieldType: "select",
           options: SHIRT_SIZES,
         })}
+        {fieldValue("merchSize") === "OTRO" &&
+          editableField("merchSizeOther", "¿Cuál talla de prenda/accesorio?")}
       </div>
 
       <div className="profileSection">
