@@ -1,0 +1,147 @@
+/* Tutorial guiado (GuidedTour): oscurece la página, deja "iluminado" el elemento del paso y muestra
+   una tarjeta junto a él. */
+.tourOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+}
+
+.tourOverlayDim {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.tourSpotlight {
+  position: fixed;
+  border-radius: 14px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
+  outline: 2px solid rgba(255, 255, 255, 0.9);
+  pointer-events: none;
+  z-index: 0;
+  transition: top 0.25s ease, left 0.25s ease, width 0.25s ease, height 0.25s ease;
+}
+
+.tourCard {
+  position: fixed;
+  z-index: 1;
+  box-sizing: border-box;
+  padding: 16px 18px 14px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+  color: #111;
+  font-family: inherit;
+  animation: tourCardIn 0.2s ease-out;
+}
+
+.tourDoneCard {
+  position: static;
+  width: min(340px, 100%);
+}
+
+.tourClose {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: #9ca3af;
+  cursor: pointer;
+}
+
+.tourClose:hover {
+  background: #f3f4f6;
+  color: #111;
+}
+
+.tourCounter {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #6a00ff;
+}
+
+.tourTitle {
+  margin: 4px 0 6px;
+  font-size: 1.05rem;
+}
+
+.tourText {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #4b5563;
+}
+
+.tourCheck {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  font-size: 0.88rem;
+  color: #374151;
+  cursor: pointer;
+}
+
+.tourActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.tourBtnPrimary,
+.tourBtnGhost {
+  padding: 8px 14px;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tourBtnPrimary {
+  border: none;
+  background: linear-gradient(120deg, #6a00ff, #a855f7);
+  color: #fff;
+}
+
+.tourBtnGhost {
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #111;
+}
+
+.tourBtnGhost:hover {
+  background: #f3f4f6;
+}
+
+@keyframes tourCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tourCard {
+    animation: none;
+  }
+
+  .tourSpotlight {
+    transition: none;
+  }
+}

@@ -68,3 +68,15 @@
     --angle: 360deg;
   }
 }
+
+/* Con ícono: ícono y texto en una sola fila. */
+.animated-border.has-icon {
+  flex-direction: row;
+  gap: 6px;
+}
+
+.animated-border.has-icon svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}

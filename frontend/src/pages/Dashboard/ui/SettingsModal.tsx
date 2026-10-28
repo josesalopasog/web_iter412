@@ -3,6 +3,7 @@ import type { AppSettings } from "../../../api/settings";
 import { updateSettings } from "../../../api/settings";
 import { formatCOP, formatNumberCO, parseDigits } from "./paymentConfig";
 import { spanishMonthName } from "../../../utils/spanishMonth";
+import { toRoman } from "../../../utils/romanNumeral";
 import ConfirmSettingsModal from "./ConfirmSettingsModal";
 import type { SettingsChange } from "./ConfirmSettingsModal";
 
@@ -15,6 +16,7 @@ type Props = {
 };
 
 const FIELD_LABELS: Record<keyof AppSettings, string> = {
+  retreatNumber: "Número del retiro",
   soldadoPrice: "Precio retiro soldados",
   servidorPrice: "Precio retiro servidores",
   subsidyCap: "Subsidio total",
@@ -43,10 +45,12 @@ const MONTH_FIELDS = new Set<keyof AppSettings>(["retreatMonth", "advanceMonth",
 const formatFieldValue = (field: keyof AppSettings, value: number) => {
   if (CURRENCY_FIELDS.has(field)) return formatCOP(value);
   if (MONTH_FIELDS.has(field)) return spanishMonthName(value);
+  if (field === "retreatNumber") return toRoman(value);
   return String(value);
 };
 
 const MONTH_OPTIONS = Array.from({ length: 12 }, (_, i) => i + 1);
+const clampRetreatNumber = (n: number) => Math.min(100, Math.max(1, n || 1));
 const clampDay = (n: number) => Math.min(31, Math.max(1, n || 1));
 const clampYear = (n: number) => Math.min(2100, Math.max(2000, n || 2000));
 
@@ -64,6 +68,7 @@ const CurrencyField: React.FC<FieldProps> = ({ label, value, disabled, onChange 
       <span className="paymentInputPrefix">$</span>
       <input
         className="configInput"
+        autoComplete="off"
         type="text"
         inputMode="numeric"
         disabled={disabled}
@@ -79,6 +84,7 @@ const DayField: React.FC<FieldProps> = ({ label, value, disabled, onChange }) =>
     <span>{label}</span>
     <input
       className="configInput configInputPlain"
+      autoComplete="off"
       type="number"
       min={1}
       max={31}
@@ -94,6 +100,7 @@ const MonthField: React.FC<FieldProps> = ({ label, value, disabled, onChange }) 
     <span>{label}</span>
     <select
       className="configInput configInputPlain"
+      autoComplete="off"
       disabled={disabled}
       value={value}
       onChange={(e) => onChange(Number(e.target.value))}
@@ -107,11 +114,28 @@ const MonthField: React.FC<FieldProps> = ({ label, value, disabled, onChange }) 
   </label>
 );
 
+const RetreatNumberField: React.FC<FieldProps> = ({ label, value, disabled, onChange }) => (
+  <label className="configField">
+    <span>{label}</span>
+    <input
+      className="configInput configInputPlain"
+      autoComplete="off"
+      type="number"
+      min={1}
+      max={100}
+      disabled={disabled}
+      value={value}
+      onChange={(e) => onChange(clampRetreatNumber(Number(e.target.value)))}
+    />
+  </label>
+);
+
 const YearField: React.FC<FieldProps> = ({ label, value, disabled, onChange }) => (
   <label className="configField">
     <span>{label}</span>
     <input
       className="configInput configInputPlain"
+      autoComplete="off"
       type="number"
       min={2000}
       max={2100}
@@ -200,6 +224,7 @@ const SettingsModal: React.FC<Props> = ({ settings, canEdit, totalSubsidyUsed, o
 
             <div className="configColumn">
               <div className="configColumnTitle">Fechas del retiro</div>
+              <RetreatNumberField {...field("retreatNumber")} />
               <DayField {...field("fridayDate")} />
               <DayField {...field("saturdayDate")} />
               <DayField {...field("sundayDate")} />

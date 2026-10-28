@@ -8,7 +8,7 @@ import { createLog } from "../../activityLog/createLog.js";
 import { getSettings } from "../../settings/settings.service.js";
 import { getTotalSubsidyUsed } from "../subsidyPool.js";
 import { issueSession } from "../../auth/auth.utils.js";
-import { Servidor } from "./servidor.model.js";
+import { Servidor, SERVICE_STATUSES } from "./servidor.model.js";
 import type { RegistrationServidoresDTO } from "./servidor.types.js"
 
 const formatRegistrationNumber = (n: number | null | undefined) =>
@@ -55,6 +55,7 @@ const EDITABLE_FIELDS = new Set([
   "otherSedesDetail",
   "formationOther",
   "testimony",
+  "serviceStatus",
   "registrationNumber",
   "paymentAmount",
   "subsidyAmount",
@@ -130,6 +131,9 @@ const parseTestimony = (value: unknown): string => {
   }
   return text;
 };
+
+const isValidServiceStatus = (value: unknown): value is (typeof SERVICE_STATUSES)[number] =>
+  typeof value === "string" && (SERVICE_STATUSES as readonly string[]).includes(value);
 
 const ASSIGNABLE_ROLES = new Set(["SERVIDOR", "ADMIN", "TREASURER", "SUPERADMIN"]);
 
@@ -286,6 +290,8 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
 
     formationOther: body.formationOther,
 
+    serviceStatus: "ACTIVO",
+
     acceptTerms: body.acceptTerms,
     acceptDataPolicy: body.acceptDataPolicy,
   });
@@ -371,6 +377,9 @@ export const updateServidor = asyncHandler(async (req, res) => {
     (servidor as any)[field] = value;
   } else if (field === "testimony") {
     servidor.testimony = parseTestimony(value);
+  } else if (field === "serviceStatus") {
+    if (!isValidServiceStatus(value)) throw new ApiError(400, "Estado de servicio inválido");
+    servidor.serviceStatus = value;
   } else if (field === "registrationNumber") {
     if (!isValidRegistrationNumber(value)) {
       throw new ApiError(400, "El número de registro debe ser un entero positivo");
@@ -473,6 +482,9 @@ export const updateMyServidor = asyncHandler(async (req, res) => {
     (servidor as any)[field] = value;
   } else if (field === "testimony") {
     servidor.testimony = parseTestimony(value);
+  } else if (field === "serviceStatus") {
+    if (!isValidServiceStatus(value)) throw new ApiError(400, "Estado de servicio inválido");
+    servidor.serviceStatus = value;
   } else if (field === "registrationNumber") {
     if (!isValidRegistrationNumber(value)) {
       throw new ApiError(400, "El número de registro debe ser un entero positivo");

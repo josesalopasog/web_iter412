@@ -5,6 +5,10 @@ import { BellIcon, XMarkIcon } from "../../../assets/icons";
 import { highlightSection } from "../../../notifications/highlight";
 import { useNotifications } from "../../../notifications/useNotifications";
 import type { AppNotification } from "../../../notifications/types";
+import { useAuth } from "../../../auth/AuthContext";
+import { TOURS, requestTourStart } from "../../../tours/tours";
+import type { Tour } from "../../../tours/tours";
+import "./NotificationsBell.css";
 
 const formatShortDate = (iso: string) => {
   const [y, m, d] = iso.split("-").map(Number);
@@ -16,7 +20,13 @@ type Props = {
 };
 
 const NotificationsBell = ({ userId }: Props) => {
-  const { notifications, read, unreadCount, markRead, dismiss } = useNotifications(userId);
+  const { notifications, read, dismissed, unreadCount, markRead, dismiss } = useNotifications(userId);
+  const { user } = useAuth();
+  const isAdmin = user?.role === "ADMIN" || user?.role === "SUPERADMIN" || user?.role === "TREASURER";
+  // Tutoriales para volver a ver. La X los quita de aquí para siempre (como una notificación).
+  const tutorials = [isAdmin && TOURS.dashboard, TOURS.perfil].filter(
+    (t): t is Tour => Boolean(t) && !dismissed.has(`tutorial-${(t as Tour).id}`)
+  );
   const [open, setOpen] = useState(false);
   // En pantallas angostas el panel va fijo a la pantalla (ver .notifPanel en styles.css), justo
   // debajo de la campana: el header puede partirse en dos filas, así que su borde se mide.
@@ -51,8 +61,14 @@ const NotificationsBell = ({ userId }: Props) => {
     else navigate(n.target.path, { state: { highlight: n.target.sectionId } });
   };
 
+  const handleOpenTutorial = (tour: Tour) => {
+    setOpen(false);
+    if (tour.path === location.pathname) requestTourStart(tour.id);
+    else navigate(tour.path, { state: { tour: tour.id } });
+  };
+
   return (
-    <div className="notifRoot" ref={rootRef}>
+    <div className="notifRoot" ref={rootRef} data-tour="bell">
       <button
         className="iconBtn notifBellBtn"
         type="button"
@@ -122,6 +138,37 @@ const NotificationsBell = ({ userId }: Props) => {
                 );
               })}
             </ul>
+          )}
+          {tutorials.length > 0 && (
+            <>
+              <div className="notifSectionTitle">Tutoriales</div>
+              <ul className="notifList">
+                {tutorials.map((t) => (
+                  <li key={t.id} className="notifListItem">
+                    <button
+                      type="button"
+                      role="menuitem"
+                      className="notifItem"
+                      onClick={() => handleOpenTutorial(t)}
+                    >
+                      <span className="notifDot" aria-hidden="true" />
+                      <span className="notifContent">
+                        <span className="notifTitle">{t.label}</span>
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      className="notifDismissBtn"
+                      onClick={() => dismiss(`tutorial-${t.id}`)}
+                      aria-label={`Quitar: ${t.label}`}
+                      title="Quitar (no se podrá volver a ver)"
+                    >
+                      <XMarkIcon className="w-4 h-4" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </>
           )}
         </div>
       )}

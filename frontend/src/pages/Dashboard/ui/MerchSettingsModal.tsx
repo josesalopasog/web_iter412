@@ -80,6 +80,7 @@ const MerchSettingsModal: React.FC<Props> = ({ settings, canEdit, onSaved, onClo
                   <span className="paymentInputPrefix">$</span>
                   <input
                     className="configInput"
+                    autoComplete="off"
                     type="text"
                     inputMode="numeric"
                     disabled={!canEdit}

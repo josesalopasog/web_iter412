@@ -3,6 +3,7 @@ import { getPublicSettings } from "../api/settings";
 import type { PublicSettings } from "../api/settings";
 
 const FALLBACK_SETTINGS: PublicSettings = {
+  retreatNumber: 16,
   soldadoPrice: 435000,
   servidorPrice: 300000,
   fridayDate: 13,

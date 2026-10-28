@@ -72,6 +72,13 @@ export const SOLDADO_DEFAULT_VISIBLE = [
 ];
 
 export const SERVIDOR_COLUMNS: ColumnDef[] = [
+  {
+    id: "serviceStatus",
+    label: "Estado",
+    type: "dropup",
+    options: ["ACTIVO", "INACTIVO", "SANTISIMO_NOCTURNO"],
+    editable: true,
+  },
   { id: "firstNames", label: "Nombres", type: "text", editable: true },
   { id: "lastNames", label: "Apellidos", type: "text", editable: true },
   { id: "preferredName", label: "Le dicen", type: "text", editable: true },
@@ -137,6 +144,7 @@ export const SERVIDOR_COLUMNS: ColumnDef[] = [
 ];
 
 export const SERVIDOR_DEFAULT_VISIBLE = [
+  "serviceStatus",
   "firstNames",
   "lastNames",
   "documentNumber",

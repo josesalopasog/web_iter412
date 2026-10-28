@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useKeepInViewport } from "../../../hooks/useKeepInViewport";
 
 export type View = "soldados" | "servidores" | "pedido" | "eliminados";
 
@@ -18,6 +19,8 @@ const LABELS: Record<View, string> = {
 const ViewDropdown: React.FC<Props> = ({ view, showEliminados, onChange }) => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  useKeepInViewport(menuRef);
 
   useEffect(() => {
     const onClickOutside = (e: MouseEvent) => {
@@ -28,11 +31,11 @@ const ViewDropdown: React.FC<Props> = ({ view, showEliminados, onChange }) => {
   }, []);
 
   const options: View[] = showEliminados
-    ? ["soldados", "servidores", "pedido", "eliminados"]
-    : ["soldados", "servidores", "pedido"];
+    ? ["soldados", "servidores", "eliminados"]
+    : ["soldados", "servidores"];
 
   return (
-    <div className="dbDropdown" ref={ref}>
+    <div className="dbDropdown" ref={ref} data-tour="view">
       <button
         type="button"
         className={`dbDropdownBtn ${view}`}
@@ -43,7 +46,7 @@ const ViewDropdown: React.FC<Props> = ({ view, showEliminados, onChange }) => {
       </button>
 
       {open && (
-        <div className="dbDropdownMenu">
+        <div className="dbDropdownMenu" ref={menuRef}>
           {options.map((v) => (
             <button
               key={v}

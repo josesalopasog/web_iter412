@@ -1,0 +1,94 @@
+import { useState } from "react";
+import { updateMyServidorField } from "../../../api/adminUsers";
+import { DocumentIcon } from "../../../assets/icons";
+import TermsModal from "./TermsModal";
+import { usePublicSettings } from "../../../hooks/usePublicSettings";
+import { toRoman } from "../../../utils/romanNumeral";
+
+export type ServiceStatus = "ACTIVO" | "INACTIVO" | "SANTISIMO_NOCTURNO";
+
+type Props = {
+  value: ServiceStatus;
+  /** Se llama al cambiar (antes de guardar) y al revertir si falla, para que el tema del perfil siga al estado. */
+  onChange: (next: ServiceStatus) => void;
+  onSaved: () => void;
+};
+
+// "Activo para servir" (verde/gris). Si está inactivo aparece "Santísimo Nocturno" debajo: quien no
+// sirve en el retiro aún puede apuntarse a acompañar el Santísimo en la noche.
+const ServiceStatusToggle = ({ value, onChange, onSaved }: Props) => {
+  const [saving, setSaving] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [showTerms, setShowTerms] = useState(false);
+  const { retreatNumber } = usePublicSettings();
+
+  const isActive = value === "ACTIVO";
+  const isNightAdoration = value === "SANTISIMO_NOCTURNO";
+
+  const save = async (next: ServiceStatus) => {
+    const previous = value;
+    onChange(next);
+    setSaving(true);
+    setErrorMsg(null);
+    try {
+      await updateMyServidorField("serviceStatus", next);
+      onSaved();
+    } catch (error) {
+      onChange(previous);
+      setErrorMsg(error instanceof Error ? error.message : "No se pudo guardar");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div id="estado-servicio" className="profileSection serviceStatusSection" data-tour="status">
+      <h3>Disponibilidad</h3>
+      <p className="serviceStatusRetreat">
+        Servir en el <strong>{toRoman(retreatNumber)} Retiro de ITER 4.12</strong>
+      </p>
+      <p className="serviceStatusHint">
+        Mantén encendido <strong>Activo para servir</strong> si puedes servir en este retiro. Si esta vez no
+        puedes, apágalo; y si aun así quieres acompañar al Santísimo durante la noche, enciende{" "}
+        <strong>Santísimo Nocturno</strong>.
+      </p>
+
+      <button
+        type="button"
+        role="switch"
+        aria-checked={isActive}
+        className={`serviceStatusBtn${isActive ? " is-on" : ""}`}
+        disabled={saving}
+        onClick={() => save(isActive ? "INACTIVO" : "ACTIVO")}
+      >
+        <span className="serviceStatusKnob" aria-hidden="true" />
+        <span className="serviceStatusLabel">Activo para servir</span>
+      </button>
+
+      {!isActive && (
+        <button
+          type="button"
+          role="switch"
+          aria-checked={isNightAdoration}
+          className={`serviceStatusBtn serviceStatusBtnNight${isNightAdoration ? " is-on" : ""}`}
+          disabled={saving}
+          onClick={() => save(isNightAdoration ? "INACTIVO" : "SANTISIMO_NOCTURNO")}
+        >
+          <span className="serviceStatusKnob" aria-hidden="true" />
+          <span className="serviceStatusLabel">Santísimo Nocturno</span>
+        </button>
+      )}
+
+      {errorMsg && <p className="testimonyMessage is-error">{errorMsg}</p>}
+
+      <button type="button" className="serviceTermsBtn" onClick={() => setShowTerms(true)}>
+        <DocumentIcon className="w-4 h-4" />
+        Consultar términos y condiciones nuevamente
+      </button>
+
+      {showTerms && <TermsModal onClose={() => setShowTerms(false)} />}
+    </div>
+  );
+};
+
+export default ServiceStatusToggle;

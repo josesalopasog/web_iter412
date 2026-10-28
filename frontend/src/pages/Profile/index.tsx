@@ -7,17 +7,23 @@ import { getMyServidorProfile, updateMyServidorField } from "../../api/adminUser
 import { LogoutIcon } from "../../assets/icons";
 import ServidorProfileForm from "./ui/ServidorProfileForm";
 import TestimonyEditor from "./ui/TestimonyEditor";
+import ServiceStatusToggle from "./ui/ServiceStatusToggle";
+import type { ServiceStatus } from "./ui/ServiceStatusToggle";
 import NotificationsBell from "./ui/NotificationsBell";
 import ConfirmLogoutModal from "../../components/ConfirmLogoutModal";
+import GuidedTour from "../../tours/GuidedTour";
 import { roleLabel } from "../../auth/roleLabel";
 import "./styles.css";
 
-// Color de acento del perfil según el rol: morado SUPERADMIN, rojo ADMIN/TREASURER, verde SERVIDOR.
-const roleThemeClass = (role: string | undefined) => {
-  if (role === "SUPERADMIN") return "role-superadmin";
-  if (role === "ADMIN" || role === "TREASURER") return "role-admin";
-  return "role-servidor";
+// Color de acento del perfil según la disponibilidad: verde activo, gris inactivo, azul Santísimo nocturno.
+const STATUS_THEME_CLASS: Record<ServiceStatus, string> = {
+  ACTIVO: "theme-activo",
+  INACTIVO: "theme-inactivo",
+  SANTISIMO_NOCTURNO: "theme-nocturno",
 };
+
+const toServiceStatus = (value: unknown): ServiceStatus =>
+  value === "INACTIVO" || value === "SANTISIMO_NOCTURNO" ? value : "ACTIVO";
 
 const Profile = () => {
   const { user, logout } = useAuth();
@@ -29,11 +35,15 @@ const Profile = () => {
   const [data, setData] = useState<Record<string, unknown> | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [serviceStatus, setServiceStatus] = useState<ServiceStatus>("ACTIVO");
 
   const loadProfile = () => {
     if (!userId) return;
     getMyServidorProfile()
-      .then(setData)
+      .then((profile) => {
+        setData(profile);
+        setServiceStatus(toServiceStatus(profile.serviceStatus));
+      })
       .catch((error: unknown) =>
         setErrorMsg(error instanceof Error ? error.message : "Error cargando tu perfil")
       );
@@ -42,7 +52,7 @@ const Profile = () => {
   useEffect(loadProfile, [userId]);
 
   return (
-    <div className={`profilePage ${roleThemeClass(user?.role)}`}>
+    <div className={`profilePage ${STATUS_THEME_CLASS[serviceStatus]}`}>
       <header className="profileHeader">
         <div className="profileHeaderLeft">
           <LogoLink className="profileLogo" />
@@ -54,6 +64,7 @@ const Profile = () => {
               className="btnGhost profileDashboardBtn profileDashboardBtnDanger"
               type="button"
               onClick={() => navigate("/dashboard")}
+              data-tour="dashboard"
             >
               Dashboard
             </button>
@@ -79,6 +90,7 @@ const Profile = () => {
             className="btnGhost profileDashboardBtn"
             type="button"
             onClick={() => navigate("/password")}
+            data-tour="password"
           >
             Cambiar contraseña
           </button>
@@ -87,6 +99,10 @@ const Profile = () => {
         {errorMsg && <p className="loginError">{errorMsg}</p>}
 
         {!data && !errorMsg && <PageLoader variant="inline" />}
+
+        {data && (
+          <ServiceStatusToggle value={serviceStatus} onChange={setServiceStatus} onSaved={loadProfile} />
+        )}
 
         {data && (
           <TestimonyEditor
@@ -105,6 +121,8 @@ const Profile = () => {
           />
         )}
       </div>
+
+      <GuidedTour tourId="perfil" userId={userId} ready={Boolean(data)} />
 
       {showLogoutConfirm && (
         <ConfirmLogoutModal onCancel={() => setShowLogoutConfirm(false)} onConfirm={logout} />

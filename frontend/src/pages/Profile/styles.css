@@ -2,31 +2,31 @@
   min-height: 100vh;
   background: #f4f5f9;
 
-  /* Color de acento según el rol (lo pone Profile con role-*): títulos, nombre, bordes, etc.
-     Por defecto morado (SUPERADMIN). */
-  --role-accent: #6a00ff;
-  --role-accent-2: #a855f7;
-  --role-accent-rgb: 106, 0, 255;
-  --role-title: #6a00ff;
-  --role-soft: #f5f3ff;
-}
-
-/* ADMIN y TREASURER: rojo de la cruz del Hero (#d40201) y del logo (#ff1b1d). */
-.profilePage.role-admin {
-  --role-accent: #d40201;
-  --role-accent-2: #ff1b1d;
-  --role-accent-rgb: 255, 27, 29;
-  --role-title: #e00000;
-  --role-soft: #fff1f1;
-}
-
-/* SERVIDOR: verde del logo (#12a127) y del pincel verde del Hero (#51a30c). */
-.profilePage.role-servidor {
+  /* Color de acento según la disponibilidad (lo pone Profile con theme-*): títulos, nombre,
+     bordes, etc. Por defecto verde (activo para servir). */
   --role-accent: #12a127;
   --role-accent-2: #51a30c;
   --role-accent-rgb: 18, 161, 39;
   --role-title: #12a127;
   --role-soft: #effbf0;
+}
+
+/* Inactivo: gris. */
+.profilePage.theme-inactivo {
+  --role-accent: #6b7280;
+  --role-accent-2: #9ca3af;
+  --role-accent-rgb: 107, 114, 128;
+  --role-title: #6b7280;
+  --role-soft: #f3f4f6;
+}
+
+/* Santísimo nocturno: el azul del interruptor. */
+.profilePage.theme-nocturno {
+  --role-accent: #1e3a8a;
+  --role-accent-2: #4338ca;
+  --role-accent-rgb: 67, 56, 202;
+  --role-title: #3730a3;
+  --role-soft: #eef2ff;
 }
 
 .profileHeader {
@@ -373,214 +373,6 @@
   color: #b91c1c;
 }
 
-/* ---------- Notificaciones ---------- */
-.notifRoot {
-  position: relative;
-  /* flex: sin esto el botón queda en línea y el espacio de la línea base lo sube unos px. */
-  display: flex;
-}
-
-.notifBellBtn {
-  position: relative;
-}
-
-.notifBadge {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: 999px;
-  background: #dc2626;
-  color: #fff;
-  font-size: 0.68rem;
-  font-weight: 700;
-  line-height: 18px;
-  text-align: center;
-  box-shadow: 0 0 0 2px #fff;
-}
-
-.notifPanel {
-  position: absolute;
-  top: calc(100% + 10px);
-  right: 0;
-  z-index: 50;
-  width: min(360px, calc(100vw - 32px));
-  max-height: min(460px, calc(100vh - 120px));
-  overflow-y: auto;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
-  animation: notifPanelIn 0.18s ease-out;
-}
-
-.notifPanelHead {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 10px 10px 10px 16px;
-  background: #fff;
-  font-weight: 700;
-  border-bottom: 1px solid #f1f1f1;
-}
-
-.notifCloseBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  border: none;
-  border-radius: 999px;
-  background: none;
-  color: #6b7280;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.notifCloseBtn svg {
-  width: 20px;
-  height: 20px;
-}
-
-.notifCloseBtn:hover,
-.notifCloseBtn:focus-visible {
-  background: #f3f4f6;
-  color: #111;
-  outline: none;
-}
-
-/* Pantallas angostas: la campana no está pegada al borde (le sigue "cerrar sesión"), así que un
-   panel anclado a ella se salía por la izquierda. Aquí va fijo a la pantalla, con margen a los
-   dos lados, justo debajo del header (--notif-top lo calcula NotificationsBell). */
-@media (max-width: 600px) {
-  .notifPanel {
-    position: fixed;
-    top: var(--notif-top, 72px);
-    left: 12px;
-    right: 12px;
-    width: auto;
-    max-height: calc(100vh - var(--notif-top, 72px) - 16px);
-    max-height: calc(100dvh - var(--notif-top, 72px) - 16px);
-  }
-}
-
-.notifEmpty {
-  margin: 0;
-  padding: 18px 16px;
-  color: #6b7280;
-  font-size: 0.9rem;
-}
-
-.notifList {
-  list-style: none;
-  margin: 0;
-  padding: 6px;
-}
-
-.notifListItem {
-  position: relative;
-}
-
-.notifItem {
-  display: flex;
-  gap: 10px;
-  width: 100%;
-  padding: 10px 34px 10px 10px;
-  border: none;
-  border-radius: 12px;
-  background: none;
-  text-align: left;
-  cursor: pointer;
-  font: inherit;
-  color: inherit;
-  transition: background 0.15s ease;
-}
-
-.notifItem:hover,
-.notifItem:focus-visible {
-  background: var(--role-soft);
-  outline: none;
-}
-
-/* X de cada notificación (esquina superior derecha): la quita de la lista. */
-.notifDismissBtn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-  border: none;
-  border-radius: 999px;
-  background: none;
-  color: #9ca3af;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.notifDismissBtn:hover,
-.notifDismissBtn:focus-visible {
-  background: rgba(0, 0, 0, 0.06);
-  color: #111;
-  outline: none;
-}
-
-.notifDot {
-  flex-shrink: 0;
-  width: 8px;
-  height: 8px;
-  margin-top: 6px;
-  border-radius: 999px;
-  background: transparent;
-}
-
-.notifItem.is-unread .notifDot {
-  background: var(--role-accent);
-}
-
-.notifContent {
-  display: grid;
-  gap: 3px;
-}
-
-.notifTitle {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #374151;
-}
-
-.notifItem.is-unread .notifTitle {
-  font-weight: 700;
-  color: #111;
-}
-
-.notifBody {
-  font-size: 0.82rem;
-  line-height: 1.4;
-  color: #6b7280;
-}
-
-.notifDate {
-  font-size: 0.75rem;
-  color: #9ca3af;
-}
-
-@keyframes notifPanelIn {
-  from { opacity: 0; transform: translateY(-6px); }
-  to { opacity: 1; transform: none; }
-}
-
 /* Respuesta enlazada desde el dashboard (/participante/...#campo) */
 .profileRowHighlight {
   border-radius: 8px;
@@ -596,5 +388,220 @@
   }
   100% {
     background: #f5f3ff;
+  }
+}
+
+/* "Activo para servir" / "Santísimo Nocturno": interruptor + texto, sin fondo. Encendido, el texto y
+   el interruptor llevan el degradado del estado (verde / azul); apagado, gris. */
+.serviceStatusSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.serviceStatusSection h3 {
+  margin-bottom: 2px;
+}
+
+.serviceStatusBtn {
+  --status-gradient: linear-gradient(120deg, #12a127, #51a30c);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: none;
+  background: none;
+  padding: 4px 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #9ca3af;
+}
+
+.serviceStatusBtnNight {
+  --status-gradient: linear-gradient(120deg, #1e3a8a, #4338ca);
+}
+
+.serviceStatusBtn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.serviceStatusLabel {
+  transition: color 0.2s;
+}
+
+.serviceStatusBtn.is-on .serviceStatusLabel {
+  background: var(--status-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.serviceStatusKnob {
+  position: relative;
+  width: 38px;
+  height: 22px;
+  border-radius: 999px;
+  background: #d1d5db;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.serviceStatusBtn.is-on .serviceStatusKnob {
+  background: var(--status-gradient);
+}
+
+.serviceStatusKnob::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+}
+
+.serviceStatusBtn.is-on .serviceStatusKnob::after {
+  transform: translateX(16px);
+}
+
+.serviceStatusRetreat {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #111;
+}
+
+.serviceStatusRetreat strong {
+  color: var(--role-title);
+}
+
+.serviceStatusHint {
+  margin: 0 0 4px;
+  color: #4b5563;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.serviceTermsBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+  text-align: left;
+  cursor: pointer;
+}
+
+.serviceTermsBtn svg {
+  flex-shrink: 0;
+}
+
+.serviceTermsBtn:hover {
+  text-decoration: underline;
+}
+
+/* Pop up de términos (igual al del formulario de servidores, con clases propias). */
+.profileTermsOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: profileTermsFadeIn 0.18s ease;
+}
+
+.profileTermsCard {
+  width: min(780px, 96%);
+  border-radius: 18px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+  animation: profileTermsPopIn 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.profileTermsHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.profileTermsHead h3 {
+  margin: 0;
+}
+
+.profileTermsClose {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 8px 10px;
+  border-radius: 12px;
+}
+
+.profileTermsClose:hover {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.profileTermsBody {
+  margin: 10px 0 0;
+  padding: 12px;
+  border-radius: 14px;
+  line-height: 1.6;
+  max-height: 55vh;
+  overflow: auto;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.profileTermsActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+@keyframes profileTermsFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes profileTermsPopIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profileTermsOverlay,
+  .profileTermsCard {
+    animation: none;
   }
 }

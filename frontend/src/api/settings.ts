@@ -1,6 +1,7 @@
 import { API_URL, authedRequest } from "./http";
 
 export type AppSettings = {
+  retreatNumber: number;
   soldadoPrice: number;
   servidorPrice: number;
   fridayDate: number;
@@ -24,6 +25,7 @@ export type AppSettings = {
 };
 
 export type PublicSettings = {
+  retreatNumber: number;
   soldadoPrice: number;
   servidorPrice: number;
   fridayDate: number;

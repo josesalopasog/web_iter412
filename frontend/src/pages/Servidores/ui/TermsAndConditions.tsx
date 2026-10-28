@@ -1,13 +1,11 @@
 import { usePublicSettings } from "../../../hooks/usePublicSettings";
 import { spanishMonthName } from "../../../utils/spanishMonth";
+import { toRoman } from "../../../utils/romanNumeral";
 
 const PHONE_NUMBER_H = "3195571763";
 const PHONE_NUMBER_M = "3196188804";
 const MIN_ABONO_COP = 100_000;
 
-const NEQUI_CONTACT_NAME_H = "Yostin Arteaga - Coordinador XVI Retiro";
-const NEQUI_CONTACT_NAME_M = "Karen Cruz - Coordinadora XVI Retiro";
-const RETREAT_LABEL = "XVI RETIRO ITER 4.12";
 
 const BANK_ACCOUNT_TYPE = "Cuenta corriente";
 const BANK_NAME = "Banco Caja Social";
@@ -23,6 +21,7 @@ function formatCOP(value: number) {
 
 export default function TermsAndConditions() {
   const {
+    retreatNumber,
     servidorPrice,
     retreatYear,
     advanceStartDay,
@@ -32,6 +31,10 @@ export default function TermsAndConditions() {
     finalPaymentEndDay,
     finalPaymentMonth,
   } = usePublicSettings();
+  const retreatRoman = toRoman(retreatNumber);
+  const nequiContactNameH = `Yostin Arteaga - Coordinador ${retreatRoman} Retiro`;
+  const nequiContactNameM = `Karen Cruz - Coordinadora ${retreatRoman} Retiro`;
+  const retreatLabel = `${retreatRoman} RETIRO ITER 4.12`;
   const totalPriceText = formatCOP(servidorPrice);
   const minAbonoText = formatCOP(MIN_ABONO_COP);
   const advanceWindowText = `${advanceStartDay} y el ${advanceEndDay} de ${spanishMonthName(advanceMonth)} del ${retreatYear}`;
@@ -68,7 +71,7 @@ export default function TermsAndConditions() {
         <p>Para participantes hombres:</p>
         <br />
         <p>
-          <strong>Nequi:</strong> {NEQUI_CONTACT_NAME_H}
+          <strong>Nequi:</strong> {nequiContactNameH}
           <br />
           <strong>Nombre:</strong> {PHONE_NUMBER_H}
         </p>
@@ -76,7 +79,7 @@ export default function TermsAndConditions() {
         <p>Para participantes mujeres:</p>
         <br />
         <p>
-          <strong>Nequi:</strong> {NEQUI_CONTACT_NAME_M}
+          <strong>Nequi:</strong> {nequiContactNameM}
           <br />
           <strong>Nombre:</strong> {PHONE_NUMBER_M}
         </p>
@@ -84,7 +87,7 @@ export default function TermsAndConditions() {
         <p>En el mensaje de la transferencia se debe indicar:</p>
 
         <div className="terms__highlight">
-          <strong>NOMBRE COMPLETO - {RETREAT_LABEL}</strong>
+          <strong>NOMBRE COMPLETO - {retreatLabel}</strong>
         </div>
 
         <p>
@@ -92,9 +95,9 @@ export default function TermsAndConditions() {
           soporte de la transacción a WhatsApp junto con el nombre del
           participante del retiro. Si el participante es hombre a:{" "}
           <strong>{PHONE_NUMBER_H}</strong>{" "}
-          <strong>{NEQUI_CONTACT_NAME_H}</strong> y si el participante es
+          <strong>{nequiContactNameH}</strong> y si el participante es
           mujer a: <strong>{PHONE_NUMBER_M}</strong>{" "}
-          <strong>{NEQUI_CONTACT_NAME_M}</strong>.
+          <strong>{nequiContactNameM}</strong>.
           <br />
           <br />
           De no realizarse el envío del soporte correspondiente, este pago{" "}

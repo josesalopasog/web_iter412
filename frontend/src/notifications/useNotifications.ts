@@ -151,5 +151,5 @@ export const useNotifications = (userId: string | undefined) => {
     [userId]
   );
 
-  return { notifications, read, unreadCount, markRead, dismiss };
+  return { notifications, read, dismissed, unreadCount, markRead, dismiss };
 };

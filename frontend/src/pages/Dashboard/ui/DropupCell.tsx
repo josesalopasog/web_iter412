@@ -1,20 +1,25 @@
 import { useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { formatEnumLabel } from "../../Profile/ui/format";
+import { useKeepInViewport } from "../../../hooks/useKeepInViewport";
 
 type Props = {
   value: string;
   options: string[];
   canEdit: boolean;
   onChange: (next: string) => Promise<void>;
+  /** Cómo se pinta un valor (en el botón y en el menú). Por defecto, el código con espacios. */
+  renderOption?: (value: string) => ReactNode;
 };
 
-const DropupCell: React.FC<Props> = ({ value, options, canEdit, onChange }) => {
+const DropupCell: React.FC<Props> = ({ value, options, canEdit, onChange, renderOption = formatEnumLabel }) => {
   const [open, setOpen] = useState(false);
   const [menuPos, setMenuPos] = useState<{ bottom: number; left: number } | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const btnRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  useKeepInViewport(menuRef);
 
   useEffect(() => {
     const onClickOutside = (e: MouseEvent) => {
@@ -64,7 +69,7 @@ const DropupCell: React.FC<Props> = ({ value, options, canEdit, onChange }) => {
         disabled={!canEdit || isSaving}
         onClick={() => setOpen((o) => !o)}
       >
-        {value ? formatEnumLabel(value) : "-"}
+        {value ? renderOption(value) : "-"}
         {canEdit && <span className="dbDropdownCaret">▴</span>}
       </button>
 
@@ -83,7 +88,7 @@ const DropupCell: React.FC<Props> = ({ value, options, canEdit, onChange }) => {
                 className={`dbPillAddOption${opt === value ? " active" : ""}`}
                 onClick={() => select(opt)}
               >
-                {formatEnumLabel(opt)}
+                {renderOption(opt)}
               </button>
             ))}
           </div>,

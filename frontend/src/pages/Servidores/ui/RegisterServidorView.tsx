@@ -14,7 +14,10 @@ import type {
 
 import whatsapp_logo from "../../../assets/svg/WhatsApp.svg";
 import TermsAndConditions from "./TermsAndConditions";
+import AnimatedBorder from "../../../components/AnimatedBorder";
+import { ProfileIcon } from "../../../assets/icons";
 import { usePublicSettings } from "../../../hooks/usePublicSettings";
+import { toRoman } from "../../../utils/romanNumeral";
 
 function formatCOP(value: number) {
   return new Intl.NumberFormat("es-CO", {
@@ -157,7 +160,8 @@ export const RegisterServidorView: React.FC<Props> = ({
   const [openPolicy, setOpenPolicy] = React.useState(false);
   const [isLoggingIn, setIsLoggingIn] = React.useState(false);
   const [autoLoginError, setAutoLoginError] = React.useState<string | null>(null);
-  const { servidorPrice } = usePublicSettings();
+  const { servidorPrice, retreatNumber } = usePublicSettings();
+  const retreatRoman = toRoman(retreatNumber);
 
   const passwordOk = password.length >= 8 && password === confirmPassword;
 
@@ -1084,6 +1088,20 @@ export const RegisterServidorView: React.FC<Props> = ({
                 </a>
               </li>
             </ul>
+
+            <div className="alreadyRegistered">
+              <h3>👤 ¿Ya te registraste?</h3>
+              <div className="alreadyRegisteredRow">
+                <p>
+                  Si ya llenaste este formulario no tienes que hacerlo de nuevo: inicia sesión con tu
+                  correo y contraseña para entrar a tu perfil. Allí puedes actualizar tus datos, indicar
+                  si estás activo para servir y dejar tu testimonio. Este formulario es solo para
+                  servidores de ITER 4.12: <strong>no compartas este link</strong> con nadie que no
+                  sea servidor de la comunidad.
+                </p>
+                <AnimatedBorder text="Iniciar sesión" href="/login" icon={<ProfileIcon />} />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1104,7 +1122,7 @@ export const RegisterServidorView: React.FC<Props> = ({
             <div className="modalBody" style={{ whiteSpace: "normal" }}>
               <p>
                 Tu inscripción ha sido registrada con éxito. Estamos felices
-                y te esperamos en nuestro próximo <strong>XVI Retiro de ITER 4.12</strong>.
+                y te esperamos en nuestro próximo <strong>{retreatRoman} Retiro de ITER 4.12</strong>.
               </p>
               <p>
                 Para más información, comunícate con uno de nuestros

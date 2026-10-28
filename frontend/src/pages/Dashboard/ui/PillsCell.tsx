@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useKeepInViewport } from "../../../hooks/useKeepInViewport";
 
 export type PillOption = { code: string; label: string };
 
@@ -15,6 +16,7 @@ const PillsCell: React.FC<Props> = ({ value, options, onChange }) => {
   const [isSaving, setIsSaving] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  useKeepInViewport(menuRef);
   const addBtnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {

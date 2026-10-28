@@ -1,13 +1,11 @@
 import { usePublicSettings } from "../../../hooks/usePublicSettings";
 import { spanishMonthName } from "../../../utils/spanishMonth";
+import { toRoman } from "../../../utils/romanNumeral";
 
 const PHONE_NUMBER_H = "3195571763";
 const PHONE_NUMBER_M = "3196188804";
 const MIN_ADVANCE_COP = 100_000;
 
-const NEQUI_CONTACT_NAME_H = "Yostin Arteaga - Coordinador XVI Retiro";
-const NEQUI_CONTACT_NAME_M = "Karen Cruz - Coordinadora XVI Retiro";
-const RETREAT_LABEL = "XVI RETIRO ITER 4.12";
 
 const BANK_ACCOUNT_TYPE = "Cuenta corriente";
 const BANK_NAME = "Banco Caja Social";
@@ -23,6 +21,7 @@ function formatCOP(value: number) {
 
 export default function TermsAndConditions() {
   const {
+    retreatNumber,
     soldadoPrice,
     fridayDate,
     saturdayDate,
@@ -36,6 +35,10 @@ export default function TermsAndConditions() {
     finalPaymentEndDay,
     finalPaymentMonth,
   } = usePublicSettings();
+  const retreatRoman = toRoman(retreatNumber);
+  const nequiContactNameH = `Yostin Arteaga - Coordinador ${retreatRoman} Retiro`;
+  const nequiContactNameM = `Karen Cruz - Coordinadora ${retreatRoman} Retiro`;
+  const retreatLabel = `${retreatRoman} RETIRO ITER 4.12`;
   const totalPriceText = formatCOP(soldadoPrice);
   const minAdvanceText = formatCOP(MIN_ADVANCE_COP);
   const retreatMonthYearText = `${spanishMonthName(retreatMonth)} del ${retreatYear}`;
@@ -52,7 +55,7 @@ export default function TermsAndConditions() {
 
       <p>
         El{" "}
-        <strong>XVI Retiro Espiritual de la Comunidad ITER 4.12 Bogotá</strong>,
+        <strong>{retreatRoman} Retiro Espiritual de la Comunidad ITER 4.12 Bogotá</strong>,
         se llevará a cabo los días{" "}
         <strong>
           viernes {fridayDate}, {saturdayDate} sábado y {sundayDate} Domingo
@@ -101,7 +104,7 @@ export default function TermsAndConditions() {
         <p>Para participantes hombres:</p>
         <br />
         <p>
-          <strong>Nequi:</strong> {NEQUI_CONTACT_NAME_H}
+          <strong>Nequi:</strong> {nequiContactNameH}
           <br />
           <strong>Nombre:</strong> {PHONE_NUMBER_H}
         </p>
@@ -109,7 +112,7 @@ export default function TermsAndConditions() {
         <p>Para participantes mujeres:</p>
         <br />
         <p>
-          <strong>Nequi:</strong> {NEQUI_CONTACT_NAME_M}
+          <strong>Nequi:</strong> {nequiContactNameM}
           <br />
           <strong>Nombre:</strong> {PHONE_NUMBER_M}
         </p>
@@ -117,16 +120,16 @@ export default function TermsAndConditions() {
         <p>En el mensaje de la transferencia se debe indicar:</p>
 
         <div className="terms__highlight">
-          <strong>NOMBRE - {RETREAT_LABEL}</strong>
+          <strong>NOMBRE - {retreatLabel}</strong>
         </div>
 
         <p>
           Para hacer efectiva esta modalidad de pago, se debe hacer envío del
           soporte de la transacción a WhatsApp. Si el participante es hombre a:{" "}
           <strong>{PHONE_NUMBER_H}</strong>{" "}
-          <strong>{NEQUI_CONTACT_NAME_H}</strong> y si el participante es mujer
+          <strong>{nequiContactNameH}</strong> y si el participante es mujer
           a: <strong>{PHONE_NUMBER_M}</strong>{" "}
-          <strong>{NEQUI_CONTACT_NAME_M}</strong>{" "}
+          <strong>{nequiContactNameM}</strong>{" "}
            junto con la copia de tu documento de identidad. Si la consignación se
           realiza desde otro banco u otra ciudad diferente a Bogotá, deberás
           asumir el costo de la transacción

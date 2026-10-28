@@ -6,6 +6,7 @@ import { getSettings } from "./settings.service.js";
 import type { SettingsDoc } from "./settings.service.js";
 
 type SettingsField =
+  | "retreatNumber"
   | "soldadoPrice"
   | "servidorPrice"
   | "fridayDate"
@@ -28,6 +29,7 @@ type SettingsField =
   | "extraSizePrice";
 
 const FIELD_LABELS: Record<SettingsField, string> = {
+  retreatNumber: "número del retiro",
   soldadoPrice: "precio de retiro soldados",
   servidorPrice: "precio de retiro servidores",
   fridayDate: "fecha viernes",
@@ -70,12 +72,18 @@ const isValidYear = (value: unknown): value is number => {
   return Number.isInteger(num) && num >= 2000 && num <= 2100;
 };
 
+const isValidRetreatNumber = (value: unknown): value is number => {
+  const num = Number(value);
+  return Number.isInteger(num) && num >= 1 && num <= 100;
+};
+
 const isValidCap = (value: unknown): value is number => {
   const num = Number(value);
   return Number.isFinite(num) && num >= 0;
 };
 
 const FIELD_VALIDATORS: Record<SettingsField, (value: unknown) => boolean> = {
+  retreatNumber: isValidRetreatNumber,
   soldadoPrice: isValidPrice,
   servidorPrice: isValidPrice,
   fridayDate: isValidDayOfMonth,
@@ -110,6 +118,7 @@ const MERCH_FIELDS: SettingsField[] = [
 ];
 
 const toResponse = (settings: SettingsDoc) => ({
+  retreatNumber: settings.retreatNumber,
   soldadoPrice: settings.soldadoPrice,
   servidorPrice: settings.servidorPrice,
   fridayDate: settings.fridayDate,

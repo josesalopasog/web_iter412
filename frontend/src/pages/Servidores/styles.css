@@ -157,3 +157,35 @@
   display: block;
   font-size: 1.6em;
 }
+
+/* Responsive: el cuadro de info va antes del formulario (en una sola columna). */
+@media (max-width: 900px) {
+  #register-servidores .grid > .span-4 {
+    order: -1;
+  }
+}
+
+/* Sección "¿Ya te registraste?" dentro del cuadro de Info: título como el de Info, texto y
+   debajo el botón de iniciar sesión (mismo estilo que "Quiero Inscribirme"). */
+.alreadyRegistered {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border, #e5e7eb);
+}
+
+.alreadyRegisteredRow {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+/* El texto queda a la izquierda; el botón va debajo, centrado. */
+.alreadyRegisteredRow .animated-border-container {
+  align-self: center;
+  margin-bottom: 4px;
+}
+
+.alreadyRegistered a {
+  text-decoration: none;
+}

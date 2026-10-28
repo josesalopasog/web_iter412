@@ -35,6 +35,7 @@ const SubsidyCell: React.FC<Props> = ({ amount, max, onChange }) => {
       <span className="paymentInputPrefix">$</span>
       <input
         className="paymentRowInput"
+        autoComplete="off"
         type="text"
         inputMode="numeric"
         value={formatNumberCO(draft)}

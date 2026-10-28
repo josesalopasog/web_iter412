@@ -2,6 +2,8 @@ import mongoose, { Schema } from "mongoose";
 
 const SettingsSchema = new Schema(
   {
+    // Número del retiro (XVI = 16); en la página se muestra en romanos.
+    retreatNumber: { type: Number, required: true, default: 16, min: 1, max: 100 },
     soldadoPrice: { type: Number, required: true, default: 435000, min: 0 },
     servidorPrice: { type: Number, required: true, default: 300000, min: 0 },
     fridayDate: { type: Number, required: true, default: 13, min: 1, max: 31 },

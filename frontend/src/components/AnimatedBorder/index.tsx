@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import "./styles.css";
 
 type AnimatedBorderProps = {
@@ -5,6 +6,8 @@ type AnimatedBorderProps = {
   text: string;
   href?: string;
   isBlank?: boolean; 
+  /** Ícono opcional a la izquierda del texto. */
+  icon?: ReactNode;
 };
 
 const AnimatedBorder: React.FC<AnimatedBorderProps> = ({
@@ -12,9 +15,11 @@ const AnimatedBorder: React.FC<AnimatedBorderProps> = ({
   text,
   href,
   isBlank = false, 
+  icon,
 }) => {
   const content = (
-    <div className={`animated-border ${className}`}>
+    <div className={`animated-border ${icon ? "has-icon" : ""} ${className}`}>
+      {icon}
       <p>{text}</p>
     </div>
   );

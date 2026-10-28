@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
+import { ProfileIcon } from "../../assets/icons";
 import "./styles.css";
 
 // Mismo umbral que usan RegisterFab/BackToTop para aparecer en Home.
@@ -58,15 +59,7 @@ const ProfileFab = ({ yieldToRegister = false }: ProfileFabProps) => {
         aria-label="Ir a mi perfil"
         tabIndex={yieldToRegister ? -1 : 0}
       >
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <circle cx="12" cy="8.2" r="3.4" stroke="currentColor" strokeWidth={2.1} />
-          <path
-            d="M5 19.5c0-3.8 3.13-6.2 7-6.2s7 2.4 7 6.2"
-            stroke="currentColor"
-            strokeWidth={2.1}
-            strokeLinecap="round"
-          />
-        </svg>
+        <ProfileIcon />
       </Link>
     </div>
   );

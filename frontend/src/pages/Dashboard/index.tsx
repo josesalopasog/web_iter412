@@ -26,10 +26,13 @@ import EliminadosTable from "./ui/EliminadosTable";
 import PedidoTable from "./ui/PedidoTable";
 import type { View } from "./ui/ViewDropdown";
 import ConfirmLogoutModal from "../../components/ConfirmLogoutModal";
+import NotificationsBell from "../Profile/ui/NotificationsBell";
+import GuidedTour from "../../tours/GuidedTour";
 import { takeNewRegistrations } from "./ui/newRegistrations";
 import "./styles.css";
 
 const DEFAULT_SETTINGS: AppSettings = {
+  retreatNumber: 16,
   soldadoPrice: 435000,
   servidorPrice: 300000,
   fridayDate: 13,
@@ -227,6 +230,7 @@ const Dashboard = () => {
 
         <div className="dashboardHeaderRight">
           <span className="dashboardUserName">{user?.preferredName}</span>
+          <NotificationsBell userId={userId} />
           <button
             className="iconBtn"
             type="button"
@@ -274,7 +278,7 @@ const Dashboard = () => {
         ) : (
           <>
             {view !== "eliminados" && view !== "pedido" && (
-              <div className="statsWrap">
+              <div className="statsWrap" data-tour="stats">
                 <StatsCards
                   view={view}
                   total={activeStats.total}
@@ -332,7 +336,6 @@ const Dashboard = () => {
             {view === "pedido" && (
               <PedidoTable
                 rows={servidores}
-                showEliminados={isSuperAdmin}
                 settings={settings}
                 canEditSettings={canEditMerchSettings}
                 onViewChange={setView}
@@ -348,6 +351,8 @@ const Dashboard = () => {
           </>
         )}
       </div>
+
+      <GuidedTour tourId="dashboard" userId={userId} ready={!isLoading} />
 
       {showLogoutConfirm && (
         <ConfirmLogoutModal onCancel={() => setShowLogoutConfirm(false)} onConfirm={logout} />

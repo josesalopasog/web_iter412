@@ -19,6 +19,11 @@ import PaymentCell from "./PaymentCell";
 import PillsCell from "./PillsCell";
 import type { PillOption } from "./PillsCell";
 import DropupCell from "./DropupCell";
+import ServiceStatusFilter from "./ServiceStatusFilter";
+import PedidoButton from "./PedidoButton";
+import StatusLed from "./StatusLed";
+import { SERVICE_STATUS_CELL_LABELS, serviceStatusOf } from "./serviceStatus";
+import type { ServiceStatus, ServiceStatusFilterValue } from "./serviceStatus";
 import { formatEnumLabel } from "../../Profile/ui/format";
 import {
   MERCH_OPTIONS,
@@ -107,6 +112,13 @@ const MERCH_PILL_OPTIONS: Record<string, PillOption[]> = {
   merchItems: MERCH_OPTIONS,
 };
 
+const renderServiceStatus = (value: string) => (
+  <>
+    <StatusLed status={value as ServiceStatus} />
+    {SERVICE_STATUS_CELL_LABELS[value as ServiceStatus] ?? value}
+  </>
+);
+
 const formatRegNum = (n: number | null | undefined) =>
   n == null || Number.isNaN(n) ? "s/n" : String(n).padStart(3, "0");
 
@@ -120,8 +132,14 @@ const loadColumnOrder = (
     if (raw) {
       const saved = JSON.parse(raw) as ColumnOrderItem[];
       const savedIds = new Set(saved.map((s) => s.id));
-      const missing = columns.filter((c) => !savedIds.has(c.id)).map((c) => ({ id: c.id, visible: false }));
-      return [...saved.filter((s) => columns.some((c) => c.id === s.id)), ...missing];
+      const order = saved.filter((s) => columns.some((c) => c.id === s.id));
+      // Columnas nuevas (no guardadas aún): entran en su posición de la definición y visibles
+      // según el set por defecto (p. ej. "Estado" queda de primera).
+      columns.forEach((c, index) => {
+        if (savedIds.has(c.id)) return;
+        order.splice(Math.min(index, order.length), 0, { id: c.id, visible: defaultVisible.includes(c.id) });
+      });
+      return order;
     }
   } catch {
     // ignore malformed storage
@@ -133,6 +151,8 @@ const UsersTable: React.FC<Props> = (props) => {
   const [showSearchRow, setShowSearchRow] = useState(false);
   const [columnSearch, setColumnSearch] = useState<Record<string, string>>({});
   const [showPaymentCols, setShowPaymentCols] = useState(false);
+  // Servidores: por defecto solo los activos para servir; el admin elige si ver otro estado.
+  const [statusFilter, setStatusFilter] = useState<ServiceStatusFilterValue>("ACTIVO");
 
   const columns = props.view === "soldados" ? SOLDADO_COLUMNS : SERVIDOR_COLUMNS;
   const defaultVisible = props.view === "soldados" ? SOLDADO_DEFAULT_VISIBLE : SERVIDOR_DEFAULT_VISIBLE;
@@ -189,6 +209,7 @@ const UsersTable: React.FC<Props> = (props) => {
     if (col.id === "createdAt") return formatDate(String(row.createdAt ?? ""));
     if (col.id === "gender") return normalizeGender(row.gender as string | undefined) || "";
     if (col.id === "registrationNumber") return formatRegNum(row.registrationNumber);
+    if (col.id === "serviceStatus") return serviceStatusOf(row);
     const value = row[col.id];
     if (Array.isArray(value)) {
       const pillOptions = MERCH_PILL_OPTIONS[col.id];
@@ -228,6 +249,10 @@ const UsersTable: React.FC<Props> = (props) => {
   const filteredRows = useMemo(() => {
     let rows: (SoldadoRecord | ServidorRecord)[] = props.rows;
 
+    if (props.view === "servidores" && statusFilter !== "TODOS") {
+      rows = rows.filter((r) => serviceStatusOf(r) === statusFilter);
+    }
+
     const regNumQuery = columnSearch.registrationNumber?.trim().toLowerCase();
     if (regNumQuery) {
       rows = rows.filter((r) => formatRegNum(r.registrationNumber).toLowerCase().includes(regNumQuery));
@@ -250,12 +275,24 @@ const UsersTable: React.FC<Props> = (props) => {
     }
     return rows;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.rows, columnSearch, columnFilters, visibleColumns]);
+  }, [props.rows, columnSearch, columnFilters, visibleColumns, statusFilter]);
+
+  const statusCounts = useMemo(() => {
+    const counts: Record<ServiceStatusFilterValue, number> = {
+      ACTIVO: 0,
+      INACTIVO: 0,
+      SANTISIMO_NOCTURNO: 0,
+      TODOS: props.rows.length,
+    };
+    for (const r of props.rows as (SoldadoRecord | ServidorRecord)[]) counts[serviceStatusOf(r)] += 1;
+    return counts;
+  }, [props.rows]);
 
   const getSortValue = (key: string, row: SoldadoRecord | ServidorRecord): string | number => {
     if (key === "registrationNumber") return row.registrationNumber;
     if (key === "role") return String((row as ServidorRecord).role ?? "");
     if (key === "gender") return normalizeGender(row.gender as string | undefined) || "";
+    if (key === "serviceStatus") return serviceStatusOf(row);
     const value = row[key];
     if (Array.isArray(value)) return value.join(", ");
     return value != null ? String(value) : "";
@@ -409,21 +446,29 @@ const UsersTable: React.FC<Props> = (props) => {
       <div className="tableSectionHead">
         <div className="tableSectionHeadLeft">
           <ViewDropdown view={props.view} showEliminados={props.showEliminados} onChange={props.onViewChange} />
+          {props.view === "servidores" && (
+            <ServiceStatusFilter value={statusFilter} counts={statusCounts} onChange={setStatusFilter} />
+          )}
           <ColumnPicker columns={visibleColumns} order={columnOrder} onChange={handleColumnOrderChange} />
           <button
             type="button"
             className="btnGhost settingsBtn"
             title="Ajustes del retiro"
+            data-tour="settings"
             onClick={props.onOpenSettings}
           >
             <GearIcon className="w-5 h-5" />
           </button>
         </div>
         <div className="tableSectionHeadRight">
+          {props.view === "servidores" && (
+            <PedidoButton active={false} onClick={() => props.onViewChange("pedido")} />
+          )}
           <button
             type="button"
             className="btnGhost exportBtn"
             title="Exportar a Excel"
+            data-tour="export"
             onClick={() => setShowExport(true)}
           >
             <ExcelIcon className="w-4 h-4" />
@@ -440,7 +485,7 @@ const UsersTable: React.FC<Props> = (props) => {
         </div>
       </div>
 
-      <div className="tableScroll">
+      <div className="tableScroll" data-tour="table">
         <table className="dataTable">
           <thead>
               <tr>
@@ -678,10 +723,11 @@ const UsersTable: React.FC<Props> = (props) => {
                         return (
                           <DropupCell
                             key={col.id}
-                            value={typeof r[col.id] === "string" ? (r[col.id] as string) : ""}
+                            value={renderCellValue(col, r)}
                             options={col.options ?? []}
                             canEdit={canEditCol}
                             onChange={(next) => editServidorField(r._id, col.id, next)}
+                            renderOption={col.id === "serviceStatus" ? renderServiceStatus : undefined}
                           />
                         );
                       }

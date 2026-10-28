@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { formatEnumLabel } from "./format";
 import "../../Dashboard/ui/shared.css";
+import { useKeepInViewport } from "../../../hooks/useKeepInViewport";
 
 type Props = {
   label: string;
@@ -24,6 +25,7 @@ const PillMultiSelectField: React.FC<Props> = ({
   const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
   const btnRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  useKeepInViewport(menuRef);
 
   useEffect(() => {
     const onClickOutside = (e: MouseEvent) => {

@@ -1,6 +1,8 @@
 import mongoose, { Schema } from "mongoose";
 import { USER_ROLES } from "../roles.js";
 
+export const SERVICE_STATUSES = ["ACTIVO", "INACTIVO", "SANTISIMO_NOCTURNO"] as const;
+
 export type ServidorDoc = mongoose.InferSchemaType<typeof ServidorSchema>;
 
 const ServidorSchema = new Schema(
@@ -67,6 +69,10 @@ const ServidorSchema = new Schema(
 
     // "Cuéntanos tu testimonio": se edita desde /profile y se muestra (al azar) en la página principal.
     testimony: { type: String, trim: true, default: "" },
+
+    // Disponibilidad para servir (se cambia desde /profile). Al registrarse queda ACTIVO; si está
+    // inactivo puede marcar que sirve solo en el Santísimo nocturno.
+    serviceStatus: { type: String, enum: SERVICE_STATUSES, required: true, default: "ACTIVO" },
 
     acceptTerms: { type: Boolean, required: true },
     acceptDataPolicy: { type: Boolean, required: true },

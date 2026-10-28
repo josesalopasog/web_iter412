@@ -37,6 +37,7 @@ const PaymentCell: React.FC<Props> = ({ amount, max, onChange }) => {
       <span className="paymentInputPrefix">$</span>
       <input
         className="paymentRowInput"
+        autoComplete="off"
         type="text"
         inputMode="numeric"
         title={`Restante: ${formatCOP(Math.max(0, max - draft))}`}

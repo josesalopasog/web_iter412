@@ -14,6 +14,7 @@ import type {
 import TermsAndConditions from "./TermsAndConditions";
 import whatsapp_logo from "../../../assets/svg/WhatsApp.svg";
 import { usePublicSettings } from "../../../hooks/usePublicSettings";
+import { toRoman } from "../../../utils/romanNumeral";
 
 function formatCOP(value: number) {
   return new Intl.NumberFormat("es-CO", {
@@ -131,7 +132,8 @@ export const RegisterView: React.FC<Props> = ({
   const navigate = useNavigate();
   const [openTerms, setOpenTerms] = React.useState(false);
   const [openPolicy, setOpenPolicy] = React.useState(false);
-  const { soldadoPrice } = usePublicSettings();
+  const { soldadoPrice, retreatNumber } = usePublicSettings();
+  const retreatRoman = toRoman(retreatNumber);
 
   const SACRAMENTS: Sacrament[] = [
     "NINGUNO",
@@ -187,7 +189,7 @@ export const RegisterView: React.FC<Props> = ({
           <h2>Inscripción al Retiro</h2>
           <h3>Completa tus datos para reservar tu cupo</h3>
           <p className="sub">
-            ¡Bienvenido/a! Dios te ha llamado para vivir el XVI retiro de la
+            ¡Bienvenido/a! Dios te ha llamado para vivir el {retreatRoman} retiro de la
             comunidad ITER 4.12 Bogotá los días 13, 14 y 15 de noviembre del 2026.
           </p>
         </div>
@@ -1033,7 +1035,7 @@ export const RegisterView: React.FC<Props> = ({
             <div className="modalBody" style={{ whiteSpace: "normal" }}>
               <p>
                 Tu inscripción ha sido registrada con éxito. Estamos felices
-                y te esperamos en nuestro próximo <strong>XVI Retiro de ITER 4.12</strong>.
+                y te esperamos en nuestro próximo <strong>{retreatRoman} Retiro de ITER 4.12</strong>.
               </p>
               <p>
                 Para más información, comunícate con uno de nuestros

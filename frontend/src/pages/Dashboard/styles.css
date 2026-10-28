@@ -542,6 +542,20 @@
   cursor: pointer;
 }
 
+/* Vista de pedido: barra blanca horizontal con las acciones, encima de las cards. */
+.tableSectionHead.pedidoToolbar {
+  background: #fff;
+  border-radius: 18px;
+  padding: 12px 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.pedidoBtn.active {
+  background: #fff7ed;
+  border-color: #f59e0b;
+  color: #c2410c;
+}
+
 .searchRowToggleBtn {
   display: inline-flex;
   align-items: center;
@@ -568,7 +582,7 @@
   .tableSectionHead .exportBtn,
   .tableSectionHead .columnPickerBtn {
     padding: 8px;
-    gap: 0;
+    gap: 4px;
   }
 }
 
@@ -1371,4 +1385,57 @@
     --new-row-alpha: 1;
     background-size: 100% 100%;
   }
+}
+
+/* Filtro de disponibilidad de servidores: mismo botón que "Columnas", con un LED del color del
+   estado en vez del ícono y el borde de ese mismo color. El LED también va en la celda "Estado". */
+.serviceStatusFilterBtn {
+  border-color: var(--led-color);
+  white-space: nowrap;
+}
+
+.serviceStatusFilterBtn:hover {
+  border-color: var(--led-color);
+}
+
+.statusLed {
+  position: relative;
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--led-color, #9ca3af);
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.statusLed::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: var(--led-color, #9ca3af);
+  box-shadow: 0 0 4px var(--led-color, #9ca3af);
+}
+
+.status-activo {
+  --led-color: #16a34a;
+}
+
+.status-inactivo {
+  --led-color: #9ca3af;
+}
+
+.status-santisimo_nocturno {
+  --led-color: #2563eb;
+}
+
+.status-todos {
+  --led-color: #7c3aed;
+}
+
+.dbDropdownItem .statusLed,
+.dbPillAddOption .statusLed {
+  margin-right: 8px;
+  vertical-align: -2px;
 }

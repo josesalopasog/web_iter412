@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { roleLabel } from "../../../auth/roleLabel";
+import { useKeepInViewport } from "../../../hooks/useKeepInViewport";
 
 const ASSIGNABLE_ROLES = ["SERVIDOR", "ADMIN", "TREASURER", "SUPERADMIN"];
 
@@ -16,6 +17,7 @@ const RoleDropdown: React.FC<Props> = ({ role, canChange, isSaving, onChange }) 
   const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
   const btnRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  useKeepInViewport(menuRef);
 
   useEffect(() => {
     const onClickOutside = (e: MouseEvent) => {

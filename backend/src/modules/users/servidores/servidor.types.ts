@@ -7,6 +7,8 @@ export type DocumentType = "TI" | "CC" | "PAS" | "OTRO";
 export type ShirtSize = "S" | "M" | "L" | "OTRO";
 export type ShirtColor = "BLANCA" | "VERDE" | "AZUL";
 
+export type ServiceStatus = "ACTIVO" | "INACTIVO" | "SANTISIMO_NOCTURNO";
+
 export type MerchItem =
   | "BUSO_CERRADO"
   | "CHAQUETA_ABIERTA"

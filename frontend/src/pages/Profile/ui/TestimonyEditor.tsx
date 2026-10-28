@@ -50,7 +50,7 @@ const TestimonyEditor = ({ initialValue, onSaved }: Props) => {
   const counterClass = isEmpty ? "" : inRange ? " is-ok" : " is-short";
 
   return (
-    <div id="testimonio" className="profileSection testimonyEditor">
+    <div id="testimonio" className="profileSection testimonyEditor" data-tour="testimony">
       <h3>Cuéntanos tu testimonio</h3>
       <p className="testimonyHint">
         Este testimonio aparece en la página principal. Cuéntale al futuro soldado por qué hacer el retiro de ITER

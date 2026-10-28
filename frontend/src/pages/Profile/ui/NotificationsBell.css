@@ -1,0 +1,217 @@
+/* ---------- Notificaciones (campana de /profile y del dashboard) ---------- */
+.notifRoot {
+  position: relative;
+  /* flex: sin esto el botón queda en línea y el espacio de la línea base lo sube unos px. */
+  display: flex;
+}
+
+.notifBellBtn {
+  position: relative;
+}
+
+.notifBadge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #dc2626;
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  box-shadow: 0 0 0 2px #fff;
+}
+
+.notifPanel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 50;
+  width: min(360px, calc(100vw - 32px));
+  max-height: min(460px, calc(100vh - 120px));
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
+  animation: notifPanelIn 0.18s ease-out;
+}
+
+.notifPanelHead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 10px 10px 16px;
+  background: #fff;
+  font-weight: 700;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.notifCloseBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: #6b7280;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.notifCloseBtn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.notifCloseBtn:hover,
+.notifCloseBtn:focus-visible {
+  background: #f3f4f6;
+  color: #111;
+  outline: none;
+}
+
+/* Pantallas angostas: la campana no está pegada al borde (le sigue "cerrar sesión"), así que un
+   panel anclado a ella se salía por la izquierda. Aquí va fijo a la pantalla, con margen a los
+   dos lados, justo debajo del header (--notif-top lo calcula NotificationsBell). */
+@media (max-width: 600px) {
+  .notifPanel {
+    position: fixed;
+    top: var(--notif-top, 72px);
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-height: calc(100vh - var(--notif-top, 72px) - 16px);
+    max-height: calc(100dvh - var(--notif-top, 72px) - 16px);
+  }
+}
+
+.notifEmpty {
+  margin: 0;
+  padding: 18px 16px;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.notifList {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+}
+
+.notifSectionTitle {
+  padding: 10px 16px 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  border-top: 1px solid #f1f1f1;
+}
+
+.notifListItem {
+  position: relative;
+}
+
+.notifItem {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 34px 10px 10px;
+  border: none;
+  border-radius: 12px;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  transition: background 0.15s ease;
+}
+
+.notifItem:hover,
+.notifItem:focus-visible {
+  background: var(--role-soft, #f5f3ff);
+  outline: none;
+}
+
+/* X de cada notificación (esquina superior derecha): la quita de la lista. */
+.notifDismissBtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.notifDismissBtn:hover,
+.notifDismissBtn:focus-visible {
+  background: rgba(0, 0, 0, 0.06);
+  color: #111;
+  outline: none;
+}
+
+.notifDot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.notifItem.is-unread .notifDot {
+  background: var(--role-accent, #6a00ff);
+}
+
+.notifContent {
+  display: grid;
+  gap: 3px;
+}
+
+.notifTitle {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.notifItem.is-unread .notifTitle {
+  font-weight: 700;
+  color: #111;
+}
+
+.notifBody {
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: #6b7280;
+}
+
+.notifDate {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+@keyframes notifPanelIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: none; }
+}

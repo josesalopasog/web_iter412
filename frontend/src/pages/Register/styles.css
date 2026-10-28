@@ -154,3 +154,10 @@
     padding-top: 0;
   }
 }
+
+/* Responsive: el cuadro de info va antes del formulario (en una sola columna). */
+@media (max-width: 900px) {
+  #register .grid > .span-4 {
+    order: -1;
+  }
+}

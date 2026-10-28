@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { SortType } from "./columnDefs";
+import { useKeepInViewport } from "../../../hooks/useKeepInViewport";
 
 export type SortDirection = "asc" | "desc";
 
@@ -22,6 +23,7 @@ const SortableHeader: React.FC<Props> = ({ label, sortType = "text", active, onS
   const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
   const btnRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  useKeepInViewport(menuRef);
 
   useEffect(() => {
     const onClickOutside = (e: MouseEvent) => {

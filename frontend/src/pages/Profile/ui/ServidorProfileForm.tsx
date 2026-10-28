@@ -160,7 +160,7 @@ const ServidorProfileForm: React.FC<Props> = ({ data, rowLabel, canEditEmail, sa
 
   return (
     <>
-      <div className="profileSection">
+      <div className="profileSection" data-tour="profile-data">
         <h3>Datos personales</h3>
         {editableField("firstNames", "Nombres")}
         {editableField("lastNames", "Apellidos")}

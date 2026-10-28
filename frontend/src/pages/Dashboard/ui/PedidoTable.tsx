@@ -2,8 +2,14 @@ import { useState } from "react";
 import type { ServidorRecord } from "../../../api/adminUsers";
 import type { AppSettings } from "../../../api/settings";
 import type { ColumnDef } from "./columnDefs";
-import { GearIcon, TrashIcon, ExcelIcon, ColumnCollapseIcon, ColumnExpandIcon } from "../../../assets/icons";
-import ViewDropdown from "./ViewDropdown";
+import {
+  ArrowLeftIcon,
+  GearIcon,
+  TrashIcon,
+  ExcelIcon,
+  ColumnCollapseIcon,
+  ColumnExpandIcon,
+} from "../../../assets/icons";
 import type { View } from "./ViewDropdown";
 import EditableCell from "./EditableCell";
 import PaymentCell from "./PaymentCell";
@@ -28,10 +34,10 @@ import {
   saveShirtColors,
   saveMerchItems,
 } from "./merchPricing";
+import PedidoButton from "./PedidoButton";
 
 type Props = {
   rows: ServidorRecord[];
-  showEliminados: boolean;
   settings: AppSettings;
   canEditSettings: boolean;
   onViewChange: (view: View) => void;
@@ -71,7 +77,6 @@ const requestedMerch = (row: ServidorRecord) =>
 
 const PedidoTable: React.FC<Props> = ({
   rows,
-  showEliminados,
   settings,
   canEditSettings,
   onViewChange,
@@ -164,35 +169,44 @@ const PedidoTable: React.FC<Props> = ({
 
   return (
     <>
+      {/* Barra de acciones del pedido, arriba de las cards. */}
+      <div className="tableSectionHead pedidoToolbar">
+        <div className="tableSectionHeadLeft">
+          <button
+            type="button"
+            className="btnGhost exportBtn"
+            title="Volver a servidores"
+            onClick={() => onViewChange("servidores")}
+          >
+            <ArrowLeftIcon className="w-4 h-4" />
+            <span className="exportBtnLabel">Volver</span>
+          </button>
+          <button
+            type="button"
+            className="btnGhost settingsBtn"
+            title="Precios de merch"
+            onClick={() => setShowSettings(true)}
+          >
+            <GearIcon className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="tableSectionHeadRight">
+          <PedidoButton active onClick={() => onViewChange("servidores")} />
+          <button
+            type="button"
+            className="btnGhost exportBtn"
+            title="Exportar resumen a Excel"
+            onClick={() => setShowExport(true)}
+          >
+            <ExcelIcon className="w-4 h-4" />
+            <span className="exportBtnLabel">Exportar</span>
+          </button>
+        </div>
+      </div>
+
       <PedidoStatsCards rows={rows} settings={settings} />
 
       <div className="tableSection">
-        <div className="tableSectionHead">
-          <div className="tableSectionHeadLeft">
-            <ViewDropdown view="pedido" showEliminados={showEliminados} onChange={onViewChange} />
-            <span className="tableCount">{pedidoRows.length} registros</span>
-            <button
-              type="button"
-              className="btnGhost settingsBtn"
-              title="Precios de merch"
-              onClick={() => setShowSettings(true)}
-            >
-              <GearIcon className="w-5 h-5" />
-            </button>
-          </div>
-          <div className="tableSectionHeadRight">
-            <button
-              type="button"
-              className="btnGhost exportBtn"
-              title="Exportar resumen a Excel"
-              onClick={() => setShowExport(true)}
-            >
-              <ExcelIcon className="w-4 h-4" />
-              <span className="exportBtnLabel">Exportar</span>
-            </button>
-          </div>
-        </div>
-
         <div className="tableScroll">
           <table className="dataTable">
             <thead>

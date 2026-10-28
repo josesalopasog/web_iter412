@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { FilterIcon } from "../../../assets/icons";
+import { useKeepInViewport } from "../../../hooks/useKeepInViewport";
 
 type Props = {
   label: string;
@@ -14,6 +15,7 @@ const FilterableHeader: React.FC<Props> = ({ label, options, selected, onChange 
   const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
   const btnRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  useKeepInViewport(menuRef);
 
   useEffect(() => {
     const onClickOutside = (e: MouseEvent) => {

@@ -105,7 +105,7 @@ const ColumnPicker: React.FC<Props> = ({ columns, order, onChange }) => {
   };
 
   return (
-    <div className="columnPicker" ref={ref}>
+    <div className="columnPicker" ref={ref} data-tour="columns">
       <button type="button" className="btnGhost columnPickerBtn" onClick={() => setOpen((o) => !o)}>
         <ColumnsIcon className="w-4 h-4" />
         <span className="columnPickerBtnLabel">Columnas</span>
