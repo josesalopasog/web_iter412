@@ -20,6 +20,7 @@ const ServiceStatusToggle = ({ value, onChange, onSaved }: Props) => {
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [showTerms, setShowTerms] = useState(false);
+  const [confirmDeactivate, setConfirmDeactivate] = useState(false);
   const { retreatNumber } = usePublicSettings();
 
   const isActive = value === "ACTIVO";
@@ -59,7 +60,8 @@ const ServiceStatusToggle = ({ value, onChange, onSaved }: Props) => {
         aria-checked={isActive}
         className={`serviceStatusBtn${isActive ? " is-on" : ""}`}
         disabled={saving}
-        onClick={() => save(isActive ? "INACTIVO" : "ACTIVO")}
+        // Desactivar pide confirmación; volver a activarse no.
+        onClick={() => (isActive ? setConfirmDeactivate(true) : save("ACTIVO"))}
       >
         <span className="serviceStatusKnob" aria-hidden="true" />
         <span className="serviceStatusLabel">Activo para servir</span>
@@ -87,6 +89,46 @@ const ServiceStatusToggle = ({ value, onChange, onSaved }: Props) => {
       </button>
 
       {showTerms && <TermsModal onClose={() => setShowTerms(false)} />}
+
+      {confirmDeactivate && (
+        <div className="profileTermsOverlay" role="dialog" aria-modal="true" onClick={() => setConfirmDeactivate(false)}>
+          <div className="profileTermsCard profileConfirmCard" onClick={(e) => e.stopPropagation()}>
+            <div className="profileTermsHead">
+              <h3>¿Estás seguro que quieres desactivar esta opción?</h3>
+              <button
+                type="button"
+                className="profileTermsClose"
+                title="Cerrar"
+                onClick={() => setConfirmDeactivate(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="profileTermsBody">
+              <p>
+                Si desactivas esta opción no te tendremos en cuenta para servir en el{" "}
+                <strong>{toRoman(retreatNumber)} Retiro de ITER 4.12</strong>. Podrás volver a activarla
+                cuando quieras.
+              </p>
+            </div>
+            <div className="profileTermsActions">
+              <button type="button" className="profileConfirmBtn" onClick={() => setConfirmDeactivate(false)}>
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="profileConfirmBtn is-danger"
+                onClick={() => {
+                  setConfirmDeactivate(false);
+                  save("INACTIVO");
+                }}
+              >
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
