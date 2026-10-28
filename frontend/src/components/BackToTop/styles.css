@@ -8,7 +8,8 @@
 .backToTop-container {
   position: fixed;
   right: clamp(14px, 3vw, 28px);
-  bottom: clamp(14px, 3vw, 28px);
+  /* --fab-lift lo pone el Footer: al llegar al final sube el botón hasta la fila del footer. */
+  bottom: calc(clamp(14px, 3vw, 28px) + var(--fab-lift, 0px));
   z-index: 2000;
   opacity: 0;
   transform: translateY(12px) scale(0.9);

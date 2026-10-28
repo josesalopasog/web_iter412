@@ -10,7 +10,8 @@
 .profileFab-container {
   position: fixed;
   right: clamp(14px, 3vw, 28px);
-  bottom: clamp(14px, 3vw, 28px);
+  /* --fab-lift lo pone el Footer: al llegar al final sube el botón hasta la fila del footer. */
+  bottom: calc(clamp(14px, 3vw, 28px) + var(--fab-lift, 0px));
   z-index: 2000;
   animation: profileFab-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
   /* Se corre suavemente al lugar de al lado en cuanto aparecen "Quiero Inscribirme"/volver arriba,

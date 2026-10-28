@@ -3,3 +3,281 @@ footer{
     color:#fff;
     padding:2rem;
 }
+/* El © va centrado y el ícono de info a la izquierda. */
+.footerContent {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 30px;
+    /* Espacio para el ícono de info (izquierda) y, simétrico, para que el texto quede centrado. */
+    padding: 0 44px;
+}
+
+.footerContent p {
+    margin: 0;
+}
+
+/* Ícono de info con el crédito de quién hizo la página. */
+.footerCredit {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+}
+
+.footerInfoBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: none;
+    color: #9ca3af;
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+}
+
+/* Brillo: el ícono en gris y, encima, el mismo ícono con el degradado cyan→magenta. Cada 2,4 s el
+   degradado entra barriendo de izquierda a derecha, se queda 1 s y se desvanece. */
+.footerInfoIcon {
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+}
+
+.footerInfoIcon svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.footerInfoShine {
+    -webkit-mask-image: linear-gradient(115deg, #fff 40%, transparent 60%);
+    mask-image: linear-gradient(115deg, #fff 40%, transparent 60%);
+    -webkit-mask-size: 300% 300%;
+    mask-size: 300% 300%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    animation: footerInfo-shine 2.4s ease-in-out infinite;
+}
+
+@keyframes footerInfo-shine {
+    /* 0 → 0,6 s: entra barriendo */
+    0% {
+        -webkit-mask-position: 100% 50%;
+        mask-position: 100% 50%;
+        opacity: 1;
+    }
+    25% {
+        -webkit-mask-position: 0% 50%;
+        mask-position: 0% 50%;
+        opacity: 1;
+    }
+    /* 0,6 → 1,6 s: se queda */
+    67% {
+        -webkit-mask-position: 0% 50%;
+        mask-position: 0% 50%;
+        opacity: 1;
+    }
+    /* 1,6 → 1,9 s: se va; el resto del ciclo queda en gris */
+    79%,
+    100% {
+        -webkit-mask-position: 0% 50%;
+        mask-position: 0% 50%;
+        opacity: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .footerInfoShine {
+        animation: none;
+        -webkit-mask-image: none;
+        mask-image: none;
+    }
+}
+
+.footerInfoBtn:hover,
+.footerInfoBtn:focus-visible {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Al pasar el mouse (o con el foco del teclado) el crédito aparece justo a la derecha de la "i". */
+.footerCreditBubble {
+    position: absolute;
+    top: 50%;
+    left: calc(100% + 8px);
+    z-index: 5;
+    width: max-content;
+    max-width: min(280px, calc(100vw - 100px));
+    padding: 10px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    background: #000;
+    color: #fff;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    text-align: center;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-4px, -50%);
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+}
+
+/* Puente invisible entre la "i" y el cuadro: así se puede llegar al link sin que se cierre. */
+.footerCreditBubble::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -10px;
+    width: 10px;
+}
+
+.footerCredit:hover .footerCreditBubble,
+.footerCredit:focus-within .footerCreditBubble {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(0, -50%);
+}
+
+.footerCreditBubble a {
+    font-weight: 700;
+    text-decoration: none;
+    background: linear-gradient(90deg, #ff00cc, #00e5ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.footerHeart {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    vertical-align: -2px;
+    fill: #00e5ff;
+}
+
+.footerCreditBubble a:hover {
+    text-decoration: underline;
+    text-decoration-color: #00e5ff;
+}
+
+
+/* Pop up con la vista previa de josesalopaso.com: fondo negro al 70%. */
+.footerPreviewOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    animation: footerPreview-fade 0.18s ease;
+}
+
+.footerPreviewCard {
+    display: flex;
+    flex-direction: column;
+    width: min(960px, 100%);
+    height: min(680px, calc(100dvh - 32px));
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 18px;
+    background: rgba(10, 10, 10, 0.55);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+    animation: footerPreview-pop 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.footerPreviewHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px 10px 18px;
+    color: #fff;
+}
+
+.footerPreviewTitle {
+    font-weight: 700;
+    background: linear-gradient(90deg, #ff00cc, #00e5ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.footerPreviewActions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.footerPreviewOpen {
+    padding: 6px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
+    color: #fff;
+    font-size: 0.82rem;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.footerPreviewOpen:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.footerPreviewClose {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: none;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.footerPreviewClose:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.footerPreviewFrame {
+    flex: 1;
+    width: 100%;
+    border: none;
+    background: #fff;
+}
+
+@keyframes footerPreview-fade {
+    from {
+        opacity: 0;
+    }
+}
+
+@keyframes footerPreview-pop {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.98);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .footerPreviewOverlay,
+    .footerPreviewCard {
+        animation: none;
+    }
+}
