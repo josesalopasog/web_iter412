@@ -29,6 +29,8 @@ import ConfirmLogoutModal from "../../components/ConfirmLogoutModal";
 import NotificationsBell from "../Profile/ui/NotificationsBell";
 import GuidedTour from "../../tours/GuidedTour";
 import { takeNewRegistrations } from "./ui/newRegistrations";
+import { serviceStatusOf } from "./ui/serviceStatus";
+import type { ServiceStatusFilterValue } from "./ui/serviceStatus";
 import "./styles.css";
 
 const DEFAULT_SETTINGS: AppSettings = {
@@ -73,6 +75,8 @@ const Dashboard = () => {
   const [servidores, setServidores] = useState<ServidorRecord[]>([]);
   const [eliminados, setEliminados] = useState<EliminadoRecord[]>([]);
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
+  // Servidores: por defecto solo los activos; el filtro también define las tarjetas de stats.
+  const [servidorStatusFilter, setServidorStatusFilter] = useState<ServiceStatusFilterValue>("ACTIVO");
   const [isLoading, setIsLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
@@ -152,23 +156,31 @@ const Dashboard = () => {
     [soldados, settings.soldadoPrice]
   );
 
+  const servidoresByStatus = useMemo(
+    () =>
+      servidorStatusFilter === "TODOS"
+        ? servidores
+        : servidores.filter((s) => serviceStatusOf(s) === servidorStatusFilter),
+    [servidores, servidorStatusFilter]
+  );
+
   const servidorStats = useMemo(
-    () => buildStats(servidores, settings.servidorPrice),
-    [servidores, settings.servidorPrice]
+    () => buildStats(servidoresByStatus, settings.servidorPrice),
+    [servidoresByStatus, settings.servidorPrice]
   );
 
   const activeStats = view === "soldados" ? soldadoStats : servidorStats;
 
   // Cuántas de las inscripciones de cada tarjeta son nuevas (para el "+N" animado).
   const activeAdded = useMemo(() => {
-    const rows: (SoldadoRecord | ServidorRecord)[] = view === "soldados" ? soldados : servidores;
+    const rows: (SoldadoRecord | ServidorRecord)[] = view === "soldados" ? soldados : servidoresByStatus;
     const fresh = rows.filter((r) => newIds.has(r._id));
     return {
       total: fresh.length,
       hombres: fresh.filter((r) => isHombre(r.gender)).length,
       mujeres: fresh.filter((r) => isMujer(r.gender)).length,
     };
-  }, [view, soldados, servidores, newIds]);
+  }, [view, soldados, servidoresByStatus, newIds]);
 
   const totalSubsidyUsed = useMemo(
     () =>
@@ -330,6 +342,8 @@ const Dashboard = () => {
                 onDelete={handleDeleteServidor}
                 onRoleChange={handleRoleChange}
                 onOpenSettings={() => setShowSettingsModal(true)}
+                statusFilter={servidorStatusFilter}
+                onStatusFilterChange={setServidorStatusFilter}
               />
             )}
 

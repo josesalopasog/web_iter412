@@ -82,6 +82,9 @@ type Props =
       onDelete: (id: string) => Promise<void>;
       onRoleChange: (id: string, role: string) => Promise<void>;
       onOpenSettings: () => void;
+      /** Estado seleccionado (vive en el Dashboard para que las tarjetas de stats lo sigan). */
+      statusFilter: ServiceStatusFilterValue;
+      onStatusFilterChange: (value: ServiceStatusFilterValue) => void;
     };
 
 type PendingEdit = {
@@ -151,8 +154,8 @@ const UsersTable: React.FC<Props> = (props) => {
   const [showSearchRow, setShowSearchRow] = useState(false);
   const [columnSearch, setColumnSearch] = useState<Record<string, string>>({});
   const [showPaymentCols, setShowPaymentCols] = useState(false);
-  // Servidores: por defecto solo los activos para servir; el admin elige si ver otro estado.
-  const [statusFilter, setStatusFilter] = useState<ServiceStatusFilterValue>("ACTIVO");
+  // Servidores: el filtro de estado lo controla el Dashboard (comparte con las tarjetas).
+  const statusFilter: ServiceStatusFilterValue = props.view === "servidores" ? props.statusFilter : "TODOS";
 
   const columns = props.view === "soldados" ? SOLDADO_COLUMNS : SERVIDOR_COLUMNS;
   const defaultVisible = props.view === "soldados" ? SOLDADO_DEFAULT_VISIBLE : SERVIDOR_DEFAULT_VISIBLE;
@@ -447,7 +450,7 @@ const UsersTable: React.FC<Props> = (props) => {
         <div className="tableSectionHeadLeft">
           <ViewDropdown view={props.view} showEliminados={props.showEliminados} onChange={props.onViewChange} />
           {props.view === "servidores" && (
-            <ServiceStatusFilter value={statusFilter} counts={statusCounts} onChange={setStatusFilter} />
+            <ServiceStatusFilter value={statusFilter} counts={statusCounts} onChange={props.onStatusFilterChange} />
           )}
           <ColumnPicker columns={visibleColumns} order={columnOrder} onChange={handleColumnOrderChange} />
           <button
