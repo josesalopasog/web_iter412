@@ -1,0 +1,270 @@
+/* ===== Tema oscuro del dashboard =====
+   Solo aplica mientras el dashboard está abierto (html[data-theme="dark"], ver useDashboardTheme).
+   Las variables cubren lo nuevo; abajo se ajustan las tablas, menús y modales de antes, que usan
+   colores fijos. */
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+html[data-theme="dark"] body {
+  background-color: #111116;
+}
+
+html[data-theme="dark"] .adminShell {
+  --iter-accent: #4cc3f7;
+  --iter-accent-2: #84d6fa;
+  --iter-accent-bg: rgba(76, 195, 247, 0.16);
+  --iter-todos: #9d5cff;
+  --iter-soldados: #9d5cff;
+  --iter-soldados-2: #c084fc;
+  --iter-servidores: #c084fc;
+  --iter-servidores-2: #d8b4fe;
+  --iter-hombres: #4ade80;
+  --iter-hombres-text: #4ade80;
+  --iter-mujeres: #ff6b9f;
+  --iter-mujeres-text: #ff8fb6;
+  --iter-finanzas: #4cc3f7;
+  --iter-finanzas-2: #84d6fa;
+  --iter-finanzas-3: #bde9fc;
+  --iter-finanzas-oscuro: #29a9e6;
+  --iter-finanzas-text: #6dcff8;
+  --iter-info: #4cc3f7;
+  --iter-info-2: #84d6fa;
+  --iter-info-3: #bde9fc;
+  --iter-inactivo: #71717a;
+  --iter-parcial: #fbbf24;
+  --iter-positivo: #34d399;
+  --iter-positivo-text: #34d399;
+  --iter-negativo: #f87171;
+  --iter-negativo-text: #f87171;
+  --iter-good: #34d399;
+  --iter-bad: #f87171;
+
+  --ad-bg: #111116;
+  --ad-surface: #1a1a21;
+  --ad-text: #f4f4f5;
+  --ad-text-muted: #a1a1aa;
+  --ad-border: #2c2c35;
+  --ad-hover: #24242c;
+  --ad-shadow: rgba(0, 0, 0, 0.5);
+}
+
+html[data-theme="dark"] .adTopBar {
+  background: rgba(26, 26, 33, 0.92);
+}
+
+html[data-theme="dark"] .adIconButton,
+html[data-theme="dark"] .adProfileButton {
+  color: var(--ad-text);
+}
+
+html[data-theme="dark"] .kpiCard.tone-neutral { --tone-text: #a1a1aa; }
+
+html[data-theme="dark"] .statusPill.completo { --status-color: #34d399; }
+html[data-theme="dark"] .statusPill.parcial { --status-color: #fbbf24; }
+html[data-theme="dark"] .statusPill.sinPago { --status-color: #f87171; }
+html[data-theme="dark"] .statusPill.info { --status-color: #6dcff8; }
+
+/* ===== Superficies de antes (tablas, menús, modales, notificaciones, tutorial) ===== */
+html[data-theme="dark"] .tableSection,
+html[data-theme="dark"] .tableSectionHead.pedidoToolbar,
+html[data-theme="dark"] .dbDropdownMenu,
+html[data-theme="dark"] .columnPickerMenu,
+html[data-theme="dark"] .dbPillAddMenu,
+html[data-theme="dark"] .dbPillAddOption,
+html[data-theme="dark"] .dbDropdownItem,
+html[data-theme="dark"] .modalCard,
+html[data-theme="dark"] .notifPanel,
+html[data-theme="dark"] .notifPanelHead,
+html[data-theme="dark"] .tourCard,
+html[data-theme="dark"] .exportPreviewTable th,
+html[data-theme="dark"] .idleGuardCard {
+  background: #1a1a21;
+  color: #f4f4f5;
+  border-color: #2c2c35;
+}
+
+html[data-theme="dark"] .modalHead,
+html[data-theme="dark"] .notifPanelHead,
+html[data-theme="dark"] .filterMenuActions,
+html[data-theme="dark"] .dataTable th,
+html[data-theme="dark"] .dataTable td,
+html[data-theme="dark"] .exportPreviewScroll,
+html[data-theme="dark"] .notifListItem,
+html[data-theme="dark"] .notifItem {
+  border-color: #2c2c35;
+}
+
+html[data-theme="dark"] .dataTable th,
+html[data-theme="dark"] .emptyState,
+html[data-theme="dark"] .configHint,
+html[data-theme="dark"] .configColumnTitle,
+html[data-theme="dark"] .columnPickerHint,
+html[data-theme="dark"] .paymentInputPrefix,
+html[data-theme="dark"] .notifDate,
+html[data-theme="dark"] .notifBody,
+html[data-theme="dark"] .notifEmpty,
+html[data-theme="dark"] .notifSectionTitle {
+  color: #a1a1aa;
+}
+
+html[data-theme="dark"] .dataTable,
+html[data-theme="dark"] .dataTable td,
+html[data-theme="dark"] .modalBody,
+html[data-theme="dark"] .modalHead h3,
+html[data-theme="dark"] .configField,
+html[data-theme="dark"] .configInput,
+html[data-theme="dark"] .notifTitle,
+html[data-theme="dark"] .notifItem.is-unread .notifTitle,
+html[data-theme="dark"] .filterMenuItem,
+html[data-theme="dark"] .columnPickerItem label,
+html[data-theme="dark"] .exportColumnItem,
+html[data-theme="dark"] .pendingChangesList,
+html[data-theme="dark"] .eventsPageTitle,
+html[data-theme="dark"] .tourCheck {
+  color: #f4f4f5;
+}
+
+/* Botones de contorno */
+html[data-theme="dark"] .btnGhost,
+html[data-theme="dark"] .iconBtn,
+html[data-theme="dark"] .colDividerToggle,
+html[data-theme="dark"] .eventBtnGhost,
+html[data-theme="dark"] .tourBtnGhost,
+html[data-theme="dark"] .idleGuardBtnGhost,
+html[data-theme="dark"] .roleDropdownBtn,
+html[data-theme="dark"] .dbDropupBtn,
+html[data-theme="dark"] .searchRowToggleBtn,
+html[data-theme="dark"] .linkBtn {
+  background: #1a1a21;
+  color: #f4f4f5;
+  border-color: #2c2c35;
+}
+
+html[data-theme="dark"] .dbDropupBtn:disabled,
+html[data-theme="dark"] .roleDropdownBtn.readonly {
+  background: transparent;
+  border-color: transparent;
+  color: #a1a1aa;
+}
+
+/* Hover */
+html[data-theme="dark"] .btnGhost:hover,
+html[data-theme="dark"] .iconBtn:hover,
+html[data-theme="dark"] .colDividerToggle:hover,
+html[data-theme="dark"] .eventBtnGhost:hover,
+html[data-theme="dark"] .tourBtnGhost:hover,
+html[data-theme="dark"] .roleDropdownBtn:hover,
+html[data-theme="dark"] .dbDropdownItem:hover,
+html[data-theme="dark"] .filterMenuItem:hover,
+html[data-theme="dark"] .columnPickerItem:hover,
+html[data-theme="dark"] .exportColumnItem:hover,
+html[data-theme="dark"] .dbPillAddOption:hover,
+html[data-theme="dark"] .dataTable tr:hover td,
+html[data-theme="dark"] .modalClose:hover,
+html[data-theme="dark"] .notifItem:hover {
+  background: #24242c;
+}
+
+html[data-theme="dark"] .searchRowToggleBtn.active,
+html[data-theme="dark"] .editableCell:hover {
+  background: rgba(76, 195, 247, 0.16) !important;
+  color: #6dcff8;
+}
+
+html[data-theme="dark"] .dirtyCell {
+  background: rgba(234, 179, 8, 0.2) !important;
+}
+
+html[data-theme="dark"] .pendingBar,
+html[data-theme="dark"] .settingsWarning {
+  background: rgba(234, 179, 8, 0.14);
+  color: #fde68a;
+  border-color: rgba(234, 179, 8, 0.3);
+}
+
+html[data-theme="dark"] .dbPill {
+  background: rgba(76, 195, 247, 0.18);
+  color: #9fdcfa;
+}
+
+html[data-theme="dark"] .dbPillRemove {
+  background: rgba(216, 196, 255, 0.15);
+  color: #9fdcfa;
+}
+
+html[data-theme="dark"] .dbPillAddBtn {
+  background: rgba(76, 195, 247, 0.2);
+  color: #6dcff8;
+}
+
+html[data-theme="dark"] .rowDocBtn:hover {
+  background: rgba(76, 195, 247, 0.18);
+  color: #6dcff8;
+}
+
+html[data-theme="dark"] .rowDeleteBtn:hover {
+  background: rgba(248, 113, 113, 0.15);
+  color: #f87171;
+}
+
+html[data-theme="dark"] .pedidoBtn.active {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border-color: #f59e0b;
+}
+
+html[data-theme="dark"] .sortHeaderBtn:hover,
+html[data-theme="dark"] .sortHeaderIcon.active,
+html[data-theme="dark"] .filterHeaderIcon.active,
+html[data-theme="dark"] .dbPillAddOption.active,
+html[data-theme="dark"] .dbOtherSizeLink {
+  color: #6dcff8;
+}
+
+/* Campos de formulario */
+html[data-theme="dark"] .paymentInputGroup,
+html[data-theme="dark"] .subsidyInputGroup,
+html[data-theme="dark"] .configInputGroup,
+html[data-theme="dark"] .configInputPlain,
+html[data-theme="dark"] .configReadOnlyValue,
+html[data-theme="dark"] .columnSearchInput,
+html[data-theme="dark"] .cellInput,
+html[data-theme="dark"] .adminShell input:not([type="checkbox"]):not([type="radio"]),
+html[data-theme="dark"] .adminShell select,
+html[data-theme="dark"] .adminShell textarea,
+html[data-theme="dark"] .modalCard input:not([type="checkbox"]):not([type="radio"]),
+html[data-theme="dark"] .modalCard select,
+html[data-theme="dark"] .modalCard textarea {
+  background-color: #14141a;
+  color: #f4f4f5;
+  border-color: #2c2c35;
+}
+
+html[data-theme="dark"] .paymentInputGroup input,
+html[data-theme="dark"] .subsidyInputGroup input,
+html[data-theme="dark"] .configInputGroup input,
+html[data-theme="dark"] .tableSearch input {
+  background-color: transparent !important;
+  border: none;
+}
+
+html[data-theme="dark"] .paymentInputGroup.status-none { border-color: #f87171; }
+html[data-theme="dark"] .paymentInputGroup.status-partial { border-color: #fbbf24; }
+html[data-theme="dark"] .paymentInputGroup.status-full { border-color: #34d399; }
+html[data-theme="dark"] .subsidyInputGroup.has-value { border-color: #4cc3f7; }
+
+/* Fila de inscripción nueva: un tono que se lea sobre fondo oscuro */
+html[data-theme="dark"] .dataTable tr.newRegistrationRow {
+  --new-row-rgb: 14 52 74;
+  --new-row-hover-rgb: 18 66 94;
+}
+
+html[data-theme="dark"] .footerPreviewCard {
+  background: #1a1a21;
+}
+
+html[data-theme="dark"] .adminShell {
+  --iter-cumple: #ff9a4d;
+}

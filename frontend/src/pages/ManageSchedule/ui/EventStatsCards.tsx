@@ -1,3 +1,5 @@
+import KpiCard from "../../Admin/ui/KpiCard";
+import { CalendarIcon, CheckCircleIcon, ClockIcon, MountainIcon, SparklesIcon } from "../../Admin/icons";
 import type { EventRecord } from "../../../api/events";
 
 type Props = {
@@ -12,27 +14,12 @@ const EventStatsCards: React.FC<Props> = ({ events }) => {
   const otros = events.filter((e) => e.tag === "Formación" || e.tag === "Otro").length;
 
   return (
-    <div className="eventStatsGrid">
-      <div className="eventStatCard eventStatTotal">
-        <div className="eventStatLabel">Eventos programados</div>
-        <div className="eventStatValue">{total}</div>
-      </div>
-      <div className="eventStatCard eventStatOpen">
-        <div className="eventStatLabel">💚 Reuniones abiertas</div>
-        <div className="eventStatValue">{abiertas}</div>
-      </div>
-      <div className="eventStatCard eventStatClosed">
-        <div className="eventStatLabel">❤️ Reuniones cerradas</div>
-        <div className="eventStatValue">{cerradas}</div>
-      </div>
-      <div className="eventStatCard eventStatRetiro">
-        <div className="eventStatLabel">💜 Retiros</div>
-        <div className="eventStatValue">{retiros}</div>
-      </div>
-      <div className="eventStatCard eventStatOther">
-        <div className="eventStatLabel">✨ Formación / Otros</div>
-        <div className="eventStatValue">{otros}</div>
-      </div>
+    <div className="kpiGrid eventKpiGrid">
+      <KpiCard tone="info" label="Eventos programados" icon={CalendarIcon} value={total} />
+      <KpiCard tone="info" label="Reuniones abiertas" icon={CheckCircleIcon} value={abiertas} />
+      <KpiCard tone="info" label="Reuniones cerradas" icon={ClockIcon} value={cerradas} />
+      <KpiCard tone="todos" label="Retiros" icon={MountainIcon} value={retiros} />
+      <KpiCard tone="info" label="Formación / Otros" icon={SparklesIcon} value={otros} />
     </div>
   );
 };

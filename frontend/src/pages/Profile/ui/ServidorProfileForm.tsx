@@ -20,7 +20,15 @@ type PendingEdit = {
   newValue: string | string[];
 };
 
+export type ProfileSectionKey = "datos" | "salud" | "merch" | "emergencia" | "servicio";
+
+const ALL_SECTIONS: ProfileSectionKey[] = ["datos", "salud", "merch", "emergencia", "servicio"];
+
 type Props = {
+  /** Qué partes del formulario mostrar (por defecto todas). */
+  sections?: ProfileSectionKey[];
+  /** Sin tarjeta propia: para meterlo dentro de otra tarjeta (p. ej. Merch en el perfil). */
+  embedded?: boolean;
   data: Record<string, unknown>;
   rowLabel: string;
   canEditEmail: boolean;
@@ -34,7 +42,9 @@ const arraysEqualAsSets = (a: string[], b: string[]) =>
 const toDisplay = (v: string | string[]) =>
   Array.isArray(v) ? v.map(formatEnumLabel).join(", ") : v;
 
-const ServidorProfileForm: React.FC<Props> = ({ data, rowLabel, canEditEmail, save, onSaved }) => {
+const ServidorProfileForm: React.FC<Props> = ({ sections = ALL_SECTIONS, embedded = false, data, rowLabel, canEditEmail, save, onSaved }) => {
+  const show = (key: ProfileSectionKey) => sections.includes(key);
+  const sectionClass = embedded ? "profileEmbedded" : "profileSection";
   const [pendingEdits, setPendingEdits] = useState<Record<string, PendingEdit>>({});
   const [showConfirmSave, setShowConfirmSave] = useState(false);
   const [isSavingAll, setIsSavingAll] = useState(false);
@@ -160,7 +170,8 @@ const ServidorProfileForm: React.FC<Props> = ({ data, rowLabel, canEditEmail, sa
 
   return (
     <>
-      <div className="profileSection" data-tour="profile-data">
+      {show("datos") && (
+      <div className={sectionClass} data-tour="profile-data">
         <h3>Datos personales</h3>
         {editableField("firstNames", "Nombres")}
         {editableField("lastNames", "Apellidos")}
@@ -177,15 +188,19 @@ const ServidorProfileForm: React.FC<Props> = ({ data, rowLabel, canEditEmail, sa
         {editableField("address", "Dirección")}
         {editableField("phone", "Celular")}
       </div>
+      )}
 
-      <div className="profileSection">
+      {show("salud") && (
+      <div className={sectionClass}>
         <h3>Salud</h3>
         {editableField("eps", "EPS")}
         {editableField("bloodType", "Tipo de sangre")}
       </div>
+      )}
 
-      <div className="profileSection">
-        <h3>Camiseta y merch</h3>
+      {show("merch") && (
+      <div className={sectionClass}>
+        {!embedded && <h3>Camiseta y merch</h3>}
         <EditableProfileField
           label="¿Necesita camiseta?"
           value={fieldValue("needsShirt")}
@@ -223,8 +238,10 @@ const ServidorProfileForm: React.FC<Props> = ({ data, rowLabel, canEditEmail, sa
         {fieldValue("merchSize") === "OTRO" &&
           editableField("merchSizeOther", "¿Cuál talla de prenda/accesorio?")}
       </div>
+      )}
 
-      <div className="profileSection">
+      {show("emergencia") && (
+      <div className={sectionClass}>
         <h3>Contacto de emergencia</h3>
         {editableField("emergencyFirstName", "Nombres")}
         {editableField("emergencyLastName", "Apellidos")}
@@ -238,8 +255,10 @@ const ServidorProfileForm: React.FC<Props> = ({ data, rowLabel, canEditEmail, sa
         {editableField("emergencyEmail", "Correo")}
         {editableField("emergencyAddress", "Dirección")}
       </div>
+      )}
 
-      <div className="profileSection">
+      {show("servicio") && (
+      <div className={sectionClass}>
         <h3>Servicio</h3>
         <PillMultiSelectField
           label="Servicios"
@@ -260,6 +279,7 @@ const ServidorProfileForm: React.FC<Props> = ({ data, rowLabel, canEditEmail, sa
         })}
         {editableField("formationOther", "Otra formación")}
       </div>
+      )}
 
       {pendingList.length > 0 && (
         <div className="pendingBar profilePendingBar">

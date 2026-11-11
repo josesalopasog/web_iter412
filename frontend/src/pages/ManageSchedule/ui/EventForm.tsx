@@ -22,9 +22,11 @@ type Props = {
   isSaving: boolean;
   onSubmit: (payload: EventInput) => void;
   onCancelEdit: () => void;
+  /** Fecha con la que arranca un evento nuevo (día elegido en el calendario). */
+  defaultDate?: string;
 };
 
-const EventForm: React.FC<Props> = ({ editingEvent, isSaving, onSubmit, onCancelEdit }) => {
+const EventForm: React.FC<Props> = ({ editingEvent, isSaving, onSubmit, onCancelEdit, defaultDate }) => {
   const [form, setForm] = useState<EventInput>(
     editingEvent
       ? {
@@ -38,8 +40,11 @@ const EventForm: React.FC<Props> = ({ editingEvent, isSaving, onSubmit, onCancel
           description: editingEvent.description ?? "",
           isOpen: Boolean(editingEvent.isOpen),
         }
-      : emptyForm
+      : { ...emptyForm, dateISO: defaultDate ?? "" }
   );
+
+  // Un evento que ya pasó se puede editar sin moverle la fecha: su fecha original sigue siendo válida.
+  const minDate = editingEvent && editingEvent.dateISO < todayISO() ? editingEvent.dateISO : todayISO();
 
   const field = <K extends keyof EventInput>(key: K, value: EventInput[K]) =>
     setForm((f) => ({ ...f, [key]: value }));
@@ -94,7 +99,7 @@ const EventForm: React.FC<Props> = ({ editingEvent, isSaving, onSubmit, onCancel
             className="configInputPlain"
             type="date"
             required
-            min={todayISO()}
+            min={minDate}
             value={form.dateISO}
             onChange={(e) => field("dateISO", e.target.value)}
           />
@@ -115,7 +120,7 @@ const EventForm: React.FC<Props> = ({ editingEvent, isSaving, onSubmit, onCancel
           <input
             className="configInputPlain"
             type="date"
-            min={form.dateISO > todayISO() ? form.dateISO : todayISO()}
+            min={form.dateISO > minDate ? form.dateISO : minDate}
             value={form.endDateISO}
             onChange={(e) => field("endDateISO", e.target.value)}
           />

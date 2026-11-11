@@ -125,3 +125,8 @@ export const restoreEliminado = (id: string) =>
   });
 
 export const listLogs = () => authedRequest<LogRecord[]>("/api/logs");
+
+/** Cumpleaños de los servidores (solo nombre y "MM-DD", sin año). */
+export type Birthday = { _id: string; name: string; monthDay: string };
+
+export const listBirthdays = () => authedRequest<Birthday[]>("/api/users/servidores/birthdays");

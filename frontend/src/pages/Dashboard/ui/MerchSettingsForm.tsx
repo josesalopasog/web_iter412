@@ -7,7 +7,6 @@ type Props = {
   settings: AppSettings;
   canEdit: boolean;
   onSaved: (updated: AppSettings) => void;
-  onClose: () => void;
 };
 
 type MerchField =
@@ -36,7 +35,8 @@ const FIELDS: MerchField[] = [
   "extraSizePrice",
 ];
 
-const MerchSettingsModal: React.FC<Props> = ({ settings, canEdit, onSaved, onClose }) => {
+// Precios de merch (antes un pop up): vive en Pedido de merch → Precios.
+const MerchSettingsForm: React.FC<Props> = ({ settings, canEdit, onSaved }) => {
   const [draft, setDraft] = useState<AppSettings>(settings);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -62,17 +62,16 @@ const MerchSettingsModal: React.FC<Props> = ({ settings, canEdit, onSaved, onClo
   };
 
   return (
-    <div className="modalOverlay" role="dialog" aria-modal="true">
-      <div className="modalCard">
-        <div className="modalHead">
-          <h3>⚙️ Precios de merch</h3>
-          <button type="button" className="modalClose" onClick={onClose}>
-            ✕
-          </button>
+    <div className="chartCard settingsPanel">
+        <div className="chartCardHeader">
+          <div>
+            <h2 className="chartCardTitle">Precios de merch</h2>
+            <p className="chartCardSubtitle">Lo que paga cada servidor por prenda. Cambiarlos recalcula el total de cada pedido.</p>
+          </div>
         </div>
 
-        <div className="modalBody">
-          <div className="configColumn">
+        <div className="settingsPanelBody">
+          <div className="configColumn merchPriceGrid">
             {FIELDS.map((f) => (
               <label className="configField" key={f}>
                 <span>{FIELD_LABELS[f]}</span>
@@ -100,19 +99,19 @@ const MerchSettingsModal: React.FC<Props> = ({ settings, canEdit, onSaved, onClo
           {error && <p className="configError">{error}</p>}
         </div>
 
-        <div className="modalActions">
-          <button type="button" className="btnGhost" onClick={onClose}>
-            Cerrar
-          </button>
-          {canEdit && hasChanges && (
-            <button type="button" className="btnPrimary" onClick={handleSave} disabled={isSaving}>
+        {canEdit && (
+          <div className="settingsPanelActions">
+            <span className="settingsPanelHint">{hasChanges ? "Hay cambios sin guardar" : "Sin cambios"}</span>
+            <button type="button" className="toolbarButton" disabled={!hasChanges || isSaving} onClick={() => setDraft(settings)}>
+              Descartar
+            </button>
+            <button type="button" className="toolbarButton primary" onClick={handleSave} disabled={!hasChanges || isSaving}>
               {isSaving ? "Guardando..." : "Guardar cambios"}
             </button>
-          )}
-        </div>
-      </div>
+          </div>
+        )}
     </div>
   );
 };
 
-export default MerchSettingsModal;
+export default MerchSettingsForm;

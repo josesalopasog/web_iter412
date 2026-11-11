@@ -200,3 +200,16 @@ export const updateSettingsHandler = asyncHandler(async (req, res) => {
 export const updateMerchSettingsHandler = asyncHandler(async (req, res) => {
   await applySettingsUpdate(req, res, MERCH_FIELDS, "Actualizó precios de merch");
 });
+
+/** GET /api/settings/merch-prices: precios de merch para cualquier servidor con sesión (su pedido). */
+export const getMerchPricesHandler = asyncHandler(async (_req, res) => {
+  const s = toResponse(await getSettings());
+  res.json({
+    shirtPrice: s.shirtPrice,
+    busoChaquetaPrice: s.busoChaquetaPrice,
+    canguroPrice: s.canguroPrice,
+    tulaPrice: s.tulaPrice,
+    cachuchaPrice: s.cachuchaPrice,
+    extraSizePrice: s.extraSizePrice,
+  });
+});

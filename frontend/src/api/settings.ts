@@ -65,3 +65,8 @@ export const updateMerchSettings = (changes: Partial<AppSettings>) =>
     method: "PATCH",
     body: JSON.stringify(changes),
   });
+
+export type MerchPrices = Pick<AppSettings, "shirtPrice" | "busoChaquetaPrice" | "canguroPrice" | "tulaPrice" | "cachuchaPrice" | "extraSizePrice">;
+
+/** Precios de merch para el pedido de cada servidor (cualquiera con sesión). */
+export const getMerchPrices = () => authedRequest<MerchPrices>("/api/settings/merch-prices");

@@ -11,6 +11,7 @@ import {
   updateServidorRole,
   resetServidorMerch,
   deleteServidor,
+  listBirthdays,
 } from "./servidor.controller.js";
 import { requireAuth, requireRole } from "../../../middlewares/auth.middleware.js";
 import { changePasswordRateLimiter } from "../../../middlewares/rateLimit.middleware.js";
@@ -20,6 +21,7 @@ const router = Router();
 router.post("/", createServidorFromForm);
 router.get("/testimonials", listRandomTestimonials);
 router.get("/me", requireAuth, getMyServidorProfile);
+router.get("/birthdays", requireAuth, listBirthdays);
 router.patch("/me", requireAuth, updateMyServidor);
 router.patch("/me/password", requireAuth, changePasswordRateLimiter, changeMyPassword);
 router.get("/", requireAuth, requireRole("ADMIN", "SUPERADMIN", "TREASURER"), listServidores);

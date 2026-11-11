@@ -1,0 +1,713 @@
+/* ===== Perfil con el estilo del dashboard (tarjetas, colores y tema claro/oscuro) =====
+   .profileModern va junto a .adminShell, así usa las mismas variables (--ad-*, --iter-*) y el
+   tema oscuro de pages/Admin/dark.css. Los acentos por disponibilidad (--role-*) se mantienen. */
+
+.profileModern {
+  min-height: 100vh;
+  background: var(--ad-bg);
+  color: var(--ad-text);
+}
+
+.profileModern.theme-activo,
+.profileModern:not(.theme-inactivo):not(.theme-nocturno) {
+  --role-accent: var(--iter-positivo);
+  --role-accent-2: var(--iter-positivo);
+  --role-title: var(--iter-positivo);
+  --role-soft: color-mix(in srgb, var(--iter-positivo) 10%, transparent);
+}
+
+.profileModern.theme-nocturno {
+  --role-accent: var(--iter-info);
+  --role-accent-2: var(--iter-info);
+  --role-title: var(--iter-info);
+  --role-soft: color-mix(in srgb, var(--iter-info) 10%, transparent);
+}
+
+.profileModern.theme-inactivo {
+  --role-soft: var(--ad-hover);
+}
+
+/* Barra superior */
+.profileTopBar {
+  gap: 12px;
+}
+
+.profileTopBar .adBrand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profileTopBar .adAvatar svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Cuerpo */
+.profileModern .profileBody {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.profileHero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  border: 1px solid var(--ad-border);
+  border-top: 3px solid var(--role-accent);
+  border-radius: 12px;
+  background: var(--ad-surface);
+}
+
+.profileHeroAvatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--role-accent);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.profileHeroText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.profileHeroText h1 {
+  font-size: 1.35rem !important;
+  line-height: 1.2;
+}
+
+.profileHeroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.profileHeroRole {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--role-title);
+}
+
+/* Secciones como tarjetas del dashboard */
+.profileModern .profileSection {
+  margin: 0;
+  padding: 18px;
+  border: 1px solid var(--ad-border);
+  border-radius: 12px;
+  background: var(--ad-surface);
+  box-shadow: none;
+}
+
+.profileModern .profileSection h3 {
+  margin: 0 0 12px;
+  font-family: "CalSans", system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: normal;
+  color: var(--ad-text);
+}
+
+.profileModern .profileRow {
+  border-bottom-color: var(--ad-border);
+}
+
+.profileModern .profileRow .profileLabel,
+.profileModern .testimonyHint,
+.profileModern .testimonyCounter,
+.profileModern .serviceStatusHint {
+  color: var(--ad-text-muted);
+}
+
+.profileModern .profileRow .profileValue,
+.profileModern .serviceStatusRetreat {
+  color: var(--ad-text);
+}
+
+.profileModern .pillTag {
+  background: var(--ad-hover);
+  color: var(--ad-text);
+}
+
+.profileModern .pillRemoveBtn:hover {
+  background: var(--ad-border);
+}
+
+.profileModern .pillAddBtn {
+  background: var(--ad-surface);
+}
+
+.profileModern .testimonyInput,
+.profileModern .cellInput,
+.profileModern select {
+  background: var(--ad-surface);
+  color: var(--ad-text);
+  border-color: var(--ad-border);
+}
+
+.profileModern .testimonyInput:focus {
+  background: var(--ad-surface);
+}
+
+.profileModern .btnPrimary {
+  border: none;
+  border-radius: 10px;
+  background: var(--iter-info);
+  color: #fff;
+}
+
+.profileModern .btnPrimary:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.profileModern .profileRowHighlight {
+  background: color-mix(in srgb, var(--iter-info) 10%, transparent);
+  box-shadow: inset 3px 0 0 var(--iter-info);
+}
+
+html[data-theme="dark"] .profileModern .pillsWrap.dirtyCell {
+  background: rgba(234, 179, 8, 0.18);
+}
+
+
+@media (max-width: 640px) {
+  .profileTopBar .adBrandText {
+    display: none;
+  }
+
+  .profileModern .profileBody {
+    padding: 16px 12px 40px;
+  }
+}
+
+/* ===== Calificar reuniones ===== */
+/* El calendario ocupa casi toda la ventana. */
+.profileModern .profileBody.meetingsRateBody {
+  max-width: none;
+  min-height: calc(100vh - 64px);
+  padding: 20px 24px 32px;
+}
+
+.meetingsRateBody .calLayout {
+  flex: 1;
+  grid-template-columns: minmax(0, 1fr) 380px;
+}
+
+.meetingsRateBody .calCard {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 200px);
+}
+
+.meetingsRateBody .calGrid {
+  flex: 1;
+  grid-template-rows: auto; /* La fila de los días de la semana queda baja */
+  grid-auto-rows: minmax(120px, 1fr);
+}
+
+.meetingsRateBody .calDay {
+  min-height: 0;
+}
+
+.meetingsRateBody .calChip {
+  font-size: 12px;
+}
+
+@media (max-width: 1100px) {
+  .meetingsRateBody .calLayout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .meetingsRateBody .calCard {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .profileModern .profileBody.meetingsRateBody {
+    padding: 16px 10px 32px;
+  }
+
+  .meetingsRateBody .calGrid {
+    grid-auto-rows: minmax(64px, auto);
+  }
+}
+
+.rateBox {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--ad-border);
+}
+
+.rateBoxTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ad-text-muted);
+}
+
+.rateSaved {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--iter-positivo-text);
+}
+
+/* Interruptor de disponibilidad con los mismos tonos del perfil (sin degradado) */
+.profileModern .serviceStatusBtn {
+  --status-gradient: var(--iter-positivo);
+}
+
+.profileModern .serviceStatusBtnNight {
+  --status-gradient: var(--iter-info);
+}
+
+.profileModern .serviceStatusBtn.is-on .serviceStatusLabel {
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  color: var(--role-title);
+}
+
+.profileModern .serviceStatusBtnNight.is-on .serviceStatusLabel {
+  color: var(--iter-info);
+}
+
+.profileModern .serviceStatusKnob {
+  background: var(--ad-border);
+}
+
+.profileModern .serviceStatusRetreat strong {
+  color: var(--role-title);
+}
+
+/* Panel derecho: reuniones del día + tus calificaciones */
+.calPanelSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.calPanelSection + .calPanelSection {
+  padding-top: 14px;
+  border-top: 1px solid var(--ad-border);
+}
+
+.meetingsRateBody .calPanel {
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+}
+
+.myRatings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.myRatings li {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--ad-border);
+  border-radius: 10px;
+}
+
+.myRatings li.isPending {
+  border-left: 3px solid var(--iter-parcial);
+}
+
+.myRatingRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: none;
+  color: inherit;
+  text-align: left;
+}
+
+.myRatingRow .starRating button,
+.calEventActions .starRating button {
+  font-size: 16px;
+}
+
+.myRatingComment {
+  font-size: 12px;
+  color: var(--ad-text-muted);
+}
+
+.myRatingEdit {
+  align-self: flex-start;
+  height: 30px !important;
+  padding: 0 10px !important;
+  font-size: 12px !important;
+}
+
+.statusPill.parcial {
+  --status-color: #b45309;
+}
+
+/* ===== Footer con los colores del tema (solo donde hay botón de tema: perfil y reuniones) ===== */
+html[data-theme="light"] footer {
+  background-color: #ffffff;
+  color: #6b7280;
+  border-top: 1px solid #e5e7eb;
+}
+
+html[data-theme="light"] footer .footerInfoBtn {
+  color: #9ca3af;
+}
+
+html[data-theme="light"] footer .footerInfoBtn:hover,
+html[data-theme="light"] footer .footerInfoBtn:focus-visible {
+  color: #1a9be0;
+  background: #f3f4f6;
+}
+
+html[data-theme="dark"] footer {
+  background-color: #1a1a21;
+  color: #a1a1aa;
+  border-top: 1px solid #2c2c35;
+}
+
+html[data-theme="dark"] footer .footerInfoBtn:hover,
+html[data-theme="dark"] footer .footerInfoBtn:focus-visible {
+  color: #4cc3f7;
+  background: #24242c;
+}
+
+/* ===== Tu voz en ITER ===== */
+.voiceSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.voiceSection h3 {
+  margin-bottom: 0 !important;
+}
+
+.voiceIntro,
+.voiceOptionIntro {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ad-text-muted);
+}
+
+.voiceOptions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.voiceOption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 8px;
+  border: 1px solid var(--ad-border);
+  border-radius: 12px;
+  background: var(--ad-surface);
+  color: var(--ad-text);
+  font-size: 13px;
+  font-weight: 600;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.voiceOption:hover {
+  border-color: var(--iter-info);
+}
+
+.voiceOption.isSelected {
+  border-color: var(--iter-info);
+  background: color-mix(in srgb, var(--iter-info) 10%, transparent);
+  color: var(--iter-finanzas-text);
+}
+
+.voiceOptionEmoji {
+  font-size: 22px;
+}
+
+.voiceForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.voiceChoices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.voiceChoices legend {
+  width: 100%;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.voiceChoice {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--ad-border);
+  border-radius: 10px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.voiceChoice.isSelected {
+  border-color: var(--iter-info);
+  background: color-mix(in srgb, var(--iter-info) 10%, transparent);
+}
+
+.voiceChoice input {
+  accent-color: var(--iter-info);
+}
+
+.voiceChoice small {
+  color: var(--ad-text-muted);
+}
+
+.voiceField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.voiceField input,
+.voiceField textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--ad-border);
+  border-radius: 10px;
+  background: var(--ad-surface);
+  color: var(--ad-text);
+  font: inherit;
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.voiceField textarea {
+  resize: vertical;
+}
+
+.voiceField input:focus,
+.voiceField textarea:focus {
+  outline: none;
+  border-color: var(--iter-info);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--iter-info) 15%, transparent);
+}
+
+.voiceCounter {
+  align-self: flex-end;
+  font-weight: 400;
+  color: var(--ad-text-muted);
+}
+
+.voiceAnonymous {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px dashed var(--ad-border);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.voiceAnonymous.isOn {
+  border-style: solid;
+  border-color: var(--iter-todos);
+  background: color-mix(in srgb, var(--iter-todos) 8%, transparent);
+}
+
+.voiceAnonymous input {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  accent-color: var(--iter-todos);
+}
+
+.voiceAnonymous span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+}
+
+.voiceAnonymous small {
+  color: var(--ad-text-muted);
+}
+
+.voiceActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.voiceMine ul {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.voiceMine li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--ad-hover);
+  font-size: 12px;
+}
+
+.voiceMineType {
+  font-weight: 700;
+}
+
+.voiceMineText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.voiceMineDate {
+  color: var(--ad-text-muted);
+}
+
+@media (max-width: 640px) {
+  .voiceOptions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .voiceMine li {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+}
+
+/* ===== Calendario de reuniones (tarjeta) ===== */
+.meetingsCardHead {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.meetingsCardHead h3 {
+  margin: 0 !important;
+}
+
+.meetingsCardBadge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--iter-info);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.meetingsCardDay {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ad-border);
+  font-size: 13px;
+}
+
+/* ===== Merch ===== */
+.merchSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.merchSection h3 {
+  margin-bottom: 0 !important;
+}
+
+.merchPrices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.merchPrice {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--ad-hover);
+  font-size: 12px;
+  color: var(--ad-text-muted);
+}
+
+.merchPrice strong {
+  color: var(--ad-text);
+}
+
+.profileEmbedded {
+  display: flex;
+  flex-direction: column;
+}
+
+.merchTotal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--iter-info) 8%, transparent);
+  font-size: 13px;
+}
+
+.merchTotal strong {
+  font-variant-numeric: tabular-nums;
+}
+
+.merchTotal .isDue {
+  color: var(--iter-negativo-text);
+}
+
+.merchTotal .isPaid {
+  color: var(--iter-positivo-text);
+  font-weight: 600;
+}

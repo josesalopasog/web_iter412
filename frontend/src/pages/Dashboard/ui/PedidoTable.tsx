@@ -3,22 +3,19 @@ import type { ServidorRecord } from "../../../api/adminUsers";
 import type { AppSettings } from "../../../api/settings";
 import type { ColumnDef } from "./columnDefs";
 import {
-  ArrowLeftIcon,
   GearIcon,
   TrashIcon,
   ExcelIcon,
   ColumnCollapseIcon,
   ColumnExpandIcon,
 } from "../../../assets/icons";
-import type { View } from "./ViewDropdown";
+
 import EditableCell from "./EditableCell";
 import PaymentCell from "./PaymentCell";
 import PillsCell from "./PillsCell";
 import SizeValue from "./SizeValue";
 import PendingChangesModal from "./PendingChangesModal";
 import type { PendingChange } from "./PendingChangesModal";
-import PedidoStatsCards from "./PedidoStatsCards";
-import MerchSettingsModal from "./MerchSettingsModal";
 import ConfirmResetMerchModal from "./ConfirmResetMerchModal";
 import PedidoExportModal from "./PedidoExportModal";
 import { downloadXlsx } from "./exportXlsx";
@@ -34,16 +31,14 @@ import {
   saveShirtColors,
   saveMerchItems,
 } from "./merchPricing";
-import PedidoButton from "./PedidoButton";
 
 type Props = {
   rows: ServidorRecord[];
   settings: AppSettings;
-  canEditSettings: boolean;
-  onViewChange: (view: View) => void;
   onEditField: (id: string, field: string, value: unknown) => Promise<void>;
   onResetMerch: (id: string) => Promise<void>;
-  onSettingsSaved: (updated: AppSettings) => void;
+  /** Abre la página de precios de merch. */
+  onOpenSettings: () => void;
 };
 
 type PendingEdit = {
@@ -78,15 +73,12 @@ const requestedMerch = (row: ServidorRecord) =>
 const PedidoTable: React.FC<Props> = ({
   rows,
   settings,
-  canEditSettings,
-  onViewChange,
   onEditField,
   onResetMerch,
-  onSettingsSaved,
+  onOpenSettings,
 }) => {
-  const [showSettings, setShowSettings] = useState(false);
   const [showExport, setShowExport] = useState(false);
-  const [showPaymentCols, setShowPaymentCols] = useState(false);
+  const [showPaymentCols, setShowPaymentCols] = useState(true);
   const [resetTarget, setResetTarget] = useState<{ id: string; name: string } | null>(null);
   const [isResetting, setIsResetting] = useState(false);
   const [pendingEdits, setPendingEdits] = useState<Record<string, PendingEdit>>({});
@@ -169,29 +161,19 @@ const PedidoTable: React.FC<Props> = ({
 
   return (
     <>
-      {/* Barra de acciones del pedido, arriba de las cards. */}
+      {/* Barra de acciones del pedido (la analítica está en su propia sección). */}
       <div className="tableSectionHead pedidoToolbar">
         <div className="tableSectionHeadLeft">
           <button
             type="button"
-            className="btnGhost exportBtn"
-            title="Volver a servidores"
-            onClick={() => onViewChange("servidores")}
-          >
-            <ArrowLeftIcon className="w-4 h-4" />
-            <span className="exportBtnLabel">Volver</span>
-          </button>
-          <button
-            type="button"
             className="btnGhost settingsBtn"
             title="Precios de merch"
-            onClick={() => setShowSettings(true)}
+            onClick={onOpenSettings}
           >
             <GearIcon className="w-5 h-5" />
           </button>
         </div>
         <div className="tableSectionHeadRight">
-          <PedidoButton active onClick={() => onViewChange("servidores")} />
           <button
             type="button"
             className="btnGhost exportBtn"
@@ -203,8 +185,6 @@ const PedidoTable: React.FC<Props> = ({
           </button>
         </div>
       </div>
-
-      <PedidoStatsCards rows={rows} settings={settings} />
 
       <div className="tableSection">
         <div className="tableScroll">
@@ -353,14 +333,6 @@ const PedidoTable: React.FC<Props> = ({
         </div>
       )}
 
-      {showSettings && (
-        <MerchSettingsModal
-          settings={settings}
-          canEdit={canEditSettings}
-          onSaved={onSettingsSaved}
-          onClose={() => setShowSettings(false)}
-        />
-      )}
 
       {resetTarget && (
         <ConfirmResetMerchModal

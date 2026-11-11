@@ -84,7 +84,7 @@ const MERCH_ITEM_PRICE_FIELD: Record<string, "busoChaquetaPrice" | "canguroPrice
 
 const SIZED_MERCH_ITEMS = new Set(["BUSO_CERRADO", "CHAQUETA_ABIERTA"]);
 
-const computeMerchMax = (
+export const computeMerchMax = (
   servidor: {
     needsShirt: string;
     shirtSize?: string;
@@ -619,4 +619,22 @@ export const deleteServidor = asyncHandler(async (req, res) => {
   );
 
   res.json({ ok: true });
+});
+/**
+ * GET /api/users/servidores/birthdays
+ * Cumpleaños de los servidores para el calendario: solo nombre y día/mes (sin el año ni la edad).
+ */
+export const listBirthdays = asyncHandler(async (_req, res) => {
+  const servidores = await Servidor.find().select("firstNames lastNames preferredName birthDate").lean();
+  const birthdays = servidores
+    .map((s) => {
+      const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(s.birthDate ?? ""));
+      if (!match) return null;
+      const firstName = String(s.preferredName || s.firstNames || "").trim();
+      const lastName = String(s.lastNames ?? "").trim().split(/\s+/)[0] ?? "";
+      return { _id: String(s._id), name: `${firstName} ${lastName}`.trim(), monthDay: `${match[2]}-${match[3]}` };
+    })
+    .filter((b): b is { _id: string; name: string; monthDay: string } => b !== null)
+    .sort((a, b) => a.monthDay.localeCompare(b.monthDay));
+  res.json(birthdays);
 });

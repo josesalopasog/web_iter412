@@ -12,7 +12,6 @@ type Props = {
   canEdit: boolean;
   totalSubsidyUsed: number;
   onSaved: (updated: AppSettings) => void;
-  onClose: () => void;
 };
 
 const FIELD_LABELS: Record<keyof AppSettings, string> = {
@@ -155,7 +154,8 @@ const ReadOnlyField: React.FC<{ label: string; value: string }> = ({ label, valu
   </div>
 );
 
-const SettingsModal: React.FC<Props> = ({ settings, canEdit, totalSubsidyUsed, onSaved, onClose }) => {
+// Formulario de ajustes del retiro (antes un pop up): vive en Retiro → Ajustes del retiro.
+const RetreatSettingsForm: React.FC<Props> = ({ settings, canEdit, totalSubsidyUsed, onSaved }) => {
   const [draft, setDraft] = useState<AppSettings>(settings);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -203,16 +203,15 @@ const SettingsModal: React.FC<Props> = ({ settings, canEdit, totalSubsidyUsed, o
   const saldoSubsidios = Math.max(0, draft.subsidyCap - totalSubsidyUsed);
 
   return (
-    <div className="modalOverlay" role="dialog" aria-modal="true">
-      <div className="modalCard settingsModalCard">
-        <div className="modalHead">
-          <h3>⚙️ Ajustes del retiro</h3>
-          <button type="button" className="modalClose" onClick={onClose}>
-            ✕
-          </button>
+    <div className="chartCard settingsPanel">
+        <div className="chartCardHeader">
+          <div>
+            <h2 className="chartCardTitle">Ajustes del retiro</h2>
+            <p className="chartCardSubtitle">Número, fechas, precios y plazos de pago que se muestran en la página.</p>
+          </div>
         </div>
 
-        <div className="modalBody">
+        <div className="settingsPanelBody">
           <div className="configColumns">
             <div className="configColumn">
               <div className="configColumnTitle">Precios</div>
@@ -249,17 +248,19 @@ const SettingsModal: React.FC<Props> = ({ settings, canEdit, totalSubsidyUsed, o
           {error && <p className="configError">{error}</p>}
         </div>
 
-        <div className="modalActions">
-          <button type="button" className="btnGhost" onClick={onClose}>
-            Cerrar
-          </button>
-          {canEdit && changedFields.length > 0 && (
-            <button type="button" className="btnPrimary" onClick={() => setShowConfirm(true)}>
+        {canEdit && (
+          <div className="settingsPanelActions">
+            <span className="settingsPanelHint">
+              {changedFields.length ? `${changedFields.length} cambio(s) sin guardar` : "Sin cambios"}
+            </span>
+            <button type="button" className="toolbarButton" disabled={!changedFields.length} onClick={() => setDraft(settings)}>
+              Descartar
+            </button>
+            <button type="button" className="toolbarButton primary" disabled={!changedFields.length} onClick={() => setShowConfirm(true)}>
               Guardar cambios
             </button>
-          )}
-        </div>
-      </div>
+          </div>
+        )}
 
       {showConfirm && (
         <ConfirmSettingsModal
@@ -273,4 +274,4 @@ const SettingsModal: React.FC<Props> = ({ settings, canEdit, totalSubsidyUsed, o
   );
 };
 
-export default SettingsModal;
+export default RetreatSettingsForm;

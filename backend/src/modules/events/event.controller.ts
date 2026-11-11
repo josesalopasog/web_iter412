@@ -2,6 +2,7 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import { ApiError } from "../../utils/errors.js";
 import { createLog } from "../activityLog/createLog.js";
 import { Event } from "./event.model.js";
+import { Rating } from "./rating.model.js";
 import { EVENT_TAGS } from "./event.types.js";
 import type { EventDTO } from "./event.types.js";
 
@@ -28,15 +29,8 @@ const effectiveEndMs = (event: { dateISO: string; endDateISO?: string; end?: str
   return new Date(`${dateISO}T${time}:00`).getTime();
 };
 
-// Los eventos que ya pasaron se eliminan solos: no hay que revisarlos ni archivarlos a mano.
-const purgePastEvents = async () => {
-  const now = Date.now();
-  const events = await Event.find().select("dateISO endDateISO end");
-  const expiredIds = events.filter((e) => effectiveEndMs(e) < now).map((e) => e._id);
-  if (expiredIds.length) {
-    await Event.deleteMany({ _id: { $in: expiredIds } });
-  }
-};
+// Los eventos que ya pasaron ya no se eliminan: se guardan para que los servidores califiquen las
+// reuniones y el dashboard muestre el historial. La página pública solo muestra los vigentes.
 
 const validateEventBody = (body: Partial<EventDTO>, { partial = false }: { partial?: boolean } = {}) => {
   if (!partial || body.title !== undefined) {
@@ -60,13 +54,13 @@ const validateEventBody = (body: Partial<EventDTO>, { partial = false }: { parti
 };
 
 export const listPublicEvents = asyncHandler(async (_req, res) => {
-  await purgePastEvents();
+  const now = Date.now();
   const events = await Event.find().sort({ dateISO: 1, start: 1 });
-  res.json(events);
+  res.json(events.filter((e) => effectiveEndMs(e) >= now));
 });
 
+/** Todos los eventos, también los pasados (calendario del dashboard). */
 export const listEvents = asyncHandler(async (_req, res) => {
-  await purgePastEvents();
   const events = await Event.find().sort({ dateISO: 1, start: 1 });
   res.json(events);
 });
@@ -93,11 +87,15 @@ export const createEvent = asyncHandler(async (req, res) => {
 });
 
 export const updateEvent = asyncHandler(async (req, res) => {
-  const body = req.body as Partial<EventDTO>;
-  validateEventBody(body, { partial: true });
-
+  const body = { ...(req.body as Partial<EventDTO>) };
   const event = await Event.findById(req.params.id);
   if (!event) throw new ApiError(404, "Evento no encontrado");
+
+  // Un evento que ya pasó se puede seguir editando (título, lugar...) sin cambiarle la fecha:
+  // las fechas que no cambian no se validan contra "hoy".
+  if (body.dateISO === event.dateISO) delete body.dateISO;
+  if ((body.endDateISO ?? "") === (event.endDateISO ?? "") && body.endDateISO !== undefined) delete body.endDateISO;
+  validateEventBody(body, { partial: true });
 
   const fields: (keyof EventDTO)[] = [
     "title",
@@ -126,8 +124,11 @@ export const deleteEvent = asyncHandler(async (req, res) => {
   if (!event) throw new ApiError(404, "Evento no encontrado");
 
   await event.deleteOne();
+  await Rating.deleteMany({ eventId: event._id });
 
   await createLog(req.user!, "ELIMINAR_EVENTO", `Eliminó el evento "${event.title}" (${event.dateISO})`);
 
   res.json({ ok: true });
 });
+
+export { todayISO };

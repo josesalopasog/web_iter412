@@ -19,17 +19,26 @@ export type Tour = {
 export const TOURS: Record<TourId, Tour> = {
   dashboard: {
     id: "dashboard",
-    path: "/dashboard",
+    path: "/dashboard/soldados/inscripciones",
     label: "Ver tutorial del dashboard",
     steps: [
-      { target: "stats", title: "Resumen", text: "Inscritos, pagos y subsidios del retiro de un vistazo." },
-      { target: "view", title: "Soldados y servidores", text: "Cambia aquí entre las dos listas." },
+      {
+        target: "menu",
+        title: "Menú",
+        text: "Resumen, analítica, finanzas, soldados, servidores, pedido de merch, Tu voz en ITER, gestión y reuniones: todo está aquí.",
+      },
+      {
+        target: "tabs",
+        title: "Filtros rápidos",
+        text: "Filtra por estado de pago (y en servidores, por disponibilidad). El número de cada pestaña es cuántos hay.",
+      },
+      { target: "search", title: "Buscar", text: "Busca por nombre, documento, teléfono o ciudad." },
       { target: "columns", title: "Columnas", text: "Elige qué columnas ver y arrástralas para ordenarlas." },
-      { target: "settings", title: "Ajustes del retiro", text: "Precios, fechas y número del retiro." },
+      { target: "settings", title: "Ajustes del retiro", text: "Lleva a Gestión → Ajustes del retiro: precios, fechas y número del retiro." },
       {
         target: "table",
         title: "Editar",
-        text: "Toca una celda para cambiarla y confirma con «Guardar cambios». La flecha del borde muestra pagos y acciones.",
+        text: "Toca una celda para cambiarla y confirma con «Guardar cambios». A la izquierda están los pagos, el subsidio y las acciones.",
       },
       { target: "export", title: "Exportar", text: "Descarga a Excel la lista tal como la estás viendo." },
       { target: "bell", title: "Notificaciones", text: "Avisos del retiro y estos tutoriales, por si quieres verlos de nuevo." },
@@ -40,6 +49,8 @@ export const TOURS: Record<TourId, Tour> = {
     path: "/profile",
     label: "Ver tutorial de tu perfil",
     steps: [
+      { target: "edit-profile", title: "Editar perfil", text: "Aquí están tus respuestas del formulario de inscripción para cambiarlas." },
+      { target: "password", title: "Contraseña", text: "Cámbiala cuando lo necesites." },
       {
         target: "status",
         title: "Disponibilidad",
@@ -47,12 +58,9 @@ export const TOURS: Record<TourId, Tour> = {
           "Indica si servirás en este retiro. Si no puedes, apaga «Activo para servir» y aparecerá «Santísimo Nocturno» por si quieres acompañar en la noche.",
       },
       { target: "testimony", title: "Tu testimonio", text: "Cuéntale al futuro soldado por qué vivir el retiro." },
-      {
-        target: "profile-data",
-        title: "Tus datos",
-        text: "Toca un dato para editarlo y guarda al final con «Guardar cambios».",
-      },
-      { target: "password", title: "Contraseña", text: "Cámbiala cuando lo necesites." },
+      { target: "meetings", title: "Reuniones", text: "El calendario de reuniones. Con «Calificar reuniones» nos cuentas cómo te fue en las que ya pasaron." },
+      { target: "voice", title: "Tu voz en ITER", text: "Comparte sugerencias, ideas de actividades o peticiones de oración. Puedes enviarlas de forma anónima." },
+      { target: "merch", title: "Merch", text: "Pide tu ropa del retiro y mira cuánto cuesta tu pedido y cuánto llevas pagado." },
       { target: "dashboard", title: "Dashboard", text: "Desde aquí gestionas inscritos y ajustes." },
       { target: "bell", title: "Notificaciones", text: "Avisos del retiro y estos tutoriales, por si quieres verlos de nuevo." },
     ],

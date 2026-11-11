@@ -41,8 +41,8 @@ footer{
     transition: color 0.15s, background 0.15s;
 }
 
-/* Brillo: el ícono en gris y, encima, el mismo ícono con el degradado cyan→magenta. Cada 2,4 s el
-   degradado entra barriendo de izquierda a derecha, se queda 1 s y se desvanece. */
+/* Brillo como el del spinner de carga: el ícono en gris y, encima, el mismo ícono con el
+   degradado cyan→magenta que solo se ve donde pasa la franja diagonal de la máscara. */
 .footerInfoIcon {
     position: relative;
     display: inline-block;
@@ -58,39 +58,24 @@ footer{
 }
 
 .footerInfoShine {
-    -webkit-mask-image: linear-gradient(115deg, #fff 40%, transparent 60%);
-    mask-image: linear-gradient(115deg, #fff 40%, transparent 60%);
-    -webkit-mask-size: 300% 300%;
-    mask-size: 300% 300%;
+    -webkit-mask-image: linear-gradient(115deg, transparent 36%, #fff 50%, transparent 64%);
+    mask-image: linear-gradient(115deg, transparent 36%, #fff 50%, transparent 64%);
+    -webkit-mask-size: 320% 320%;
+    mask-size: 320% 320%;
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
-    animation: footerInfo-shine 2.4s ease-in-out infinite;
+    animation: footerInfo-sweep 2.4s ease-in-out infinite;
 }
 
-@keyframes footerInfo-shine {
-    /* 0 → 0,6 s: entra barriendo */
+@keyframes footerInfo-sweep {
     0% {
-        -webkit-mask-position: 100% 50%;
-        mask-position: 100% 50%;
-        opacity: 1;
+        -webkit-mask-position: -60% 50%;
+        mask-position: -60% 50%;
     }
-    25% {
-        -webkit-mask-position: 0% 50%;
-        mask-position: 0% 50%;
-        opacity: 1;
-    }
-    /* 0,6 → 1,6 s: se queda */
-    67% {
-        -webkit-mask-position: 0% 50%;
-        mask-position: 0% 50%;
-        opacity: 1;
-    }
-    /* 1,6 → 1,9 s: se va; el resto del ciclo queda en gris */
-    79%,
+    55%,
     100% {
-        -webkit-mask-position: 0% 50%;
-        mask-position: 0% 50%;
-        opacity: 0;
+        -webkit-mask-position: 160% 50%;
+        mask-position: 160% 50%;
     }
 }
 

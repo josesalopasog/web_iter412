@@ -109,7 +109,7 @@
 }
 
 .dbDropdownBtn.soldados {
-  background: linear-gradient(120deg, #6a00ff, #a855f7);
+  background: linear-gradient(120deg, #1a9be0, #5cc0f0);
 }
 
 .dbDropdownBtn.servidores {
@@ -148,7 +148,7 @@
 
 .dbDropdownItem.active {
   font-weight: 700;
-  color: #6a00ff;
+  color: #1a9be0;
 }
 
 .statsGrid {
@@ -246,7 +246,7 @@
 }
 
 .statCard.total {
-  background: linear-gradient(135deg, #6a00ff, #7030a0);
+  background: linear-gradient(135deg, #1a9be0, #7030a0);
 }
 
 .statCard.hombres {
@@ -438,8 +438,8 @@
 .configInputGroup:focus-within,
 .configInputPlain:focus {
   outline: none;
-  border-color: #6a00ff;
-  box-shadow: 0 0 0 3px rgba(106, 0, 255, 0.12);
+  border-color: #1a9be0;
+  box-shadow: 0 0 0 3px rgba(26, 155, 224, 0.12);
 }
 
 .configInput {
@@ -568,9 +568,9 @@
 }
 
 .searchRowToggleBtn.active {
-  background: #f5f3ff;
-  border-color: #6a00ff;
-  color: #6a00ff;
+  background: #e6f5fd;
+  border-color: #1a9be0;
+  color: #1a9be0;
 }
 
 @media (max-width: 640px) {
@@ -670,7 +670,7 @@
 }
 
 .sortHeaderBtn:hover {
-  color: #6a00ff;
+  color: #1a9be0;
 }
 
 .sortHeaderIcon {
@@ -680,7 +680,7 @@
 
 .sortHeaderIcon.active {
   opacity: 1;
-  color: #6a00ff;
+  color: #1a9be0;
 }
 
 .filterHeaderIcon {
@@ -689,7 +689,7 @@
 
 .filterHeaderIcon.active {
   opacity: 1;
-  color: #6a00ff;
+  color: #1a9be0;
 }
 
 .filterMenuActions {
@@ -723,7 +723,7 @@
 
 .columnSearchInput:focus {
   outline: none;
-  border-color: #6a00ff;
+  border-color: #1a9be0;
 }
 
 .dataTable td {
@@ -752,8 +752,8 @@
 }
 
 .editableCell:hover {
-  background: #f5f3ff !important;
-  outline: 1px dashed #a855f7;
+  background: #e6f5fd !important;
+  outline: 1px dashed #5cc0f0;
   outline-offset: -2px;
 }
 
@@ -765,7 +765,7 @@
   width: 100%;
   min-width: 100px;
   padding: 6px 8px;
-  border: 1px solid #6a00ff;
+  border: 1px solid #1a9be0;
   border-radius: 8px;
   font-size: 0.85rem;
   font-family: inherit;
@@ -796,8 +796,8 @@
   gap: 6px;
   padding: 4px 8px;
   border-radius: 999px;
-  background: #f5f3ff;
-  color: #5b21b6;
+  background: #e6f5fd;
+  color: #0b6fa8;
   font-size: 0.78rem;
   font-weight: 600;
   white-space: nowrap;
@@ -812,15 +812,15 @@
   padding: 0;
   border: none;
   border-radius: 50%;
-  background: rgba(91, 33, 182, 0.15);
-  color: #5b21b6;
+  background: rgba(11, 111, 168, 0.15);
+  color: #0b6fa8;
   font-size: 0.8rem;
   line-height: 1;
   cursor: pointer;
 }
 
 .dbPillRemove:hover {
-  background: rgba(91, 33, 182, 0.3);
+  background: rgba(11, 111, 168, 0.3);
 }
 
 .dbPillAddWrap {
@@ -836,15 +836,15 @@
   padding: 0;
   border: none;
   border-radius: 50%;
-  background: rgba(106, 0, 255, 0.12);
-  color: #6a00ff;
+  background: rgba(26, 155, 224, 0.12);
+  color: #1a9be0;
   font-size: 0.8rem;
   line-height: 1;
   cursor: pointer;
 }
 
 .dbPillAddBtn:hover {
-  background: rgba(106, 0, 255, 0.22);
+  background: rgba(26, 155, 224, 0.22);
 }
 
 .dbPillAddBtn:disabled {
@@ -876,8 +876,8 @@
 }
 
 .dbPillAddOption:hover {
-  background: #f5f3ff;
-  color: #6a00ff;
+  background: #e6f5fd;
+  color: #1a9be0;
 }
 
 /* ===== Payment column (delete + pago), inline in the users table ===== */
@@ -896,14 +896,14 @@
   margin: 0;
   font: inherit;
   font-weight: 600;
-  color: #6a00ff;
+  color: #1a9be0;
   text-decoration: underline;
   text-underline-offset: 2px;
   cursor: pointer;
 }
 
 .priceEditorBtn:hover {
-  color: #4b00b5;
+  color: #0b6fa8;
 }
 
 .priceEditorGroup {
@@ -912,7 +912,7 @@
   box-sizing: border-box;
   height: 30px;
   padding-left: 6px;
-  border: 1px solid #6a00ff;
+  border: 1px solid #1a9be0;
   border-radius: 6px;
 }
 
@@ -964,8 +964,8 @@
 }
 
 .rowDocBtn:hover {
-  background: #ede9fe;
-  color: #6a00ff;
+  background: #d4eefc;
+  color: #1a9be0;
 }
 
 .paymentInputGroup {
@@ -980,7 +980,7 @@
 }
 
 .paymentInputGroup:focus-within {
-  box-shadow: 0 0 0 3px rgba(106, 0, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(26, 155, 224, 0.12);
 }
 
 .paymentInputGroup.status-none {
@@ -988,11 +988,11 @@
 }
 
 .paymentInputGroup.status-partial {
-  border-color: #f97316;
+  border-color: #f59e0b;
 }
 
 .paymentInputGroup.status-full {
-  border-color: #16a34a;
+  border-color: #059669;
 }
 
 .subsidyInputGroup {
@@ -1007,12 +1007,12 @@
 }
 
 .subsidyInputGroup.has-value {
-  border-color: #6a00ff;
+  border-color: #1a9be0;
 }
 
 .subsidyInputGroup:focus-within {
-  border-color: #6a00ff;
-  box-shadow: 0 0 0 3px rgba(106, 0, 255, 0.12);
+  border-color: #1a9be0;
+  box-shadow: 0 0 0 3px rgba(26, 155, 224, 0.12);
 }
 
 .paymentInputPrefix {
@@ -1101,7 +1101,7 @@
 .colDividerToggle:hover {
   background: #f3f4f6;
   color: #111;
-  border-color: #6a00ff;
+  border-color: #1a9be0;
 }
 
 .btnDanger {
@@ -1302,7 +1302,7 @@
 }
 
 .dbDropupBtn:hover:not(:disabled) {
-  border-color: #a855f7;
+  border-color: #5cc0f0;
 }
 
 .dbDropupBtn:disabled {
@@ -1313,7 +1313,7 @@
 
 .dbPillAddOption.active {
   font-weight: 700;
-  color: #6a00ff;
+  color: #1a9be0;
 }
 
 /* ===== Talla "Otro" (camiseta / merch) ===== */
@@ -1322,7 +1322,7 @@
   border: none;
   background: none;
   font: inherit;
-  color: #6a00ff;
+  color: #1a9be0;
   font-weight: 600;
   text-decoration: underline dotted;
   text-underline-offset: 3px;
@@ -1330,7 +1330,7 @@
 }
 
 .dbOtherSizeLink:hover {
-  color: #5b21b6;
+  color: #0b6fa8;
   text-decoration-style: solid;
 }
 
@@ -1347,8 +1347,8 @@
 }
 
 .dataTable tr.newRegistrationRow {
-  --new-row-rgb: 237 233 254;
-  --new-row-hover-rgb: 221 214 254;
+  --new-row-rgb: 230 245 253;
+  --new-row-hover-rgb: 212 238 252;
 }
 
 .dataTable tr.newRegistrationRow td {
@@ -1419,7 +1419,7 @@
 }
 
 .status-activo {
-  --led-color: #16a34a;
+  --led-color: #059669;
 }
 
 .status-inactivo {
@@ -1427,7 +1427,7 @@
 }
 
 .status-santisimo_nocturno {
-  --led-color: #2563eb;
+  --led-color: #1a9be0;
 }
 
 .status-todos {

@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import type { SoldadoRecord, ServidorRecord } from "../../../api/adminUsers";
-import type { View } from "./ViewDropdown";
-import ViewDropdown from "./ViewDropdown";
 import EditableCell from "./EditableCell";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import PendingChangesModal from "./PendingChangesModal";
@@ -19,10 +17,9 @@ import PaymentCell from "./PaymentCell";
 import PillsCell from "./PillsCell";
 import type { PillOption } from "./PillsCell";
 import DropupCell from "./DropupCell";
-import ServiceStatusFilter from "./ServiceStatusFilter";
 import PedidoButton from "./PedidoButton";
 import StatusLed from "./StatusLed";
-import { SERVICE_STATUS_CELL_LABELS, serviceStatusOf } from "./serviceStatus";
+import { SERVICE_STATUS_CELL_LABELS, SERVICE_STATUS_LABELS, serviceStatusOf } from "./serviceStatus";
 import type { ServiceStatus, ServiceStatusFilterValue } from "./serviceStatus";
 import { formatEnumLabel } from "../../Profile/ui/format";
 import {
@@ -37,6 +34,8 @@ import SizeValue from "./SizeValue";
 import { openParticipantAnswers } from "./participantLink";
 import SubsidyCell from "./SubsidyCell";
 import { formatCOP } from "./paymentConfig";
+import { Segmented } from "../../Admin/ui/PageParts";
+import { TablePagination } from "../../Admin/ui/DataTable";
 import {
   ExcelIcon,
   SearchIcon,
@@ -59,11 +58,9 @@ type Props =
       rows: SoldadoRecord[];
       newIds: Set<string>;
       currentUserRole: string;
-      showEliminados: boolean;
       price: number;
       subsidyMax: number;
       totalSubsidyUsed: number;
-      onViewChange: (view: View) => void;
       onEditField: (id: string, field: string, value: string) => Promise<void>;
       onDelete: (id: string) => Promise<void>;
       onOpenSettings: () => void;
@@ -73,16 +70,15 @@ type Props =
       rows: ServidorRecord[];
       newIds: Set<string>;
       currentUserRole: string;
-      showEliminados: boolean;
       price: number;
       subsidyMax: number;
       totalSubsidyUsed: number;
-      onViewChange: (view: View) => void;
+      onOpenPedido: () => void;
       onEditField: (id: string, field: string, value: unknown) => Promise<void>;
       onDelete: (id: string) => Promise<void>;
       onRoleChange: (id: string, role: string) => Promise<void>;
       onOpenSettings: () => void;
-      /** Estado seleccionado (vive en el Dashboard para que las tarjetas de stats lo sigan). */
+      /** Estado seleccionado (vive en AdminData para que las tarjetas de stats lo sigan). */
       statusFilter: ServiceStatusFilterValue;
       onStatusFilterChange: (value: ServiceStatusFilterValue) => void;
     };
@@ -122,6 +118,40 @@ const renderServiceStatus = (value: string) => (
   </>
 );
 
+export type PaymentFilter = "TODOS" | "COMPLETO" | "PARCIAL" | "SIN_PAGO";
+
+const PAYMENT_FILTER_LABELS: Record<PaymentFilter, string> = {
+  TODOS: "Todos",
+  COMPLETO: "Pago completo",
+  PARCIAL: "Abono",
+  SIN_PAGO: "Sin pago",
+};
+
+const PAYMENT_FILTER_COLORS: Record<PaymentFilter, string | undefined> = {
+  TODOS: undefined,
+  COMPLETO: "#059669",
+  PARCIAL: "#f59e0b",
+  SIN_PAGO: "#dc2626",
+};
+
+const SERVICE_STATUS_COLORS: Record<ServiceStatusFilterValue, string> = {
+  ACTIVO: "#059669",
+  INACTIVO: "#9ca3af",
+  SANTISIMO_NOCTURNO: "#1a9be0",
+  TODOS: "#7c3aed",
+};
+
+/** Pago + subsidio frente al precio del retiro. */
+const paymentStatusOf = (row: { paymentAmount?: unknown; subsidyAmount?: unknown }, price: number): PaymentFilter => {
+  const covered = (Number(row.paymentAmount) || 0) + (Number(row.subsidyAmount) || 0);
+  if (price > 0 && covered >= price) return "COMPLETO";
+  return covered > 0 ? "PARCIAL" : "SIN_PAGO";
+};
+
+const normalizeText = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+const PAGE_SIZES = [25, 50, 100, 0];
+
 const formatRegNum = (n: number | null | undefined) =>
   n == null || Number.isNaN(n) ? "s/n" : String(n).padStart(3, "0");
 
@@ -153,7 +183,11 @@ const loadColumnOrder = (
 const UsersTable: React.FC<Props> = (props) => {
   const [showSearchRow, setShowSearchRow] = useState(false);
   const [columnSearch, setColumnSearch] = useState<Record<string, string>>({});
-  const [showPaymentCols, setShowPaymentCols] = useState(false);
+  const [showPaymentCols, setShowPaymentCols] = useState(true);
+  const [globalSearch, setGlobalSearch] = useState("");
+  const [paymentFilter, setPaymentFilter] = useState<PaymentFilter>("TODOS");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(50);
   // Servidores: el filtro de estado lo controla el Dashboard (comparte con las tarjetas).
   const statusFilter: ServiceStatusFilterValue = props.view === "servidores" ? props.statusFilter : "TODOS";
 
@@ -256,6 +290,31 @@ const UsersTable: React.FC<Props> = (props) => {
       rows = rows.filter((r) => serviceStatusOf(r) === statusFilter);
     }
 
+    if (paymentFilter !== "TODOS") {
+      rows = rows.filter((r) => paymentStatusOf(r, props.price) === paymentFilter);
+    }
+
+    const globalQuery = normalizeText(globalSearch.trim());
+    if (globalQuery) {
+      rows = rows.filter((r) =>
+        normalizeText(
+          [
+            formatRegNum(r.registrationNumber),
+            r.firstNames,
+            r.lastNames,
+            r.preferredName,
+            r.documentNumber,
+            r.phone,
+            r.email,
+            r.city,
+            (r as ServidorRecord).role,
+          ]
+            .filter(Boolean)
+            .join(" ")
+        ).includes(globalQuery)
+      );
+    }
+
     const regNumQuery = columnSearch.registrationNumber?.trim().toLowerCase();
     if (regNumQuery) {
       rows = rows.filter((r) => formatRegNum(r.registrationNumber).toLowerCase().includes(regNumQuery));
@@ -278,7 +337,7 @@ const UsersTable: React.FC<Props> = (props) => {
     }
     return rows;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.rows, columnSearch, columnFilters, visibleColumns, statusFilter]);
+  }, [props.rows, columnSearch, columnFilters, visibleColumns, statusFilter, paymentFilter, globalSearch, props.price]);
 
   const statusCounts = useMemo(() => {
     const counts: Record<ServiceStatusFilterValue, number> = {
@@ -290,6 +349,16 @@ const UsersTable: React.FC<Props> = (props) => {
     for (const r of props.rows as (SoldadoRecord | ServidorRecord)[]) counts[serviceStatusOf(r)] += 1;
     return counts;
   }, [props.rows]);
+
+  // Conteos de las pestañas de pago (dentro del estado de servicio elegido).
+  const paymentCounts = useMemo(() => {
+    const base = (props.rows as (SoldadoRecord | ServidorRecord)[]).filter(
+      (r) => props.view !== "servidores" || statusFilter === "TODOS" || serviceStatusOf(r) === statusFilter
+    );
+    const counts: Record<PaymentFilter, number> = { TODOS: base.length, COMPLETO: 0, PARCIAL: 0, SIN_PAGO: 0 };
+    for (const r of base) counts[paymentStatusOf(r, props.price)] += 1;
+    return counts;
+  }, [props.rows, props.view, props.price, statusFilter]);
 
   const getSortValue = (key: string, row: SoldadoRecord | ServidorRecord): string | number => {
     if (key === "registrationNumber") return row.registrationNumber;
@@ -318,6 +387,15 @@ const UsersTable: React.FC<Props> = (props) => {
     });
     return sorted;
   }, [filteredRows, sortConfig]);
+
+  const pageCount = pageSize ? Math.max(1, Math.ceil(sortedRows.length / pageSize)) : 1;
+  const currentPage = Math.min(page, pageCount);
+  const pageRows = pageSize ? sortedRows.slice((currentPage - 1) * pageSize, currentPage * pageSize) : sortedRows;
+
+  // Al filtrar o buscar se vuelve a la primera página.
+  useEffect(() => {
+    setPage(1);
+  }, [globalSearch, paymentFilter, statusFilter, columnSearch, columnFilters, pageSize]);
 
   // Orden en que se "colorean" las inscripciones nuevas: primero la más antigua de ellas.
   const newRowOrder = useMemo(() => {
@@ -446,12 +524,44 @@ const UsersTable: React.FC<Props> = (props) => {
 
   return (
     <div className="tableSection">
+      <div className="usersTableTabs" data-tour="tabs">
+        {props.view === "servidores" && (
+          <Segmented
+            label="Disponibilidad"
+            value={statusFilter}
+            onChange={props.onStatusFilterChange}
+            options={(["ACTIVO", "SANTISIMO_NOCTURNO", "INACTIVO", "TODOS"] as ServiceStatusFilterValue[]).map((value) => ({
+              value,
+              label: SERVICE_STATUS_LABELS[value],
+              count: statusCounts[value],
+              dot: SERVICE_STATUS_COLORS[value],
+            }))}
+          />
+        )}
+        <Segmented
+          label="Estado de pago"
+          value={paymentFilter}
+          onChange={setPaymentFilter}
+          options={(["TODOS", "COMPLETO", "PARCIAL", "SIN_PAGO"] as PaymentFilter[]).map((value) => ({
+            value,
+            label: PAYMENT_FILTER_LABELS[value],
+            count: paymentCounts[value],
+            dot: PAYMENT_FILTER_COLORS[value],
+          }))}
+        />
+      </div>
       <div className="tableSectionHead">
         <div className="tableSectionHeadLeft">
-          <ViewDropdown view={props.view} showEliminados={props.showEliminados} onChange={props.onViewChange} />
-          {props.view === "servidores" && (
-            <ServiceStatusFilter value={statusFilter} counts={statusCounts} onChange={props.onStatusFilterChange} />
-          )}
+          <label className="tableSearch" data-tour="search">
+            <SearchIcon className="w-4 h-4" />
+            <input
+              type="search"
+              placeholder="Buscar por nombre, documento, teléfono..."
+              aria-label="Buscar"
+              value={globalSearch}
+              onChange={(e) => setGlobalSearch(e.target.value)}
+            />
+          </label>
           <ColumnPicker columns={visibleColumns} order={columnOrder} onChange={handleColumnOrderChange} />
           <button
             type="button"
@@ -465,7 +575,7 @@ const UsersTable: React.FC<Props> = (props) => {
         </div>
         <div className="tableSectionHeadRight">
           {props.view === "servidores" && (
-            <PedidoButton active={false} onClick={() => props.onViewChange("pedido")} />
+            <PedidoButton active={false} onClick={props.onOpenPedido} />
           )}
           <button
             type="button"
@@ -609,7 +719,7 @@ const UsersTable: React.FC<Props> = (props) => {
                   </td>
                 </tr>
               ) : (
-                sortedRows.map((r) => (
+                pageRows.map((r) => (
                   <tr
                     key={r._id}
                     className={newRowOrder.has(r._id) ? "newRegistrationRow" : undefined}
@@ -766,6 +876,28 @@ const UsersTable: React.FC<Props> = (props) => {
             </tbody>
           </table>
       </div>
+
+      <TablePagination
+        first={sortedRows.length ? (pageSize ? (currentPage - 1) * pageSize + 1 : 1) : 0}
+        last={pageSize ? Math.min(currentPage * pageSize, sortedRows.length) : sortedRows.length}
+        total={sortedRows.length}
+        page={currentPage}
+        pageCount={pageCount}
+        onPage={setPage}
+      >
+        <select
+          className="pageSizeSelect"
+          aria-label="Filas por página"
+          value={pageSize}
+          onChange={(e) => setPageSize(Number(e.target.value))}
+        >
+          {PAGE_SIZES.map((size) => (
+            <option key={size} value={size}>
+              {size ? `${size} por página` : "Todas"}
+            </option>
+          ))}
+        </select>
+      </TablePagination>
 
       {pendingList.length > 0 && (
         <div className="pendingBar">

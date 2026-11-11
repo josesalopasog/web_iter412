@@ -67,7 +67,7 @@
 .tourCounter {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #6a00ff;
+  color: #1a9be0;
 }
 
 .tourTitle {
@@ -111,7 +111,7 @@
 
 .tourBtnPrimary {
   border: none;
-  background: linear-gradient(120deg, #6a00ff, #a855f7);
+  background: linear-gradient(120deg, #1a9be0, #5cc0f0);
   color: #fff;
 }
 

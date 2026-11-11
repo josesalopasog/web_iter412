@@ -141,7 +141,7 @@
 
 .notifItem:hover,
 .notifItem:focus-visible {
-  background: var(--role-soft, #f5f3ff);
+  background: var(--role-soft, #e6f5fd);
   outline: none;
 }
 
@@ -181,7 +181,7 @@
 }
 
 .notifItem.is-unread .notifDot {
-  background: var(--role-accent, #6a00ff);
+  background: var(--role-accent, #1a9be0);
 }
 
 .notifContent {
