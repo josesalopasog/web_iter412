@@ -2233,3 +2233,26 @@
 .adTopBar .notifBadge {
   box-shadow: 0 0 0 2px var(--ad-surface);
 }
+
+/* Línea que separa las columnas de pago del resto: continua y del color de los bordes del tema */
+.adminShell .colDivider::after {
+  top: 0;
+  bottom: 0;
+  background: var(--ad-border);
+}
+
+.adminShell thead .colDivider::after {
+  top: 6px;
+}
+
+.adminShell .colDividerToggle {
+  border-color: var(--ad-border);
+  background: var(--ad-surface);
+  color: var(--ad-text-muted);
+}
+
+.adminShell .colDividerToggle:hover {
+  border-color: var(--iter-info);
+  background: var(--ad-hover);
+  color: var(--iter-info);
+}
