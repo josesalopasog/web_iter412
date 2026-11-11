@@ -2,7 +2,9 @@
    .profileModern va junto a .adminShell, así usa las mismas variables (--ad-*, --iter-*) y el
    tema oscuro de pages/Admin/dark.css. Los acentos por disponibilidad (--role-*) se mantienen. */
 
-.profileModern {
+/* Más específico que .profilePage (styles.css): en el build de producción el orden de los CSS puede
+   cambiar y el fondo claro de antes ganaba, aun en tema oscuro. */
+.adminShell.profilePage.profileModern {
   min-height: 100vh;
   background: var(--ad-bg);
   color: var(--ad-text);
@@ -711,3 +713,4 @@ html[data-theme="dark"] footer .footerInfoBtn:focus-visible {
   color: var(--iter-positivo-text);
   font-weight: 600;
 }
+

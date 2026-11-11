@@ -2205,3 +2205,31 @@
   font-size: 15px !important;
   min-width: 140px;
 }
+
+/* Campana de notificaciones: el mismo botón redondo de antes (con marco) y su contador rojo */
+.adTopBar .notifBellBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid var(--ad-border);
+  background: var(--ad-surface);
+  color: var(--ad-text);
+}
+
+.adTopBar .notifBellBtn:hover {
+  background: var(--ad-hover);
+}
+
+.adTopBar .notifBellBtn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.adTopBar .notifBadge {
+  box-shadow: 0 0 0 2px var(--ad-surface);
+}
