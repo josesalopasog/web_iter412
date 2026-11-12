@@ -58,7 +58,7 @@ const MeetingsCalendar = () => {
         <Link to="/dashboard/reuniones" className="toolbarButton">
           <ChartBarIcon /> Ver analítica
         </Link>
-        <Link to={`/dashboard/reuniones/nuevo${selected && selected >= today ? `?fecha=${selected}` : ""}`} className="toolbarButton primary">
+        <Link to={`/dashboard/reuniones/nuevo${selected ? `?fecha=${selected}` : ""}`} className="toolbarButton primary">
           <CalendarIcon /> Agregar evento
         </Link>
       </PageHeading>
@@ -84,11 +84,9 @@ const MeetingsCalendar = () => {
           <>
             <div className="calPanelHead">
               <h3>{formatDayTitle(selected)}</h3>
-              {selected >= today && (
-                <button type="button" className="toolbarButton primary" onClick={() => navigate(`/dashboard/reuniones/nuevo?fecha=${selected}`)}>
-                  <CalendarIcon /> Nuevo
-                </button>
-              )}
+              <button type="button" className="toolbarButton primary" onClick={() => navigate(`/dashboard/reuniones/nuevo?fecha=${selected}`)}>
+                <CalendarIcon /> Nuevo
+              </button>
             </div>
             <BirthdayList birthdays={birthdays} day={selected} />
             {dayEvents.length === 0 && <p className="pageEmpty">No hay eventos este día.</p>}

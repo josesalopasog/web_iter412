@@ -8,6 +8,19 @@ import { todayISO } from "./event.controller.js";
 const RATABLE_TAGS = ["Reunión", "Formación"];
 
 /**
+ * Momento desde el que se puede calificar: cuando termina la reunión (hora de Colombia, UTC-5).
+ * Sin hora de fin se usa la de inicio; sin ninguna, desde el comienzo de ese día.
+ */
+const ratableFromMs = (e: { dateISO: string; endDateISO?: string | null; start?: string | null; end?: string | null }) => {
+  const day = e.endDateISO || e.dateISO;
+  const time = e.end || e.start || "00:00";
+  return new Date(`${day}T${time}:00-05:00`).getTime();
+};
+
+const isRatable = (e: { tag?: string | null; dateISO: string; endDateISO?: string | null; start?: string | null; end?: string | null }) =>
+  RATABLE_TAGS.includes(String(e.tag)) && Date.now() >= ratableFromMs(e);
+
+/**
  * GET /api/events/ratings/mine
  * Eventos del calendario para el servidor, con su calificación (si ya calificó) y si ya se puede
  * calificar (el día del evento o después).
@@ -34,7 +47,8 @@ export const listMyRatings = asyncHandler(async (req, res) => {
         tag: e.tag,
         description: e.description ?? "",
         isOpen: e.isOpen,
-        ratable: RATABLE_TAGS.includes(String(e.tag)) && e.dateISO <= today,
+        ratable: isRatable(e),
+        ratableFrom: new Date(ratableFromMs(e)).toISOString(),
         myRating: rating ? { stars: rating.stars, comment: rating.comment ?? "" } : null,
       };
     }),
@@ -53,7 +67,7 @@ export const rateEvent = asyncHandler(async (req, res) => {
   const event = await Event.findById(req.params.id);
   if (!event) throw new ApiError(404, "Evento no encontrado");
   if (!RATABLE_TAGS.includes(String(event.tag))) throw new ApiError(400, "Este evento no se califica");
-  if (event.dateISO > todayISO()) throw new ApiError(400, "Podrás calificar la reunión el día que se haga");
+  if (!isRatable(event)) throw new ApiError(400, "Podrás calificar la reunión cuando termine");
 
   const user = req.user!;
   const rating = await Rating.findOneAndUpdate(

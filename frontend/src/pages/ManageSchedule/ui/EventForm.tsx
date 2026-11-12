@@ -3,8 +3,6 @@ import type { EventInput, EventRecord, EventTag } from "../../../api/events";
 
 const TAGS: EventTag[] = ["Reunión", "Retiro", "Formación", "Otro"];
 
-const todayISO = () => new Date().toISOString().slice(0, 10);
-
 const emptyForm: EventInput = {
   title: "",
   dateISO: "",
@@ -43,8 +41,6 @@ const EventForm: React.FC<Props> = ({ editingEvent, isSaving, onSubmit, onCancel
       : { ...emptyForm, dateISO: defaultDate ?? "" }
   );
 
-  // Un evento que ya pasó se puede editar sin moverle la fecha: su fecha original sigue siendo válida.
-  const minDate = editingEvent && editingEvent.dateISO < todayISO() ? editingEvent.dateISO : todayISO();
 
   const field = <K extends keyof EventInput>(key: K, value: EventInput[K]) =>
     setForm((f) => ({ ...f, [key]: value }));
@@ -99,7 +95,6 @@ const EventForm: React.FC<Props> = ({ editingEvent, isSaving, onSubmit, onCancel
             className="configInputPlain"
             type="date"
             required
-            min={minDate}
             value={form.dateISO}
             onChange={(e) => field("dateISO", e.target.value)}
           />
@@ -120,7 +115,7 @@ const EventForm: React.FC<Props> = ({ editingEvent, isSaving, onSubmit, onCancel
           <input
             className="configInputPlain"
             type="date"
-            min={form.dateISO > minDate ? form.dateISO : minDate}
+            min={form.dateISO || undefined}
             value={form.endDateISO}
             onChange={(e) => field("endDateISO", e.target.value)}
           />

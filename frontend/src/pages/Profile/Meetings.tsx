@@ -176,7 +176,7 @@ const Meetings = () => {
                         </span>
                       )
                     ) : (
-                      e.tag !== "Retiro" && e.tag !== "Otro" && <span className="calEventMeta">Podrás calificarla el día de la reunión.</span>
+                      e.tag !== "Retiro" && e.tag !== "Otro" && <span className="calEventMeta">Podrás calificarla cuando termine{e.end ? ` (${e.end})` : e.start ? ` (${e.start})` : ""}.</span>
                     )}
                     {rateBox(e, "dia")}
                   </li>

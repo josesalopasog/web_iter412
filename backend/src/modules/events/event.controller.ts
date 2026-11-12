@@ -38,13 +38,15 @@ const validateEventBody = (body: Partial<EventDTO>, { partial = false }: { parti
   }
   if (!partial || body.dateISO !== undefined) {
     if (!isValidISODate(body.dateISO)) throw new ApiError(400, "Fecha inválida");
-    if (body.dateISO! < todayISO()) throw new ApiError(400, "No se puede programar un evento en el pasado");
   }
   if (body.endDateISO && !isValidISODate(body.endDateISO)) {
     throw new ApiError(400, "Fecha de fin inválida");
   }
-  if (body.endDateISO && body.endDateISO < todayISO()) {
-    throw new ApiError(400, "La fecha de fin no puede ser en el pasado");
+  // Se permiten fechas pasadas (p. ej. registrar una reunión que ya se hizo para calificarla),
+  // pero la fecha de fin no puede ser antes del inicio.
+  const startDate = body.dateISO;
+  if (body.endDateISO && startDate && body.endDateISO < startDate) {
+    throw new ApiError(400, "La fecha de fin no puede ser antes de la fecha de inicio");
   }
   if (body.start && !isValidTime(body.start)) throw new ApiError(400, "Hora de inicio inválida");
   if (body.end && !isValidTime(body.end)) throw new ApiError(400, "Hora de fin inválida");

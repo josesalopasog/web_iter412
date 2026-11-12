@@ -49,8 +49,10 @@ export const deleteEvent = (id: string) =>
 export type MyRating = { stars: number; comment: string };
 
 export type CalendarEvent = Omit<EventRecord, "createdAt"> & {
-  /** Reunión o formación cuyo día ya llegó: se puede calificar. */
+  /** Reunión o formación que ya terminó: se puede calificar. */
   ratable: boolean;
+  /** Desde cuándo se puede calificar (fin de la reunión). */
+  ratableFrom: string;
   myRating: MyRating | null;
 };
 
