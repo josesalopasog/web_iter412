@@ -12,13 +12,13 @@ import { useAdminData } from "../AdminData";
 import { BarList, ChartCard, ChartLegend, ColumnChart, StackedBars } from "../ui/Charts";
 import { COLORS } from "../ui/colors";
 import { PageHeading, Segmented } from "../ui/PageParts";
-import { ChartBarIcon, ClipboardIcon } from "../icons";
+import { ChartBarIcon, CheckCircleIcon, ClipboardIcon } from "../icons";
 import type { ServiceStatusFilterValue } from "../../Dashboard/ui/serviceStatus";
 import { formatCOP, formatNumber, formatPercent, isHombre, isMujer } from "../format";
 import { ageBuckets, averageAge, buildStats, countBy, registrationsByDay } from "./peopleStats";
 
 type Group = "soldados" | "servidores";
-type Mode = "dashboard" | "inscripciones";
+type Mode = "dashboard" | "inscripciones" | "participantes";
 
 const STATUS_DOTS: Record<ServiceStatusFilterValue, string> = {
   ACTIVO: "#059669",
@@ -41,18 +41,26 @@ const PeoplePage = ({ group, mode }: { group: Group; mode: Mode }) => {
   const navigate = useNavigate();
   const data = useAdminData();
   const isDashboard = mode === "dashboard";
+  const isParticipantes = mode === "participantes";
   const base = `/dashboard/${group}`;
   const isSoldados = group === "soldados";
   const price = isSoldados ? data.settings.soldadoPrice : data.settings.servidorPrice;
   const allRows: (SoldadoRecord | ServidorRecord)[] = isSoldados ? data.soldados : data.servidores;
 
   // Servidores: las tarjetas y gráficas siguen el filtro de disponibilidad (activos por defecto).
-  const rows = useMemo(
-    () =>
-      isSoldados || data.servidorStatusFilter === "TODOS"
-        ? allRows
-        : allRows.filter((s) => serviceStatusOf(s) === data.servidorStatusFilter),
-    [allRows, isSoldados, data.servidorStatusFilter]
+  // Soldados: el dashboard cuenta a todos; las tablas separan Inscripciones de Participantes (asistieron).
+  const rows = useMemo(() => {
+    if (isSoldados) {
+      if (isDashboard) return allRows;
+      return (allRows as SoldadoRecord[]).filter((s) => Boolean(s.attended) === isParticipantes);
+    }
+    return data.servidorStatusFilter === "TODOS"
+      ? allRows
+      : allRows.filter((s) => serviceStatusOf(s) === data.servidorStatusFilter);
+  }, [allRows, isSoldados, isDashboard, isParticipantes, data.servidorStatusFilter]);
+  const participantesCount = useMemo(
+    () => (isSoldados ? (data.soldados as SoldadoRecord[]).filter((s) => s.attended).length : 0),
+    [isSoldados, data.soldados]
   );
 
   const stats = useMemo(() => buildStats(rows, price), [rows, price]);
@@ -89,14 +97,26 @@ const PeoplePage = ({ group, mode }: { group: Group; mode: Mode }) => {
         crumbs={[
           { label: "Dashboard", to: "/dashboard" },
           { label: isSoldados ? "Soldados" : "Servidores", to: isDashboard ? undefined : base },
-          ...(isDashboard ? [] : [{ label: "Inscripciones" }]),
+          ...(isDashboard ? [] : [{ label: isParticipantes ? "Participantes" : "Inscripciones" }]),
         ]}
-        title={`${isDashboard ? "Dashboard de" : "Inscripciones de"} ${isSoldados ? "soldados" : "servidores"}`}
+        title={
+          isParticipantes
+            ? "Participantes del retiro"
+            : `${isDashboard ? "Dashboard de" : "Inscripciones de"} ${isSoldados ? "soldados" : "servidores"}`
+        }
         subtitle={
-          <>
-            Retiro {toRoman(data.settings.retreatNumber)} · {formatNumber(stats.total)} {isSoldados ? "inscritos" : "servidores"}
-            {scope} · precio {formatCOP(price)} · {formatPercent(Math.min(1, collectedRate))} recaudado
-          </>
+          isParticipantes ? (
+            <>
+              Retiro {toRoman(data.settings.retreatNumber)} · {formatNumber(stats.total)} soldados asistieron · se
+              archivan al finalizar el retiro en Ajustes del retiro
+            </>
+          ) : (
+            <>
+              Retiro {toRoman(data.settings.retreatNumber)} · {formatNumber(stats.total)}{" "}
+              {isSoldados ? (isDashboard ? "inscritos" : "por confirmar asistencia") : "servidores"}
+              {scope} · precio {formatCOP(price)} · {formatPercent(Math.min(1, collectedRate))} recaudado
+            </>
+          )
         }
       >
         {isDashboard && !isSoldados && (
@@ -111,6 +131,15 @@ const PeoplePage = ({ group, mode }: { group: Group; mode: Mode }) => {
               count: value === "TODOS" ? allRows.length : allRows.filter((r) => serviceStatusOf(r) === value).length,
             }))}
           />
+        )}
+        {isSoldados && !isDashboard && (
+          <Link
+            to={`${base}/${isParticipantes ? "inscripciones" : "participantes"}`}
+            className="toolbarButton"
+          >
+            {isParticipantes ? <ClipboardIcon /> : <CheckCircleIcon />}{" "}
+            {isParticipantes ? "Ver inscripciones" : `Ver participantes (${formatNumber(participantesCount)})`}
+          </Link>
         )}
         {isDashboard ? (
           <Link to={`${base}/inscripciones`} className="toolbarButton primary">
@@ -204,8 +233,9 @@ const PeoplePage = ({ group, mode }: { group: Group; mode: Mode }) => {
 
       {isDashboard ? null : group === "soldados" ? (
         <UsersTable
+          key={mode}
           view="soldados"
-          rows={data.soldados}
+          rows={rows as SoldadoRecord[]}
           newIds={data.newIds}
           currentUserRole={user?.role ?? ""}
           price={data.settings.soldadoPrice}
@@ -214,6 +244,7 @@ const PeoplePage = ({ group, mode }: { group: Group; mode: Mode }) => {
           onEditField={data.editSoldado}
           onDelete={data.removeSoldado}
           onOpenSettings={() => navigate("/dashboard/ajustes")}
+          onToggleAttendance={data.toggleAttendance}
         />
       ) : (
         <UsersTable
@@ -242,5 +273,6 @@ const PeoplePage = ({ group, mode }: { group: Group; mode: Mode }) => {
 
 export const SoldadosDashboard = () => <PeoplePage group="soldados" mode="dashboard" />;
 export const SoldadosInscripciones = () => <PeoplePage group="soldados" mode="inscripciones" />;
+export const SoldadosParticipantes = () => <PeoplePage group="soldados" mode="participantes" />;
 export const ServidoresDashboard = () => <PeoplePage group="servidores" mode="dashboard" />;
 export const ServidoresInscripciones = () => <PeoplePage group="servidores" mode="inscripciones" />;

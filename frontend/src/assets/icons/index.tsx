@@ -352,6 +352,22 @@ export const CalendarIcon: React.FC<IconProps> = ({ className, ...props }) => (
   </svg>
 );
 
+/** Chulito dentro de un cuadrado (asistencia). */
+export const CheckSquareIcon: React.FC<IconProps> = ({ className, ...props }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={1.7}
+    stroke="currentColor"
+    className={cx("w-4 h-4", className)}
+    {...props}
+  >
+    <rect x="3.75" y="3.75" width="16.5" height="16.5" rx="3.5" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 12.4 2.6 2.6 4.9-5.6" />
+  </svg>
+);
+
 export const DocumentIcon: React.FC<IconProps> = ({ className, ...props }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"

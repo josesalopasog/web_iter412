@@ -3,6 +3,7 @@ import { PageLoader } from "../../../components/Spinner";
 import RetreatSettingsForm from "../../Dashboard/ui/RetreatSettingsForm";
 import { useAdminData } from "../AdminData";
 import { PageHeading } from "../ui/PageParts";
+import RetreatLifecycle from "./RetreatLifecycle";
 
 // Ajustes del retiro (antes un pop up): número, fechas, precios y plazos de pago.
 const Retreat = () => {
@@ -26,6 +27,7 @@ const Retreat = () => {
       <div data-tour="settings">
         <RetreatSettingsForm settings={data.settings} canEdit={canEdit} totalSubsidyUsed={data.totalSubsidyUsed} onSaved={data.setSettings} />
       </div>
+      <RetreatLifecycle />
     </div>
   );
 };

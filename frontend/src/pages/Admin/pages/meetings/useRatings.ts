@@ -18,6 +18,8 @@ export const useRatings = (events: EventRecord[], today: string) => {
 
   return useMemo(() => {
     if (real && real.length > 0) return { ratings: real, isExample: false, isLoading: false };
+    // Los datos de ejemplo solo existen en desarrollo: en producción el análisis empieza vacío.
+    if (!import.meta.env.DEV) return { ratings: real ?? [], isExample: false, isLoading: real === null };
     return { ratings: buildExampleRatings(events, today), isExample: true, isLoading: real === null };
   }, [real, events, today]);
 };

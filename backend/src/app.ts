@@ -12,6 +12,7 @@ import dashboardRouter from "./modules/dashboard/dashboard.routes.js";
 import analyticsRouter from "./modules/analytics/analytics.routes.js";
 import financeRouter from "./modules/finance/finance.routes.js";
 import voiceRouter from "./modules/voice/voice.routes.js";
+import retreatsRouter from "./modules/retreats/retreat.routes.js";
 import { ApiError } from "./utils/errors.js";
 import { env } from "./config/env.js";
 
@@ -56,6 +57,7 @@ export const createApp = () => {
   app.use("/api/analytics", analyticsRouter);
   app.use("/api/finance", financeRouter);
   app.use("/api/voice", voiceRouter);
+  app.use("/api/retreats", retreatsRouter);
 
   app.use((_req, res) => res.status(404).json({ message: "Not Found" }));
 

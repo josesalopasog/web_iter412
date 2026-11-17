@@ -44,6 +44,7 @@ import {
   ColumnExpandIcon,
   GearIcon,
   DocumentIcon,
+  CheckSquareIcon,
 } from "../../../assets/icons";
 import {
   SOLDADO_COLUMNS,
@@ -64,6 +65,8 @@ type Props =
       onEditField: (id: string, field: string, value: string) => Promise<void>;
       onDelete: (id: string) => Promise<void>;
       onOpenSettings: () => void;
+      /** Columna "Asistió": al marcarla el soldado pasa de Inscripciones a Participantes. */
+      onToggleAttendance?: (id: string, attended: boolean) => Promise<void>;
     }
   | {
       view: "servidores";
@@ -190,6 +193,22 @@ const UsersTable: React.FC<Props> = (props) => {
   const [pageSize, setPageSize] = useState(50);
   // Servidores: el filtro de estado lo controla el Dashboard (comparte con las tarjetas).
   const statusFilter: ServiceStatusFilterValue = props.view === "servidores" ? props.statusFilter : "TODOS";
+  const onToggleAttendance = props.view === "soldados" ? props.onToggleAttendance : undefined;
+  const showAttendance = Boolean(onToggleAttendance);
+  const [attendanceBusy, setAttendanceBusy] = useState<string | null>(null);
+  const [attendanceError, setAttendanceError] = useState<string | null>(null);
+  const handleToggleAttendance = async (row: SoldadoRecord | ServidorRecord) => {
+    if (!onToggleAttendance || attendanceBusy) return;
+    setAttendanceBusy(row._id);
+    setAttendanceError(null);
+    try {
+      await onToggleAttendance(row._id, !(row as SoldadoRecord).attended);
+    } catch (err) {
+      setAttendanceError(err instanceof Error ? err.message : "No se pudo guardar la asistencia");
+    } finally {
+      setAttendanceBusy(null);
+    }
+  };
 
   const columns = props.view === "soldados" ? SOLDADO_COLUMNS : SERVIDOR_COLUMNS;
   const defaultVisible = props.view === "soldados" ? SOLDADO_DEFAULT_VISIBLE : SERVIDOR_DEFAULT_VISIBLE;
@@ -598,6 +617,7 @@ const UsersTable: React.FC<Props> = (props) => {
         </div>
       </div>
 
+      {attendanceError && <p className="loginError">{attendanceError}</p>}
       <div className="tableScroll" data-tour="table">
         <table className="dataTable">
           <thead>
@@ -608,6 +628,11 @@ const UsersTable: React.FC<Props> = (props) => {
                 <th className={`paymentColCell${showPaymentCols ? "" : " collapsed"}`}>
                   <div className={`colCollapseInner colCollapseInnerSmall${showPaymentCols ? "" : " collapsed"}`} />
                 </th>
+                {showAttendance && (
+                  <th className={`paymentColCell${showPaymentCols ? "" : " collapsed"}`}>
+                    <div className={`colCollapseInner attendanceInner${showPaymentCols ? "" : " collapsed"}`}>Asistió</div>
+                  </th>
+                )}
                 <th className={`paymentColCell${showPaymentCols ? "" : " collapsed"}`}>
                   <div className={`colCollapseInner${showPaymentCols ? "" : " collapsed"}`}>Pagado</div>
                 </th>
@@ -674,6 +699,7 @@ const UsersTable: React.FC<Props> = (props) => {
                 <tr className="columnSearchRow">
                   <th></th>
                   <th></th>
+                  {showAttendance && <th></th>}
                   <th></th>
                   <th></th>
                   <th></th>
@@ -713,7 +739,7 @@ const UsersTable: React.FC<Props> = (props) => {
                 <tr>
                   <td
                     className="emptyState"
-                    colSpan={6 + (props.view === "servidores" ? 1 : 0) + activeColumns.length}
+                    colSpan={6 + (props.view === "servidores" ? 1 : 0) + (showAttendance ? 1 : 0) + activeColumns.length}
                   >
                     No hay registros para mostrar.
                   </td>
@@ -753,6 +779,22 @@ const UsersTable: React.FC<Props> = (props) => {
                         </button>
                       </div>
                     </td>
+                    {showAttendance && (
+                      <td className={`paymentColCell${showPaymentCols ? "" : " collapsed"}`}>
+                        <div className={`colCollapseInner attendanceInner${showPaymentCols ? "" : " collapsed"}`}>
+                          <button
+                            type="button"
+                            className={`rowAttendBtn${(r as SoldadoRecord).attended ? " is-on" : ""}`}
+                            title={(r as SoldadoRecord).attended ? "Asistió (clic para devolver a inscripciones)" : "Marcar que asistió"}
+                            aria-pressed={Boolean((r as SoldadoRecord).attended)}
+                            disabled={attendanceBusy === r._id}
+                            onClick={() => handleToggleAttendance(r)}
+                          >
+                            <CheckSquareIcon className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </td>
+                    )}
                     <td className={`paymentColCell${showPaymentCols ? "" : " collapsed"}`}>
                       <div className={`colCollapseInner${showPaymentCols ? "" : " collapsed"}`}>
                         <PaymentCell

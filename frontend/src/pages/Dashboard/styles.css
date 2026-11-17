@@ -963,6 +963,44 @@
   transition: background 0.15s, color 0.15s;
 }
 
+.attendanceInner {
+  max-width: 64px;
+  display: flex;
+  justify-content: center;
+}
+
+.rowAttendBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.rowAttendBtn:hover {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.rowAttendBtn.is-on {
+  color: #059669;
+}
+
+.rowAttendBtn.is-on svg rect {
+  fill: #d1fae5;
+}
+
+.rowAttendBtn:disabled {
+  opacity: 0.5;
+  cursor: progress;
+}
+
 .rowDocBtn:hover {
   background: #d4eefc;
   color: #1a9be0;

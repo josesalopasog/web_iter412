@@ -14,6 +14,7 @@ import {
   BellIcon,
   CalendarIcon,
   CartIcon,
+  CheckCircleIcon,
   ChartBarIcon,
   ChevronDownIcon,
   ClipboardIcon,
@@ -75,6 +76,7 @@ const SideMenu = ({ open, collapsed, onToggle, onClose }: { open: boolean; colla
       items: [
         { label: "Dashboard", to: "/dashboard/soldados", icon: ChartBarIcon },
         { label: "Inscripciones", to: "/dashboard/soldados/inscripciones", icon: UsersIcon, badge: newSoldados },
+        { label: "Participantes", to: "/dashboard/soldados/participantes", icon: CheckCircleIcon },
         { label: "Salud y alimentación", to: "/dashboard/soldados/salud", icon: HeartPulseIcon },
       ],
     },

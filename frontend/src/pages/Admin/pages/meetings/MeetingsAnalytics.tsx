@@ -137,12 +137,14 @@ const MeetingsAnalytics = () => {
         <p>
           {isExample
             ? "Los servidores califican las reuniones desde su perfil (botón del calendario). Mientras nadie califique se muestran calificaciones de ejemplo."
-            : "Lo que respondieron los servidores desde su perfil (botón del calendario)."}
+            : totalVotes
+              ? "Lo que respondieron los servidores desde su perfil (botón del calendario)."
+              : "Aún no hay calificaciones. Los servidores califican las reuniones desde su perfil (botón del calendario)."}
         </p>
       </div>
 
       <div className="kpiGrid">
-        <KpiCard tone="info" label="Calificación promedio" icon={SparklesIcon} value={formatStars(overall)} progress={overall / 5} detail="De 1 a 5 estrellas" />
+        <KpiCard tone="info" label="Calificación promedio" icon={SparklesIcon} value={totalVotes ? formatStars(overall) : "—"} progress={overall / 5} detail="De 1 a 5 estrellas" />
         <KpiCard tone="info" label="Votos" icon={UsersIcon} value={formatNumber(totalVotes)} detail={`${ratings.length} reuniones calificadas`} />
         <KpiCard tone="info" label="Mejor calificada" icon={CalendarIcon} value={best ? formatStars(best.average) : "—"} detail={best?.title} />
         <KpiCard
@@ -177,6 +179,7 @@ const MeetingsAnalytics = () => {
 
       <div className="pageGrid pageGridSide">
         <ChartCard title="Comentarios recientes" subtitle="Lo que escribieron los servidores">
+          {comments.length === 0 && <p className="pageEmpty">Aún no hay comentarios.</p>}
           <ul className="miniList">
             {comments.map((c, i) => (
               <li key={i}>

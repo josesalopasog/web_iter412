@@ -6,6 +6,11 @@ const SoldadoSchema = new Schema(
         registrationNumber: { type: Number, required: true, unique: true },
 
         paymentAmount: { type: Number, required: true, default: 0, min: 0 },
+
+        // Asistió al retiro: pasa de "Inscripciones" a "Participantes". Al finalizar el retiro los
+        // participantes se archivan y salen de esta colección.
+        attended: { type: Boolean, default: false, index: true },
+        attendedAt: { type: Date, default: null },
         subsidyAmount: { type: Number, required: true, default: 0, min: 0 },
 
         //Auth

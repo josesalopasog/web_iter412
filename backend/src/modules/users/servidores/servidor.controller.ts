@@ -484,6 +484,10 @@ export const updateMyServidor = asyncHandler(async (req, res) => {
     servidor.testimony = parseTestimony(value);
   } else if (field === "serviceStatus") {
     if (!isValidServiceStatus(value)) throw new ApiError(400, "Estado de servicio inválido");
+    const { serviceSignupOpen } = await getSettings();
+    if (serviceSignupOpen === false) {
+      throw new ApiError(403, "Pronto podrás activarte para servir en el próximo retiro");
+    }
     servidor.serviceStatus = value;
   } else if (field === "registrationNumber") {
     if (!isValidRegistrationNumber(value)) {

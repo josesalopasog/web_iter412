@@ -3,6 +3,9 @@ import { authedRequest, setAccessToken } from "./http";
 export type SoldadoRecord = {
   _id: string;
   registrationNumber: number;
+  /** Marcado como asistente: aparece en "Participantes" y no en "Inscripciones". */
+  attended?: boolean;
+  attendedAt?: string | null;
   gender: string;
   firstNames: string;
   lastNames: string;
@@ -71,6 +74,16 @@ export const getSoldadoByDocument = (documentNumber: string) =>
 
 export const getMyServidorProfile =() =>
   authedRequest<Record<string, unknown>>("/api/users/servidores/me");
+
+/** Soldados que asistieron al retiro actual. */
+export const listParticipantes = () =>
+  authedRequest<SoldadoRecord[]>("/api/users/soldados/participantes");
+
+export const setSoldadoAttendance = (id: string, attended: boolean) =>
+  authedRequest<SoldadoRecord>(`/api/users/soldados/${id}/attendance`, {
+    method: "PATCH",
+    body: JSON.stringify({ attended }),
+  });
 
 export const updateSoldadoField = (id: string, field: string, value: unknown) =>
   authedRequest<SoldadoRecord>(`/api/users/soldados/${id}`, {

@@ -2,6 +2,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { useAuth } from "../../auth/AuthContext";
 import {
   listSoldados,
+  listParticipantes,
+  setSoldadoAttendance,
   listServidores,
   listEliminados,
   updateSoldadoField,
@@ -43,7 +45,11 @@ const DEFAULT_SETTINGS: AppSettings = {
 };
 
 type AdminDataValue = {
+  /** Todos los soldados del retiro actual: inscripciones + participantes (attended). */
   soldados: SoldadoRecord[];
+  /** "Activo para servir" habilitado en el perfil de los servidores. */
+  serviceSignupOpen: boolean;
+  setServiceSignupOpen: (open: boolean) => void;
   servidores: ServidorRecord[];
   eliminados: EliminadoRecord[];
   settings: AppSettings;
@@ -58,6 +64,8 @@ type AdminDataValue = {
   setServidorStatusFilter: (value: ServiceStatusFilterValue) => void;
   reload: () => Promise<void>;
   editSoldado: (id: string, field: string, value: string) => Promise<void>;
+  /** Marca o desmarca la asistencia: el soldado pasa entre Inscripciones y Participantes. */
+  toggleAttendance: (id: string, attended: boolean) => Promise<void>;
   editServidor: (id: string, field: string, value: unknown) => Promise<void>;
   changeRole: (id: string, role: string) => Promise<void>;
   removeSoldado: (id: string) => Promise<void>;
@@ -81,23 +89,31 @@ export const AdminDataProvider = ({ children }: { children: ReactNode }) => {
   const [servidores, setServidores] = useState<ServidorRecord[]>([]);
   const [eliminados, setEliminados] = useState<EliminadoRecord[]>([]);
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
+  const [serviceSignupOpen, setServiceSignupOpen] = useState(true);
   const [servidorStatusFilter, setServidorStatusFilter] = useState<ServiceStatusFilterValue>("ACTIVO");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [newIds, setNewIds] = useState<Set<string>>(() => new Set());
+
+  // Inscripciones y participantes vienen de endpoints distintos; aquí se juntan para las estadísticas.
+  const loadSoldados = useCallback(async () => {
+    const [inscripciones, participantes] = await Promise.all([listSoldados(), listParticipantes()]);
+    return [...inscripciones, ...participantes].sort((a, b) => a.registrationNumber - b.registrationNumber);
+  }, []);
 
   const reload = useCallback(async () => {
     if (!userId) return;
     setError(null);
     try {
       const [soldadosData, servidoresData, settingsData] = await Promise.all([
-        listSoldados(),
+        loadSoldados(),
         listServidores(),
         getSettings(),
       ]);
       setSoldados(soldadosData);
       setServidores(servidoresData);
       setSettings(settingsData);
+      setServiceSignupOpen(settingsData.serviceSignupOpen !== false);
       const fresh = [
         ...takeNewRegistrations(userId, "soldados", soldadosData),
         ...takeNewRegistrations(userId, "servidores", servidoresData),
@@ -109,7 +125,7 @@ export const AdminDataProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [userId, isSuperAdmin]);
+  }, [userId, isSuperAdmin, loadSoldados]);
 
   useEffect(() => {
     reload();
@@ -124,6 +140,8 @@ export const AdminDataProvider = ({ children }: { children: ReactNode }) => {
 
   const value: AdminDataValue = {
     soldados,
+    serviceSignupOpen,
+    setServiceSignupOpen,
     servidores,
     eliminados,
     settings,
@@ -138,8 +156,12 @@ export const AdminDataProvider = ({ children }: { children: ReactNode }) => {
     editSoldado: async (id, field, val) => {
       const updated = await updateSoldadoField(id, field, val);
       // Mover el # corre a los demás: se recarga la lista completa.
-      if (field === "registrationNumber") setSoldados(await listSoldados());
+      if (field === "registrationNumber") setSoldados(await loadSoldados());
       else setSoldados((prev) => prev.map((s) => (s._id === id ? updated : s)));
+    },
+    toggleAttendance: async (id, attended) => {
+      const updated = await setSoldadoAttendance(id, attended);
+      setSoldados((prev) => prev.map((s) => (s._id === id ? updated : s)));
     },
     editServidor: async (id, field, val) => {
       const updated = await updateServidorField(id, field, val);
@@ -153,7 +175,7 @@ export const AdminDataProvider = ({ children }: { children: ReactNode }) => {
     removeSoldado: async (id) => {
       await deleteSoldado(id);
       // El backend renumera el # de los que estaban debajo, así que se recarga la lista.
-      setSoldados(await listSoldados());
+      setSoldados(await loadSoldados());
       if (isSuperAdmin) setEliminados(await listEliminados());
     },
     removeServidor: async (id) => {

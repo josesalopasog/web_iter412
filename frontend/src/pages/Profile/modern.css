@@ -714,3 +714,19 @@ html[data-theme="dark"] footer .footerInfoBtn:focus-visible {
   font-weight: 600;
 }
 
+
+/* Disponibilidad bloqueada entre un retiro y el siguiente */
+.profileModern .serviceStatusLocked {
+  margin: 0 0 4px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: color-mix(in srgb, #1a9be0 12%, transparent);
+  color: #0b7fbd;
+}
+
+.profileModern .serviceStatusBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}

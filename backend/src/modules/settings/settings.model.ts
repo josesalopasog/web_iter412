@@ -18,6 +18,9 @@ const SettingsSchema = new Schema(
     finalPaymentEndDay: { type: Number, required: true, default: 7, min: 1, max: 31 },
     finalPaymentMonth: { type: Number, required: true, default: 11, min: 1, max: 12 },
     subsidyCap: { type: Number, required: true, default: 100000, min: 0 },
+    // Si los servidores pueden cambiar su disponibilidad ("Activo para servir") desde el perfil.
+    // Se apaga al finalizar un retiro y se vuelve a encender cuando abre el siguiente.
+    serviceSignupOpen: { type: Boolean, required: true, default: true },
 
     shirtPrice: { type: Number, required: true, default: 27000, min: 0 },
     busoChaquetaPrice: { type: Number, required: true, default: 52000, min: 0 },

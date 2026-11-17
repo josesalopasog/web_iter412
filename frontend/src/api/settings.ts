@@ -24,7 +24,12 @@ export type AppSettings = {
   extraSizePrice: number;
 };
 
+/** Lo que devuelve el backend: los ajustes numéricos más si "Activo para servir" está habilitado. */
+export type SettingsResponse = AppSettings & { serviceSignupOpen: boolean };
+
 export type PublicSettings = {
+  /** false: en el perfil "Activo para servir" queda bloqueado hasta el próximo retiro. */
+  serviceSignupOpen?: boolean;
   retreatNumber: number;
   soldadoPrice: number;
   servidorPrice: number;
@@ -42,7 +47,13 @@ export type PublicSettings = {
 };
 
 
-export const getSettings = () => authedRequest<AppSettings>("/api/settings");
+export const getSettings = () => authedRequest<SettingsResponse>("/api/settings");
+
+export const updateServiceSignup = (open: boolean) =>
+  authedRequest<SettingsResponse>("/api/settings/service-signup", {
+    method: "PATCH",
+    body: JSON.stringify({ open }),
+  });
 
 export const getPublicSettings = async (): Promise<PublicSettings> => {
   const res = await fetch(`${API_URL}/api/settings/public`);

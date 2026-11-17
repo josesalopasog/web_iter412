@@ -21,7 +21,9 @@ const ServiceStatusToggle = ({ value, onChange, onSaved }: Props) => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [showTerms, setShowTerms] = useState(false);
   const [confirmDeactivate, setConfirmDeactivate] = useState(false);
-  const { retreatNumber } = usePublicSettings();
+  const { retreatNumber, serviceSignupOpen } = usePublicSettings();
+  // Entre un retiro y otro (al finalizar el retiro) la disponibilidad queda bloqueada.
+  const locked = serviceSignupOpen === false;
 
   const isActive = value === "ACTIVO";
   const isNightAdoration = value === "SANTISIMO_NOCTURNO";
@@ -48,6 +50,12 @@ const ServiceStatusToggle = ({ value, onChange, onSaved }: Props) => {
       <p className="serviceStatusRetreat">
         Servir en el <strong>{toRoman(retreatNumber)} Retiro de ITER 4.12</strong>
       </p>
+      {locked && (
+        <p className="serviceStatusLocked" role="status">
+          🔒 Pronto podrás activarte para servir en el próximo retiro. Te avisaremos cuando se abra.
+        </p>
+      )}
+
       <p className="serviceStatusHint">
         Mantén encendido <strong>Activo para servir</strong> si puedes servir en este retiro. Si esta vez no
         puedes, apágalo; y si aun así quieres acompañar al Santísimo durante la noche, enciende{" "}
@@ -59,7 +67,7 @@ const ServiceStatusToggle = ({ value, onChange, onSaved }: Props) => {
         role="switch"
         aria-checked={isActive}
         className={`serviceStatusBtn${isActive ? " is-on" : ""}`}
-        disabled={saving}
+        disabled={saving || locked}
         // Desactivar pide confirmación; volver a activarse no.
         onClick={() => (isActive ? setConfirmDeactivate(true) : save("ACTIVO"))}
       >
@@ -73,7 +81,7 @@ const ServiceStatusToggle = ({ value, onChange, onSaved }: Props) => {
           role="switch"
           aria-checked={isNightAdoration}
           className={`serviceStatusBtn serviceStatusBtnNight${isNightAdoration ? " is-on" : ""}`}
-          disabled={saving}
+          disabled={saving || locked}
           onClick={() => save(isNightAdoration ? "INACTIVO" : "SANTISIMO_NOCTURNO")}
         >
           <span className="serviceStatusKnob" aria-hidden="true" />

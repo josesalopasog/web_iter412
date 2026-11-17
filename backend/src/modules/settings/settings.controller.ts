@@ -133,6 +133,7 @@ const toResponse = (settings: SettingsDoc) => ({
   finalPaymentEndDay: settings.finalPaymentEndDay,
   finalPaymentMonth: settings.finalPaymentMonth,
   subsidyCap: settings.subsidyCap,
+  serviceSignupOpen: settings.serviceSignupOpen !== false,
   shirtPrice: settings.shirtPrice,
   busoChaquetaPrice: settings.busoChaquetaPrice,
   canguroPrice: settings.canguroPrice,
@@ -199,6 +200,23 @@ export const updateSettingsHandler = asyncHandler(async (req, res) => {
 
 export const updateMerchSettingsHandler = asyncHandler(async (req, res) => {
   await applySettingsUpdate(req, res, MERCH_FIELDS, "Actualizó precios de merch");
+});
+
+/** PATCH /api/settings/service-signup { open }: habilita o bloquea "Activo para servir" en el perfil. */
+export const updateServiceSignupHandler = asyncHandler(async (req, res) => {
+  const { open } = req.body as { open?: unknown };
+  if (typeof open !== "boolean") throw new ApiError(400, "Indica si se abre (true o false)");
+  const settings = await getSettings();
+  settings.serviceSignupOpen = open;
+  await settings.save();
+  await createLog(
+    req.user!,
+    "EDITAR_CONFIGURACION",
+    open
+      ? "Habilitó que los servidores se activen para servir desde su perfil"
+      : "Bloqueó que los servidores se activen para servir desde su perfil"
+  );
+  res.json(toResponse(settings));
 });
 
 /** GET /api/settings/merch-prices: precios de merch para cualquier servidor con sesión (su pedido). */

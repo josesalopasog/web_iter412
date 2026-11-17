@@ -230,9 +230,43 @@ export const getSoldadoByDocument = asyncHandler(async (req, res) => {
   res.json(soldado);
 });
 
+/** GET /api/users/soldados: inscripciones (quienes aún no están marcados como asistentes). */
 export const listSoldados = asyncHandler(async (_req, res) => {
-  const soldados = await Soldado.find().sort({ registrationNumber: 1 });
+  const soldados = await Soldado.find({ attended: { $ne: true } }).sort({ registrationNumber: 1 });
   res.json(soldados);
+});
+
+/** GET /api/users/soldados/participantes: soldados que asistieron al retiro actual. */
+export const listParticipantes = asyncHandler(async (_req, res) => {
+  const soldados = await Soldado.find({ attended: true }).sort({ registrationNumber: 1 });
+  res.json(soldados);
+});
+
+/** PATCH /api/users/soldados/:id/attendance { attended }: los pasa de inscripciones a participantes (y viceversa). */
+export const setSoldadoAttendance = asyncHandler(async (req, res) => {
+  const { attended } = req.body as { attended?: unknown };
+  if (typeof attended !== "boolean") throw new ApiError(400, "Indica si asistió (true o false)");
+
+  const soldado = await Soldado.findById(req.params.id);
+  if (!soldado) throw new ApiError(404, "No encontrado");
+  if (Boolean(soldado.attended) === attended) return res.json(soldado);
+
+  // Solo se tocan estos dos campos (sin revalidar todo el registro).
+  const updated = await Soldado.findByIdAndUpdate(
+    soldado._id,
+    { $set: { attended, attendedAt: attended ? new Date() : null } },
+    { returnDocument: "after" }
+  );
+
+  await createLog(
+    req.user!,
+    "ASISTENCIA_SOLDADO",
+    attended
+      ? `Marcó que ${soldado.firstNames} ${soldado.lastNames} (SOLDADO) asistió al retiro: pasó a participantes`
+      : `Quitó la asistencia de ${soldado.firstNames} ${soldado.lastNames} (SOLDADO): volvió a inscripciones`
+  );
+
+  res.json(updated);
 });
 
 export const updateSoldado = asyncHandler(async (req, res) => {

@@ -30,10 +30,13 @@ const AdminLayout = lazy(() => import("../pages/Admin/AdminLayout"));
 const General = lazy(() => import("../pages/Admin/pages/General"));
 const Analytics = lazy(() => import("../pages/Admin/pages/Analytics"));
 const Finance = lazy(() => import("../pages/Admin/pages/Finance"));
-const peoplePage = (name: "SoldadosDashboard" | "SoldadosInscripciones" | "ServidoresDashboard" | "ServidoresInscripciones") =>
+const peoplePage = (
+  name: "SoldadosDashboard" | "SoldadosInscripciones" | "SoldadosParticipantes" | "ServidoresDashboard" | "ServidoresInscripciones"
+) =>
   lazy(() => import("../pages/Admin/pages/PeoplePage").then((m) => ({ default: m[name] })));
 const SoldadosDashboard = peoplePage("SoldadosDashboard");
 const SoldadosInscripciones = peoplePage("SoldadosInscripciones");
+const SoldadosParticipantes = peoplePage("SoldadosParticipantes");
 const ServidoresDashboard = peoplePage("ServidoresDashboard");
 const ServidoresInscripciones = peoplePage("ServidoresInscripciones");
 const Pedido = lazy(() => import("../pages/Admin/pages/Pedido"));
@@ -104,6 +107,7 @@ const AppRoutes = () => {
         { path: "finanzas", element: <Finance /> },
         { path: "soldados", element: <SoldadosDashboard /> },
         { path: "soldados/inscripciones", element: <SoldadosInscripciones /> },
+        { path: "soldados/participantes", element: <SoldadosParticipantes /> },
         { path: "soldados/salud", element: <SoldadosHealth /> },
         { path: "servidores", element: <ServidoresDashboard /> },
         { path: "servidores/inscripciones", element: <ServidoresInscripciones /> },
