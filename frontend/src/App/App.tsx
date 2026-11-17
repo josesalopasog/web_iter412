@@ -191,7 +191,10 @@ const AppRoutes = () => {
   const showsAlreadyLoggedIn = Boolean(user) && (pathname === "/login" || pathname === "/servidores");
   // El dashboard tiene su propio menú lateral y su propio footer.
   const isDashboard = pathname === "/dashboard" || pathname.startsWith("/dashboard/");
-  const hideBackButton = pathname === "/" || isDashboard || showsAlreadyLoggedIn;
+  // Sin botón de volver: el perfil (tiene su propia barra superior) y los formularios de inscripción.
+  const isProfile = pathname === "/profile" || pathname.startsWith("/profile/");
+  const isRegistrationForm = pathname === "/inscribirme" || pathname === "/servidores";
+  const hideBackButton = pathname === "/" || isDashboard || showsAlreadyLoggedIn || isProfile || isRegistrationForm;
 
   return (
     <Suspense fallback={<PageLoader />}>
