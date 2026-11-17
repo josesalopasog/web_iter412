@@ -189,3 +189,21 @@
 .alreadyRegistered a {
   text-decoration: none;
 }
+
+/* Sección de merch dentro de la tarjeta de información */
+.infoMerch {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+}
+
+.infoMerch h3 {
+  margin: 0 0 6px;
+}
+
+.infoMerch p {
+  margin: 0;
+  line-height: 1.55;
+}

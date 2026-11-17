@@ -897,12 +897,17 @@ export const RegisterServidorView: React.FC<Props> = ({
                   </span>
                 </a>
               </li>
-              {/* El merch ya no se pide en el formulario: se crean órdenes desde el perfil. */}
-              <li>
-                👕 ¿Quieres camiseta, buso u otra prenda? Pídela después desde tu perfil, en <strong>Merch</strong>:
-                ahí creas tu orden y ves si está pagada.
-              </li>
             </ul>
+
+            {/* El merch ya no se pide en el formulario: se crean órdenes desde el perfil. */}
+            <div className="infoMerch">
+              <h3>👕 Merch</h3>
+              <p>
+                ¿Quieres camiseta, buso, chaqueta u otra prenda? <strong>Inicia sesión o crea tu perfil</strong> para
+                crear una orden con la merch que necesitas. Desde tu perfil, en <strong>Merch</strong>, verás su
+                estado y cuánto llevas pagado.
+              </p>
+            </div>
 
             <div className="alreadyRegistered">
               <h3>👤 ¿Ya te registraste?</h3>
