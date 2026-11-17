@@ -7,7 +7,7 @@ const Header = () => {
     <header>
       <div className="header-first-column">
         <a href="/">
-          <img src="/logo.png" alt="Logo" className="header-logo" />
+          <img src="/logo.webp" alt="Logo" className="header-logo" />
         </a>
       </div>
       <nav className="header-second-column">

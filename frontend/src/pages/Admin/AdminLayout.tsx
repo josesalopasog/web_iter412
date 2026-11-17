@@ -143,7 +143,7 @@ const SideMenu = ({ open, collapsed, onToggle, onClose }: { open: boolean; colla
       <aside className={`adSideMenu ${open ? "open" : ""} ${collapsed ? "collapsed" : ""}`} data-tour="menu">
         <div className="adSideTop">
           <Link to="/" className="adBrand" onClick={handleItemClick} aria-label="Ir a la página principal">
-            <img src="/logo.png" alt="ITER 4.12" className="adBrandLogo" />
+            <img src="/logo.webp" alt="ITER 4.12" className="adBrandLogo" />
             <span className="adBrandText">
               <span className="adBrandName">Iter 4.12</span>
               <span className="adBrandSubtitle">Dashboard</span>

@@ -26,7 +26,7 @@ const ProfileTopBar = ({ title, theme, onToggleTheme, current }: Props) => {
   return (
     <div className="adTopBar profileTopBar">
       <Link to="/" className="adBrand" aria-label="Ir a la página principal">
-        <img src="/logo.png" alt="ITER 4.12" className="adBrandLogo" />
+        <img src="/logo.webp" alt="ITER 4.12" className="adBrandLogo" />
         <span className="adBrandText">
           <span className="adBrandName">Iter 4.12</span>
           <span className="adBrandSubtitle">{title}</span>

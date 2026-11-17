@@ -464,12 +464,6 @@ export const RegisterServidorView: React.FC<Props> = ({
                 </div>
               </div>
 
-              {/* El merch ya no se pide aquí: se crean órdenes desde el perfil. */}
-              <p className="formHintInline formMerchNote">
-                👕 ¿Quieres camiseta, buso u otra prenda? Pídela después desde tu perfil, en <strong>Merch</strong>:
-                ahí creas tu orden y ves si está pagada.
-              </p>
-
               {/* ===================== EMERGENCIA ===================== */}
               <div className="formSection">
                 <h3 className="formTitle">🦺  Contacto de emergencia </h3>
@@ -902,6 +896,11 @@ export const RegisterServidorView: React.FC<Props> = ({
                     <strong>WhatsApp:</strong> 301-720-1658
                   </span>
                 </a>
+              </li>
+              {/* El merch ya no se pide en el formulario: se crean órdenes desde el perfil. */}
+              <li>
+                👕 ¿Quieres camiseta, buso u otra prenda? Pídela después desde tu perfil, en <strong>Merch</strong>:
+                ahí creas tu orden y ves si está pagada.
               </li>
             </ul>
 

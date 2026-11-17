@@ -7,7 +7,7 @@ type LogoLinkProps = {
 /** Logo que lleva a la página principal desde cualquier pantalla. */
 const LogoLink = ({ className }: LogoLinkProps) => (
   <Link to="/" aria-label="Ir a la página principal" style={{ display: "flex", justifyContent: "center" }}>
-    <img src="/logo.png" alt="ITER 4.12" className={className} />
+    <img src="/logo.webp" alt="ITER 4.12" className={className} />
   </Link>
 );
 

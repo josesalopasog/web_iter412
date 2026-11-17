@@ -52,6 +52,18 @@ const TABLET_BREAKPOINT = 1024;
 const HeroBackground = () => {
   const layerRefs = useRef<Partial<Record<LayerKey, HTMLDivElement | null>>>({});
   const crossRef = useRef<HTMLDivElement | null>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
+  // Fuera de pantalla no tiene sentido animar: se pausan el latido y el flotar de la cruz.
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(([entry]) => {
+      root.classList.toggle("is-offscreen", !entry.isIntersecting);
+    });
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -65,11 +77,32 @@ const HeroBackground = () => {
     let currentX = 0;
     let currentY = 0;
     let rafId = 0;
+    let running = false;
+    let visible = true;
+
+    // El bucle solo corre mientras la escena se está moviendo: cuando la "cámara" alcanza al
+    // cursor (o el hero sale de pantalla) se detiene y deja de escribir estilos en cada cuadro.
+    const start = () => {
+      if (running || !visible) return;
+      running = true;
+      rafId = requestAnimationFrame(tick);
+    };
 
     const onMouseMove = (e: MouseEvent) => {
       targetX = (e.clientX / window.innerWidth) * 2 - 1;
       targetY = (e.clientY / window.innerHeight) * 2 - 1;
+      start();
     };
+
+    const root = rootRef.current;
+    const observer =
+      root && typeof IntersectionObserver !== "undefined"
+        ? new IntersectionObserver(([entry]) => {
+            visible = entry.isIntersecting;
+            if (visible) start();
+          })
+        : null;
+    if (root) observer?.observe(root);
 
     const tick = () => {
       // Suavizado: la "cámara" persigue al cursor en vez de pegarse a él.
@@ -98,20 +131,25 @@ const HeroBackground = () => {
         crossRef.current.style.transform = `translate3d(${dx}px, ${dy}px, 0) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
       }
 
+      const settled = Math.abs(targetX - currentX) < 0.0005 && Math.abs(targetY - currentY) < 0.0005;
+      if (settled || !visible) {
+        running = false;
+        return;
+      }
       rafId = requestAnimationFrame(tick);
     };
 
     window.addEventListener("mousemove", onMouseMove, { passive: true });
-    rafId = requestAnimationFrame(tick);
 
     return () => {
       window.removeEventListener("mousemove", onMouseMove);
+      observer?.disconnect();
       cancelAnimationFrame(rafId);
     };
   }, []);
 
   return (
-    <div className="hero-background" aria-hidden="true">
+    <div className="hero-background" aria-hidden="true" ref={rootRef}>
       {LAYERS.map((layer) => (
         <div
           key={layer.key}
@@ -120,13 +158,19 @@ const HeroBackground = () => {
           }}
           className={`hb-layer ${layer.className}`}
         >
-          <img src={layer.src} alt="" />
+          <img
+            src={layer.src}
+            alt=""
+            decoding="async"
+            // El cielo es lo primero que se ve: se pide antes que el resto.
+            fetchPriority={layer.key === "sky" ? "high" : "auto"}
+          />
         </div>
       ))}
 
       {/* Cruz: foco visual principal, con su propio flotar sutil además del parallax. */}
       <div ref={crossRef} className="hb-layer hb-cross">
-        <img src={cross} alt="" className="hb-cross-img" />
+        <img src={cross} alt="" className="hb-cross-img" decoding="async" />
       </div>
 
       {FRONT_LAYERS.map((layer) => (
@@ -137,7 +181,7 @@ const HeroBackground = () => {
           }}
           className={`hb-layer ${layer.className}`}
         >
-          <img src={layer.src} alt="" />
+          <img src={layer.src} alt="" decoding="async" />
         </div>
       ))}
 
@@ -147,7 +191,7 @@ const HeroBackground = () => {
         }}
         className={`hb-layer ${YOUTH_LAYER.className}`}
       >
-        <img src={YOUTH_LAYER.src} alt="" />
+        <img src={YOUTH_LAYER.src} alt="" decoding="async" />
       </div>
     </div>
   );

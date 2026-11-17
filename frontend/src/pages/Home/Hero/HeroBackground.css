@@ -282,3 +282,20 @@
     animation: none;
   }
 }
+
+/* ---------- Rendimiento ----------
+   Cruz y pinceles llevan sombras grandes (drop-shadow) y animaciones infinitas: en su propia capa
+   la sombra se dibuja una sola vez y el movimiento lo hace la GPU, sin repintar en cada cuadro. */
+.hb-cross-img,
+.hb-brush-green img,
+.hb-brush-purple img {
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Hero fuera de pantalla: animaciones en pausa (ver HeroBackground.tsx). */
+.hero-background.is-offscreen .hb-cross-img,
+.hero-background.is-offscreen .hb-brush-green img,
+.hero-background.is-offscreen .hb-brush-purple img {
+  animation-play-state: paused;
+}

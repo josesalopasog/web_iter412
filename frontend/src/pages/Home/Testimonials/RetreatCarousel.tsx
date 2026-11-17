@@ -173,7 +173,13 @@ const RetreatCarousel = () => {
                   aria-label={`Ampliar foto del retiro ${slide.roman}`}
                   tabIndex={i === index ? 0 : -1}
                 >
-                  <img src={slide.src} alt={`Foto del retiro ${slide.roman} de ITER 4.12`} draggable={false} />
+                  <img
+                    src={slide.src}
+                    alt={`Foto del retiro ${slide.roman} de ITER 4.12`}
+                    draggable={false}
+                    decoding="async"
+                    loading={i === index ? "eager" : "lazy"}
+                  />
                 </button>
               )}
               <figcaption className="retreatCaption">Retiro {slide.roman}</figcaption>
