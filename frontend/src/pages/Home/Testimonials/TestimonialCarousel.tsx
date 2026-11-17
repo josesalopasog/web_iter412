@@ -8,7 +8,10 @@ type Props = {
 };
 
 const TestimonialCarousel = ({ testimonials }: Props) => {
-  const { index, goTo, rootProps } = useCarousel(testimonials.length, AUTOPLAY_MS);
+  const { index, goTo, next, prev, rootProps } = useCarousel(
+    testimonials.length,
+    AUTOPLAY_MS,
+  );
 
   return (
     <div
@@ -34,17 +37,35 @@ const TestimonialCarousel = ({ testimonials }: Props) => {
       </div>
 
       {testimonials.length > 1 && (
-        <div className="carouselDots">
-          {testimonials.map((t, i) => (
-            <button
-              key={t.id}
-              type="button"
-              className={`carouselDot${i === index ? " is-active" : ""}`}
-              onClick={() => goTo(i)}
-              aria-label={`Ver testimonio ${i + 1} de ${testimonials.length}`}
-              aria-current={i === index}
-            />
-          ))}
+        <div className="testimonialNav">
+          <button
+            type="button"
+            className="carouselArrow is-inline"
+            onClick={prev}
+            aria-label="Testimonio anterior"
+          >
+            ‹
+          </button>
+          <div className="carouselDots">
+            {testimonials.map((t, i) => (
+              <button
+                key={t.id}
+                type="button"
+                className={`carouselDot${i === index ? " is-active" : ""}`}
+                onClick={() => goTo(i)}
+                aria-label={`Ver testimonio ${i + 1} de ${testimonials.length}`}
+                aria-current={i === index}
+              />
+            ))}
+          </div>
+          <button
+            type="button"
+            className="carouselArrow is-inline"
+            onClick={next}
+            aria-label="Testimonio siguiente"
+          >
+            ›
+          </button>
         </div>
       )}
     </div>

@@ -112,6 +112,28 @@
   }
 }
 
+/* Testimonios: flechas a los lados de los puntos, siempre visibles y sin tapar el texto. */
+.testimonialNav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.carouselArrow.is-inline {
+  position: static;
+  translate: none;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  opacity: 1;
+  background: #fff;
+}
+
+.carouselArrow.is-inline:hover {
+  background: #f7f7f7;
+}
+
 .carouselDots {
   display: flex;
   justify-content: center;
