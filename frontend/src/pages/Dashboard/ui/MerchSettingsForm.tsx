@@ -1,7 +1,8 @@
 import { useState } from "react";
 import type { AppSettings } from "../../../api/settings";
 import { updateMerchSettings } from "../../../api/settings";
-import { formatNumberCO, parseDigits } from "./paymentConfig";
+import { formatCOP, formatNumberCO, parseDigits } from "./paymentConfig";
+import ConfirmSettingsModal from "./ConfirmSettingsModal";
 
 type Props = {
   settings: AppSettings;
@@ -35,13 +36,20 @@ const FIELDS: MerchField[] = [
   "extraSizePrice",
 ];
 
-// Precios de merch (antes un pop up): vive en Pedido de merch → Precios.
+// Precios de merch: viven en Pedido de merch → Ajustes. Guardar pide confirmación.
 const MerchSettingsForm: React.FC<Props> = ({ settings, canEdit, onSaved }) => {
   const [draft, setDraft] = useState<AppSettings>(settings);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [confirming, setConfirming] = useState(false);
 
   const hasChanges = FIELDS.some((f) => draft[f] !== settings[f]);
+  const changes = FIELDS.filter((f) => draft[f] !== settings[f]).map((f) => ({
+    key: f,
+    label: FIELD_LABELS[f],
+    oldDisplay: formatCOP(settings[f]),
+    newDisplay: formatCOP(draft[f]),
+  }));
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -54,6 +62,7 @@ const MerchSettingsForm: React.FC<Props> = ({ settings, canEdit, onSaved }) => {
       const updated = await updateMerchSettings(payload);
       onSaved(updated);
       setDraft(updated);
+      setConfirming(false);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Error al guardar los precios");
     } finally {
@@ -66,7 +75,7 @@ const MerchSettingsForm: React.FC<Props> = ({ settings, canEdit, onSaved }) => {
         <div className="chartCardHeader">
           <div>
             <h2 className="chartCardTitle">Precios de merch</h2>
-            <p className="chartCardSubtitle">Lo que paga cada servidor por prenda. Cambiarlos recalcula el total de cada pedido.</p>
+            <p className="chartCardSubtitle">Lo que paga cada servidor por prenda. Se usan en las órdenes nuevas y en las que se editen.</p>
           </div>
         </div>
 
@@ -105,11 +114,21 @@ const MerchSettingsForm: React.FC<Props> = ({ settings, canEdit, onSaved }) => {
             <button type="button" className="toolbarButton" disabled={!hasChanges || isSaving} onClick={() => setDraft(settings)}>
               Descartar
             </button>
-            <button type="button" className="toolbarButton primary" onClick={handleSave} disabled={!hasChanges || isSaving}>
+            <button type="button" className="toolbarButton primary" onClick={() => setConfirming(true)} disabled={!hasChanges || isSaving}>
               {isSaving ? "Guardando..." : "Guardar cambios"}
             </button>
           </div>
         )}
+
+      {confirming && (
+        <ConfirmSettingsModal
+          changes={changes}
+          isSaving={isSaving}
+          onCancel={() => setConfirming(false)}
+          onConfirm={handleSave}
+          message="Los precios nuevos se verán en el perfil y se usarán en las órdenes que se creen o editen desde ahora."
+        />
+      )}
     </div>
   );
 };

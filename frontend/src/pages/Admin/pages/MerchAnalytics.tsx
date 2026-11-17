@@ -2,8 +2,9 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../auth/AuthContext";
 import { PageLoader } from "../../../components/Spinner";
-import type { ServidorRecord } from "../../../api/adminUsers";
-import { MERCH_LABELS, SHIRT_COLORS, asStringArray, computeOrderTotal, isHombre, isMujer } from "../../Dashboard/ui/merchPricing";
+import type { Order } from "../../../api/orders";
+import { COLORS as SHIRT_COLORS, COLOR_LABEL, PRODUCT_LABEL, STATUS_INFO, describeItem, formatOrderNumber, isActive } from "../../../orders/catalog";
+import { useOrders } from "./orders/useOrders";
 import { useAdminData } from "../AdminData";
 import KpiCard from "../ui/KpiCard";
 import { BarList, ChartCard, ChartLegend, DonutChart } from "../ui/Charts";
@@ -30,6 +31,7 @@ type SupplierLine = { key: string; category: Unit["category"]; item: string; gen
 
 type Person = {
   _id: string;
+  order: string;
   name: string;
   phone: string;
   units: number;
@@ -42,34 +44,37 @@ type Person = {
 
 const CATEGORY_ORDER: Unit["category"][] = ["Camisetas", "Busos y chaquetas", "Accesorios"];
 const SIZE_ORDER = ["S", "M", "L"];
-const SHIRT_COLOR_HEX: Record<string, string> = { BLANCA: "#cbd5e1", VERDE: "#16a34a", AZUL: "#2563eb" };
+const SHIRT_COLOR_HEX: Record<string, string> = { BLANCA: "#cbd5e1", VERDE: "#16a34a", AZUL: "#2563eb", NEGRA: "#000000" };
 
-const genderOf = (r: ServidorRecord) => (isHombre(r.gender) ? "Hombre" : isMujer(r.gender) ? "Mujer" : "Otro");
-const sizeOf = (size: unknown, other: unknown) =>
-  size === "OTRO" ? { size: String(other || "Especial").toUpperCase(), special: true } : { size: String(size || "M"), special: false };
-
-/** Cada prenda pedida, una por fila (una camiseta por cada color elegido). */
-const unitsOf = (r: ServidorRecord): Unit[] => {
-  const base = { personId: r._id, person: `${r.firstNames} ${r.lastNames}`, phone: String(r.phone ?? ""), gender: genderOf(r) };
+/** Cada prenda pedida, una por unidad (una camiseta por cada unidad de cada línea). */
+const unitsOf = (o: Order): Unit[] => {
+  const base = { personId: o._id, person: `${o.customer.firstNames} ${o.customer.lastNames}`, phone: o.customer.phone ?? "" };
   const units: Unit[] = [];
-  if (r.needsShirt === "SI") {
-    const { size, special } = sizeOf(r.shirtSize, r.shirtSizeOther);
-    const colors = asStringArray(r.shirtColors);
-    for (const code of colors.length ? colors : ["BLANCA"]) {
-      const label = SHIRT_COLORS.find((c) => c.code === code)?.label ?? code;
-      units.push({ ...base, category: "Camisetas", item: `Camiseta ${label.toLowerCase()}`, color: code, size, special });
-    }
-  }
-  for (const code of asStringArray(r.merchItems)) {
-    if (code === "BUSO_CERRADO" || code === "CHAQUETA_ABIERTA") {
-      const { size, special } = sizeOf(r.merchSize, r.merchSizeOther);
-      units.push({ ...base, category: "Busos y chaquetas", item: MERCH_LABELS[code], color: "", size, special });
-    } else if (MERCH_LABELS[code]) {
-      units.push({ ...base, category: "Accesorios", item: MERCH_LABELS[code], color: "", gender: "Unisex", size: "Única", special: false });
-    }
+  for (const item of o.items) {
+    const category: Unit["category"] =
+      item.product === "CAMISETA" ? "Camisetas" : item.product === "BUSO_CERRADO" || item.product === "CHAQUETA_ABIERTA" ? "Busos y chaquetas" : "Accesorios";
+    const sized = category !== "Accesorios";
+    const special = sized && item.size === "OTRO";
+    const unit: Unit = {
+      ...base,
+      category,
+      item: item.product === "CAMISETA" ? `Camiseta ${(COLOR_LABEL[item.color] ?? item.color).toLowerCase()}` : PRODUCT_LABEL[item.product],
+      color: item.color,
+      gender: sized ? (item.cut === "MUJER" ? "Mujer" : "Hombre") : "Unisex",
+      size: sized ? (special ? (item.sizeOther || "Especial").toUpperCase() : item.size || "M") : "Única",
+      special,
+    };
+    for (let i = 0; i < item.quantity; i++) units.push(unit);
   }
   return units;
 };
+
+type OrderScope = "porEncargar" | "activas" | "todas";
+const ORDER_SCOPES: { value: OrderScope; label: string; match: (o: Order) => boolean }[] = [
+  { value: "activas", label: "Activas", match: (o) => isActive(o.status) },
+  { value: "porEncargar", label: "Por encargar", match: (o) => o.status === "RECIBIDO" || o.status === "CONFIRMADO" },
+  { value: "todas", label: "Todas", match: (o) => o.status !== "CANCELADO" },
+];
 
 const supplierColumns: DataColumn<SupplierLine>[] = [
   { key: "category", label: "Categoría", className: "cellMuted", render: (l) => l.category, value: (l) => l.category },
@@ -87,6 +92,7 @@ const supplierColumns: DataColumn<SupplierLine>[] = [
 const STATUS_LABEL = { completo: "Pagado", parcial: "Abono", sinPago: "Sin pago" } as const;
 
 const personColumns: DataColumn<Person>[] = [
+  { key: "order", label: "Orden", className: "cellStrong", render: (p) => p.order, value: (p) => p.order },
   { key: "name", label: "Servidor", className: "cellStrong", render: (p) => p.name, value: (p) => p.name },
   { key: "phone", label: "Teléfono", className: "cellMuted", render: (p) => p.phone || "-", value: (p) => p.phone },
   { key: "detail", label: "Pedido", className: "cellWrap", render: (p) => p.detail, value: (p) => p.detail },
@@ -149,32 +155,32 @@ const MerchAnalytics = () => {
   const data = useAdminData();
   const s = data.settings;
   const [scope, setScope] = useState<Scope>("todos");
+  const [orderScope, setOrderScope] = useState<OrderScope>("activas");
+  const { orders, isLoading: ordersLoading } = useOrders();
+  const scopedOrders = useMemo(
+    () => orders.filter(ORDER_SCOPES.find((x) => x.value === orderScope)!.match),
+    [orders, orderScope]
+  );
   const canEditMerch = user?.role === "SUPERADMIN" || user?.role === "TREASURER" || user?.role === "ADMIN";
 
   const { units, people, lines } = useMemo(() => {
     const allUnits: Unit[] = [];
     const allPeople: Person[] = [];
-    for (const r of data.servidores) {
-      const u = unitsOf(r);
+    for (const o of scopedOrders) {
+      const u = unitsOf(o);
       if (!u.length) continue;
       allUnits.push(...u);
-      const total = computeOrderTotal(r, s);
-      const paid = Number(r.merchPaymentAmount) || 0;
-      const counts = new Map<string, number>();
-      for (const x of u) {
-        const label = `${x.item}${x.size !== "Única" ? ` ${x.size}` : ""}`;
-        counts.set(label, (counts.get(label) ?? 0) + 1);
-      }
       allPeople.push({
-        _id: r._id,
-        name: `${r.firstNames} ${r.lastNames}`,
-        phone: String(r.phone ?? ""),
+        _id: o._id,
+        order: formatOrderNumber(o.orderNumber),
+        name: `${o.customer.firstNames} ${o.customer.lastNames}`,
+        phone: o.customer.phone ?? "",
         units: u.length,
-        total,
-        paid,
-        due: Math.max(0, total - paid),
-        status: total > 0 && paid >= total ? "completo" : paid > 0 ? "parcial" : "sinPago",
-        detail: [...counts.entries()].map(([k, n]) => (n > 1 ? `${n}× ${k}` : k)).join(", "),
+        total: o.total,
+        paid: o.paidAmount,
+        due: Math.max(0, o.total - o.paidAmount),
+        status: o.total > 0 && o.paidAmount >= o.total ? "completo" : o.paidAmount > 0 ? "parcial" : "sinPago",
+        detail: `${o.items.map(describeItem).join(", ")} · ${STATUS_INFO[o.status].label.toLowerCase()}`,
       });
     }
     const grouped = new Map<string, SupplierLine>();
@@ -192,9 +198,9 @@ const MerchAnalytics = () => {
         (SIZE_ORDER.indexOf(a.size) === -1 ? 99 : SIZE_ORDER.indexOf(a.size)) - (SIZE_ORDER.indexOf(b.size) === -1 ? 99 : SIZE_ORDER.indexOf(b.size))
     );
     return { units: allUnits, people: allPeople.sort((a, b) => b.due - a.due), lines: sorted };
-  }, [data.servidores, s]);
+  }, [scopedOrders]);
 
-  if (data.isLoading) return <PageLoader variant="inline" label="Cargando datos" />;
+  if (data.isLoading || ordersLoading) return <PageLoader variant="inline" label="Cargando datos" />;
 
   const total = people.reduce((sum, p) => sum + p.total, 0);
   const paid = people.reduce((sum, p) => sum + p.paid, 0);
@@ -215,7 +221,7 @@ const MerchAnalytics = () => {
   // Lo que conviene revisar antes de hacer el pedido.
   const checklist = [
     { done: specials.length === 0, text: specials.length ? `Confirmar ${specials.length} tallas especiales con el proveedor (recargo de ${formatCOP(s.extraSizePrice)} c/u).` : "No hay tallas especiales." },
-    { done: due === 0, text: due ? `Cobrar ${formatCOP(due)} a ${people.filter((p) => p.due > 0).length} servidores antes de pagar al proveedor.` : "Todo el merch está pagado." },
+    { done: due === 0, text: due ? `Cobrar ${formatCOP(due)} a ${people.filter((p) => p.due > 0).length} órdenes antes de pagar al proveedor.` : "Todo el merch está pagado." },
     { done: statusCount("sinPago") === 0, text: `${statusCount("sinPago")} servidores no han abonado nada a su pedido.` },
     { done: true, text: `Recaudado ${formatPercent(total ? paid / total : 0)} del valor total del pedido.` },
     ...(topShirtSize ? [{ done: true, text: `La talla de camiseta más pedida es la ${topShirtSize[0]} (${topShirtSize[1]}).` }] : []),
@@ -227,20 +233,26 @@ const MerchAnalytics = () => {
       <PageHeading
         crumbs={[{ label: "Dashboard", to: "/dashboard" }, { label: "Pedido" }, { label: "Analítica del pedido" }]}
         title="Analítica del pedido de merch"
-        subtitle="Lo que hay que encargar al proveedor, por prenda, corte y talla, y cómo van los pagos."
+        subtitle="Lo que hay que encargar al proveedor, por prenda, corte y talla, y cómo van los pagos de las órdenes."
       >
+        <Segmented
+          label="Órdenes"
+          value={orderScope}
+          onChange={setOrderScope}
+          options={ORDER_SCOPES.map((x) => ({ value: x.value, label: x.label, count: orders.filter(x.match).length }))}
+        />
         {canEditMerch && (
           <Link to="/dashboard/pedido/precios" className="toolbarButton">
-            <GearIcon /> Precios
+            <GearIcon /> Ajustes
           </Link>
         )}
         <Link to="/dashboard/pedido/tabla" className="toolbarButton primary">
-          <CartIcon /> Ver pedidos
+          <CartIcon /> Ver órdenes
         </Link>
       </PageHeading>
 
       <div className="kpiGrid">
-        <KpiCard tone="info" label="Servidores con pedido" icon={UsersIcon} value={formatNumber(people.length)} detail={`de ${formatNumber(data.servidores.length)} servidores`} />
+        <KpiCard tone="info" label="Órdenes" icon={UsersIcon} value={formatNumber(people.length)} detail={`${formatNumber(new Set(scopedOrders.map((o) => o.servidorId)).size)} servidores`} />
         <KpiCard tone="info"
           label="Prendas a encargar"
           icon={CartIcon}
@@ -255,13 +267,13 @@ const MerchAnalytics = () => {
           detail={specials.length ? "Revisar medidas antes de pedir" : "Ninguna"}
         />
         <KpiCard tone="info" label="Pagado" icon={BanknotesIcon} value={formatCOP(paid)} progress={total ? paid / total : 0} detail={`${formatPercent(total ? paid / total : 0)} del pedido`} />
-        <KpiCard tone="info" label="Por cobrar" icon={ReceiptIcon} value={formatCOP(due)} detail={`${people.filter((p) => p.due > 0).length} servidores con saldo`} />
+        <KpiCard tone="info" label="Por cobrar" icon={ReceiptIcon} value={formatCOP(due)} detail={`${people.filter((p) => p.due > 0).length} órdenes con saldo`} />
         <KpiCard tone="info" label="Pedidos pagados" icon={CheckCircleIcon} value={formatNumber(statusCount("completo"))} detail={`${statusCount("parcial")} con abono · ${statusCount("sinPago")} sin pago`} />
         <KpiCard tone="info"
           label="Ticket promedio"
           icon={ClipboardIcon}
           value={formatCOP(people.length ? total / people.length : 0)}
-          detail={`${(people.length ? units.length / people.length : 0).toFixed(1).replace(".", ",")} prendas por servidor`}
+          detail={`${(people.length ? units.length / people.length : 0).toFixed(1).replace(".", ",")} prendas por orden`}
         />
       </div>
 
@@ -363,7 +375,7 @@ const MerchAnalytics = () => {
         </ChartCard>
       )}
 
-      <ChartCard title="Pagos por servidor" subtitle="Quién debe su merch, de mayor a menor saldo">
+      <ChartCard title="Pagos por orden" subtitle="Quién debe su merch, de mayor a menor saldo">
         <DataTable
           id="pagos-merch"
           rows={people}

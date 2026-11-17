@@ -134,6 +134,8 @@ const toResponse = (settings: SettingsDoc) => ({
   finalPaymentMonth: settings.finalPaymentMonth,
   subsidyCap: settings.subsidyCap,
   serviceSignupOpen: settings.serviceSignupOpen !== false,
+  merchOrdersOpen: settings.merchOrdersOpen !== false,
+  retreatInfoOpen: settings.retreatInfoOpen !== false,
   shirtPrice: settings.shirtPrice,
   busoChaquetaPrice: settings.busoChaquetaPrice,
   canguroPrice: settings.canguroPrice,
@@ -216,6 +218,40 @@ export const updateServiceSignupHandler = asyncHandler(async (req, res) => {
       ? "Habilitó que los servidores se activen para servir desde su perfil"
       : "Bloqueó que los servidores se activen para servir desde su perfil"
   );
+  res.json(toResponse(settings));
+});
+
+/** Interruptores de la página: quién puede cambiarlos y qué queda en el registro de actividad. */
+const SWITCHES = {
+  serviceSignupOpen: {
+    roles: ["SUPERADMIN", "TREASURER"],
+    on: "Habilitó que los servidores se activen para servir desde su perfil",
+    off: "Bloqueó que los servidores se activen para servir desde su perfil",
+  },
+  merchOrdersOpen: {
+    roles: ["ADMIN", "SUPERADMIN", "TREASURER"],
+    on: "Activó la creación de órdenes de merch desde el perfil",
+    off: "Desactivó la creación de órdenes de merch desde el perfil",
+  },
+  retreatInfoOpen: {
+    roles: ["SUPERADMIN", "TREASURER"],
+    on: "Abrió la información e inscripción del retiro",
+    off: "Cerró la información e inscripción del retiro",
+  },
+} as const;
+type SwitchKey = keyof typeof SWITCHES;
+
+/** PATCH /api/settings/switch { key, open }: abre o cierra una función de la página. */
+export const updateSwitchHandler = asyncHandler(async (req, res) => {
+  const { key, open } = req.body as { key?: unknown; open?: unknown };
+  if (typeof key !== "string" || !(key in SWITCHES)) throw new ApiError(400, "Opción inválida");
+  if (typeof open !== "boolean") throw new ApiError(400, "Indica si se abre (true o false)");
+  const config = SWITCHES[key as SwitchKey];
+  if (!(config.roles as readonly string[]).includes(req.user!.role)) throw new ApiError(403, "No autorizado");
+  const settings = await getSettings();
+  settings[key as SwitchKey] = open;
+  await settings.save();
+  await createLog(req.user!, "EDITAR_CONFIGURACION", open ? config.on : config.off);
   res.json(toResponse(settings));
 });
 

@@ -60,7 +60,7 @@ export const TOURS: Record<TourId, Tour> = {
       { target: "testimony", title: "Tu testimonio", text: "Cuéntale al futuro soldado por qué vivir el retiro." },
       { target: "meetings", title: "Reuniones", text: "El calendario de reuniones. Con «Calificar reuniones» nos cuentas cómo te fue en las que ya pasaron." },
       { target: "voice", title: "Tu voz en ITER", text: "Comparte sugerencias, ideas de actividades o peticiones de oración. Puedes enviarlas de forma anónima." },
-      { target: "merch", title: "Merch", text: "Pide tu ropa del retiro y mira cuánto cuesta tu pedido y cuánto llevas pagado." },
+      { target: "merch", title: "Merch", text: "Crea una orden con la ropa que quieras y mira debajo tus órdenes activas: su estado, cuánto llevas pagado y cuánto falta. Mientras estén recibidas puedes editarlas." },
       { target: "dashboard", title: "Dashboard", text: "Desde aquí gestionas inscritos y ajustes." },
       { target: "bell", title: "Notificaciones", text: "Avisos del retiro y estos tutoriales, por si quieres verlos de nuevo." },
     ],

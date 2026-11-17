@@ -173,12 +173,6 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
     "eps",
     "bloodType",
 
-    "needsShirt",
-    "shirtColors",
-    "shirtSize",
-
-    "merchItems",
-
     "emergencyFirstName",
     "emergencyLastName",
     "emergencyDocumentType",
@@ -205,24 +199,8 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
   if (!Array.isArray(body.services) || body.services.length === 0) {
     throw new ApiError(400, "services must be a non-empty array");
   }
-  if (!Array.isArray(body.merchItems)) {
-    throw new ApiError(400, "merchItems must be an array");
-  }
-  if (body.needsShirt === "SI") {
-    if (!Array.isArray(body.shirtColors) || body.shirtColors.length === 0) {
-      throw new ApiError(400, "shirtColors is required when needsShirt=SI");
-    }
-  } else {
-    body.shirtColors = [];
-  }
-
-  const merchNeedsSize = Array.isArray(body.merchItems) && body.merchItems.some((i) => i !== "NINGUNA");
-
   requireIf(body.documentType === "OTRO", body, ["documentTypeOther"]);
   requireIf(body.emergencyDocumentType === "OTRO", body, ["emergencyDocumentTypeOther"]);
-  requireIf(body.shirtSize === "OTRO", body, ["shirtSizeOther"]);
-  requireIf(merchNeedsSize, body, ["merchSize"]);
-  requireIf(body.merchSize === "OTRO", body, ["merchSizeOther"]);
   requireIf(body.wentToOtherSedes === "SI", body, ["otherSedesDetail"]);
 
   if (typeof body.password !== "string" || body.password.length < 8) {
@@ -261,15 +239,6 @@ export const createServidorFromForm = asyncHandler(async (req, res) => {
 
     eps: body.eps,
     bloodType: body.bloodType,
-
-    needsShirt: body.needsShirt,
-    shirtColors: body.needsShirt === "SI" ? body.shirtColors : [],
-    shirtSize: body.shirtSize,
-    shirtSizeOther: body.shirtSize === "OTRO" ? body.shirtSizeOther : "",
-
-    merchItems: body.merchItems ?? [],
-    merchSize: body.merchSize ?? "",
-    merchSizeOther: body.merchSize === "OTRO" ? body.merchSizeOther : "",
 
     emergencyFirstName: body.emergencyFirstName,
     emergencyLastName: body.emergencyLastName,

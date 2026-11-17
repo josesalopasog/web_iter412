@@ -94,6 +94,8 @@ const normalizeYesNo = (v: unknown): YesNo => (v === true || v === "SI" ? "SI" :
 
 export const createSoldadoFromForm = asyncHandler(async (req, res) => {
   const body = req.body as Partial<RegistrationSoldadosDTO>;
+  const { retreatInfoOpen } = await getSettings();
+  if (retreatInfoOpen === false) throw new ApiError(403, "Las inscripciones al retiro están cerradas por ahora. ¡Pronto abriremos el próximo!");
 
   requireFields(body as any, [
     "gender",

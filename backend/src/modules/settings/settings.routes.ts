@@ -6,6 +6,7 @@ import {
   updateMerchSettingsHandler,
   getMerchPricesHandler,
   updateServiceSignupHandler,
+  updateSwitchHandler,
 } from "./settings.controller.js";
 import { requireAuth, requireRole } from "../../middlewares/auth.middleware.js";
 
@@ -20,6 +21,7 @@ router.patch(
   requireRole("SUPERADMIN", "TREASURER"),
   updateServiceSignupHandler
 );
+router.patch("/switch", requireAuth, requireRole("ADMIN", "SUPERADMIN", "TREASURER"), updateSwitchHandler);
 router.get("/merch-prices", requireAuth, getMerchPricesHandler);
 router.patch(
   "/merch-prices",

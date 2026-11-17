@@ -94,8 +94,8 @@ const SideMenu = ({ open, collapsed, onToggle, onClose }: { open: boolean; colla
       title: "Pedido de merch",
       items: [
         { label: "Analítica del pedido", to: "/dashboard/pedido", icon: ChartBarIcon },
-        { label: "Pedidos", to: "/dashboard/pedido/tabla", icon: CartIcon },
-        { label: "Precios de merch", to: "/dashboard/pedido/precios", icon: GearIcon },
+        { label: "Órdenes", to: "/dashboard/pedido/tabla", icon: CartIcon },
+        { label: "Ajustes", to: "/dashboard/pedido/precios", icon: GearIcon },
       ],
     },
     {

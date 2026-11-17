@@ -161,3 +161,49 @@
     order: -1;
   }
 }
+
+/* Página del retiro cerrada (Gestión → Ajustes del retiro → Ver información del retiro) */
+.retreatClosed {
+  min-height: calc(100vh - 160px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 96px 16px 48px;
+  box-sizing: border-box;
+}
+
+.retreatClosedCard {
+  max-width: 560px;
+  padding: 36px 32px;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.retreatClosedIcon {
+  font-size: 2.6rem;
+}
+
+.retreatClosedCard h2 {
+  margin: 0;
+  font-size: clamp(1.3rem, 3vw, 1.7rem);
+  line-height: 1.25;
+}
+
+.retreatClosedCard p {
+  margin: 0;
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+.retreatClosedLink {
+  margin-top: 6px;
+  font-weight: 600;
+  color: #1a9be0;
+  text-decoration: none;
+}

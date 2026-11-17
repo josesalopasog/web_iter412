@@ -3,7 +3,7 @@ import { ApiError } from "../../utils/errors.js";
 import { getPeriod, parseRange, toDayKey } from "../../utils/dates.js";
 import { Soldado } from "../users/soldados/soldado.model.js";
 import { Servidor } from "../users/servidores/servidor.model.js";
-import { computeMerchMax } from "../users/servidores/servidor.controller.js";
+import { Order } from "../orders/order.model.js";
 import { getSettings } from "../settings/settings.service.js";
 import { getPaymentMovements } from "./paymentHistory.js";
 
@@ -17,7 +17,6 @@ type Person = {
   subsidyAmount?: number;
 };
 
-type MerchInput = Parameters<typeof computeMerchMax>[0];
 
 const sum = <T>(rows: T[], pick: (row: T) => number) => rows.reduce((total, row) => total + (pick(row) || 0), 0);
 
@@ -56,15 +55,16 @@ export const getFinanceSummary = asyncHandler(async (req, res) => {
   if (!range) throw new ApiError(400, "range debe ser 7, 30 o 90");
   const { today, firstDay, from, to, previousFrom, days } = getPeriod(range);
 
-  const [settings, soldados, servidores, movements] = await Promise.all([
+  const [settings, soldados, servidores, movements, orders] = await Promise.all([
     getSettings(),
     Soldado.find().select("firstNames lastNames registrationNumber gender paymentAmount subsidyAmount").lean(),
     Servidor.find()
       .select(
-        "firstNames lastNames registrationNumber gender paymentAmount subsidyAmount merchPaymentAmount needsShirt shirtSize shirtColors merchItems merchSize serviceStatus"
+        "firstNames lastNames registrationNumber gender paymentAmount subsidyAmount serviceStatus"
       )
       .lean(),
     getPaymentMovements(previousFrom, to),
+    Order.find({ status: { $ne: "CANCELADO" } }).select("total paidAmount").lean(),
   ]);
 
   // Igual que en la tabla: por defecto solo cuentan los servidores activos para el retiro.
@@ -72,10 +72,9 @@ export const getFinanceSummary = asyncHandler(async (req, res) => {
   const soldadoTotals = groupTotals(soldados as Person[], settings.soldadoPrice);
   const servidorTotals = groupTotals(activeServidores as Person[], settings.servidorPrice);
 
-  const merchMaxes = servidores.map((s) => computeMerchMax(s as MerchInput, settings));
-  const merchExpected = sum(merchMaxes, (m) => m);
-  const merchPaid = sum(servidores, (s) => s.merchPaymentAmount ?? 0);
-  const merchOrders = merchMaxes.filter((m) => m > 0).length;
+  const merchExpected = sum(orders, (o) => o.total ?? 0);
+  const merchPaid = sum(orders, (o) => o.paidAmount ?? 0);
+  const merchOrders = orders.length;
 
   const subsidyUsed = sum(soldados, (s) => s.subsidyAmount ?? 0) + sum(servidores, (s) => s.subsidyAmount ?? 0);
 

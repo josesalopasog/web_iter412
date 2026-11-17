@@ -16,7 +16,7 @@ import {
 } from "../../api/adminUsers";
 import type { SoldadoRecord, ServidorRecord, EliminadoRecord } from "../../api/adminUsers";
 import { getSettings } from "../../api/settings";
-import type { AppSettings } from "../../api/settings";
+import type { AppSettings, SettingsSwitches } from "../../api/settings";
 import { takeNewRegistrations } from "../Dashboard/ui/newRegistrations";
 import type { ServiceStatusFilterValue } from "../Dashboard/ui/serviceStatus";
 
@@ -47,9 +47,9 @@ const DEFAULT_SETTINGS: AppSettings = {
 type AdminDataValue = {
   /** Todos los soldados del retiro actual: inscripciones + participantes (attended). */
   soldados: SoldadoRecord[];
-  /** "Activo para servir" habilitado en el perfil de los servidores. */
-  serviceSignupOpen: boolean;
-  setServiceSignupOpen: (open: boolean) => void;
+  /** Interruptores: "Activo para servir", creación de órdenes y página del retiro. */
+  switches: SettingsSwitches;
+  setSwitches: (switches: SettingsSwitches) => void;
   servidores: ServidorRecord[];
   eliminados: EliminadoRecord[];
   settings: AppSettings;
@@ -89,7 +89,7 @@ export const AdminDataProvider = ({ children }: { children: ReactNode }) => {
   const [servidores, setServidores] = useState<ServidorRecord[]>([]);
   const [eliminados, setEliminados] = useState<EliminadoRecord[]>([]);
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
-  const [serviceSignupOpen, setServiceSignupOpen] = useState(true);
+  const [switches, setSwitches] = useState<SettingsSwitches>({ serviceSignupOpen: true, merchOrdersOpen: true, retreatInfoOpen: true });
   const [servidorStatusFilter, setServidorStatusFilter] = useState<ServiceStatusFilterValue>("ACTIVO");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -113,7 +113,11 @@ export const AdminDataProvider = ({ children }: { children: ReactNode }) => {
       setSoldados(soldadosData);
       setServidores(servidoresData);
       setSettings(settingsData);
-      setServiceSignupOpen(settingsData.serviceSignupOpen !== false);
+      setSwitches({
+        serviceSignupOpen: settingsData.serviceSignupOpen !== false,
+        merchOrdersOpen: settingsData.merchOrdersOpen !== false,
+        retreatInfoOpen: settingsData.retreatInfoOpen !== false,
+      });
       const fresh = [
         ...takeNewRegistrations(userId, "soldados", soldadosData),
         ...takeNewRegistrations(userId, "servidores", servidoresData),
@@ -140,8 +144,8 @@ export const AdminDataProvider = ({ children }: { children: ReactNode }) => {
 
   const value: AdminDataValue = {
     soldados,
-    serviceSignupOpen,
-    setServiceSignupOpen,
+    switches,
+    setSwitches,
     servidores,
     eliminados,
     settings,

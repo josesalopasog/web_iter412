@@ -32,6 +32,7 @@ const ServidorSchema = new Schema(
 
     city: { type: String, required: true, trim: true },
     address: { type: String, required: true, trim: true },
+
     birthDate: { type: String, required: true },
     age: { type: Number, required: true, min: 1 },
     phone: { type: String, required: true, trim: true },
@@ -39,7 +40,9 @@ const ServidorSchema = new Schema(
     eps: { type: String, required: true, trim: true },
     bloodType: { type: String, required: true, trim: true },
 
-    needsShirt: { type: String, required: true, enum: ["SI", "NO"] },
+    // Campos del pedido de merch antiguo (antes venía en el formulario). Ahora el merch se pide como
+    // órdenes desde el perfil (colección "orders"); se conservan solo como histórico.
+    needsShirt: { type: String, enum: ["SI", "NO"], default: "NO" },
     shirtColors: { type: [String], required: true, default: [] }, 
     shirtSize: { type: String, default: "" },
     shirtSizeOther: { type: String, trim: true, default: "" },

@@ -4,7 +4,7 @@ import { useAuth } from "../../auth/AuthContext";
 import PageLoader from "../../components/Spinner";
 import { getMyServidorProfile } from "../../api/adminUsers";
 import ProfileMeetingsCard from "./ui/ProfileMeetingsCard";
-import ProfileMerch from "./ui/ProfileMerch";
+import ProfileOrders from "./ui/ProfileOrders";
 import TestimonyEditor from "./ui/TestimonyEditor";
 import ServiceStatusToggle from "./ui/ServiceStatusToggle";
 import VoiceForm from "./ui/VoiceForm";
@@ -97,7 +97,7 @@ const Profile = () => {
 
         {data && <VoiceForm />}
 
-        {data && <ProfileMerch data={data} onSaved={loadProfile} />}
+        {data && <ProfileOrders gender={typeof data.gender === "string" ? data.gender : ""} />}
       </div>
 
       <GuidedTour tourId="perfil" userId={userId} ready={Boolean(data)} />

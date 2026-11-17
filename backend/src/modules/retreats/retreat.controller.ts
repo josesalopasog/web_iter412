@@ -19,7 +19,7 @@ const sum = (list: Record<string, unknown>[], key: string) => list.reduce((s, d)
  * - Todos los servidores quedan inactivos y su pago/subsidio del retiro vuelve a 0 (queda en la copia).
  * - "Activo para servir" se bloquea en el perfil hasta que se vuelva a habilitar.
  * - El número del retiro sube en 1.
- * No toca reuniones, merch, Tu voz ni nada que no sea del retiro.
+ * No toca reuniones, órdenes de merch (ni sus pagos o estados), Tu voz ni nada que no sea del retiro.
  */
 export const finishRetreat = asyncHandler(async (req, res) => {
   const settings = await getSettings();
@@ -71,7 +71,8 @@ export const finishRetreat = asyncHandler(async (req, res) => {
   await Soldado.deleteMany({ attended: true });
   await compactRegistrationNumbers(Soldado);
 
-  // 3) Servidores inactivos y sin pago del retiro (el merch no se toca).
+  // 3) Servidores inactivos y sin pago del retiro. Las órdenes de merch (colección "orders") y
+  //    lo pagado en ellas no se tocan: siguen igual después de finalizar.
   await Servidor.updateMany({}, { $set: { serviceStatus: "INACTIVO", paymentAmount: 0, subsidyAmount: 0 } });
 
   // 4) Bloquear "Activo para servir" y pasar al siguiente retiro.

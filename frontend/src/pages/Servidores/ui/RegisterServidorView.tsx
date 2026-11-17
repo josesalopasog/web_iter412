@@ -5,10 +5,7 @@ import type { UseRegisterServidorFormReturn } from "../form/useRegisterServidorF
 import type {
   DocumentType,
   Gender,
-  MerchItem,
   Service,
-  ShirtColor,
-  ShirtSize,
   YesNo,
 } from "../form/types";
 
@@ -54,14 +51,7 @@ export const RegisterServidorView: React.FC<Props> = ({
   eps,
   bloodType,
 
-  needsShirt,
-  shirtColors,
-  shirtSize,
-  shirtSizeOther,
 
-  merchItems,
-  merchSize,
-  merchSizeOther,
 
   emergencyFirstName,
   emergencyLastName,
@@ -109,13 +99,7 @@ export const RegisterServidorView: React.FC<Props> = ({
   setEps,
   setBloodType,
 
-  setNeedsShirt,
-  toggleShirtColor,
-  setShirtSize,
-  setShirtSizeOther,
 
-  setMerchSize,
-  setMerchSizeOther,
 
   setEmergencyFirstName,
   setEmergencyLastName,
@@ -142,11 +126,9 @@ export const RegisterServidorView: React.FC<Props> = ({
   setConfirmPassword,
 
   // helpers
-  toggleMerchItem,
   toggleService,
   onSubmit,
   canSubmit,
-  merchNeedsSize,
 
   // status
   isLoading,
@@ -185,19 +167,8 @@ export const RegisterServidorView: React.FC<Props> = ({
     navigate("/");
   };
 
-  const handleToggleMerch = (item: MerchItem) => {
-    toggleMerchItem(item);
-  };
-
   const handleToggleService = (item: Service) => {
     toggleService(item);
-  };
-
-  const colorLabel = (c: ShirtColor) => {
-    if (c === "BLANCA") return "Blanca";
-    if (c === "VERDE") return "Verde";
-    if (c === "AZUL") return "Azul";
-    return c;
   };
 
   return (
@@ -493,166 +464,11 @@ export const RegisterServidorView: React.FC<Props> = ({
                 </div>
               </div>
 
-              {/* ===================== Dotación ===================== */}
-              <div className="formSection">
-                <h4 className="formTitle">Camiseta</h4>
-
-                <div className="formGrid">
-                  <div className="formRow">
-                    <label className="formLabel" htmlFor="needsShirt">
-                      ¿Necesitas camiseta? <span className="req">*</span>
-                    </label>
-                    <select
-                      id="needsShirt"
-                      className="formSelect"
-                      value={needsShirt}
-                      onChange={(e) => setNeedsShirt(e.target.value as YesNo)}
-                      required
-                    >
-                      <option value="NO">NO</option>
-                      <option value="SI">SI</option>
-                    </select>
-                  </div>
-
-                  {needsShirt === "SI" && (
-                    <>
-                      <div className="formRow formRowFull">
-                        <span className="formLabel">
-                          Color (puedes seleccionar varios){" "}
-                          <span className="req">*</span>
-                        </span>
-
-                        <div className="checkGrid">
-                          {(["BLANCA", "VERDE", "AZUL"] as const).map((c) => (
-                            <label key={c} className="checkRow">
-                              <input
-                                type="checkbox"
-                                checked={shirtColors.includes(c)}
-                                onChange={() => toggleShirtColor(c)}
-                              />
-                              <span>{colorLabel(c)}</span>
-                            </label>
-                          ))}
-                        </div>
-
-                        {shirtColors.length === 0 && (
-                          <p className="formHint" style={{ color: "crimson" }}>
-                            Selecciona al menos un color.
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="formRow">
-                        <label className="formLabel" htmlFor="shirtSize">
-                          Talla <span className="req">*</span>
-                        </label>
-                        <select
-                          id="shirtSize"
-                          className="formSelect"
-                          value={shirtSize}
-                          onChange={(e) =>
-                            setShirtSize(e.target.value as ShirtSize)
-                          }
-                          required
-                        >
-                          <option value="S">S</option>
-                          <option value="M">M</option>
-                          <option value="L">L</option>
-                          <option value="OTRO">Otro</option>
-                        </select>
-                      </div>
-
-                      {shirtSize === "OTRO" && (
-                        <div className="formRow">
-                          <label className="formLabel" htmlFor="shirtSizeOther">
-                            ¿Cuál? <span className="req">*</span>
-                          </label>
-                          <input
-                            id="shirtSizeOther"
-                            className="formInput"
-                            value={shirtSizeOther}
-                            onChange={(e) => setShirtSizeOther(e.target.value)}
-                            maxLength={15}
-                            required
-                          />
-                        </div>
-                      )}
-                    </>
-                  )}
-                </div>
-              </div>
-
-              {/* ===================== OTROS ===================== */}
-              <div className="formSection">
-                <h4 className="formTitle">Otros</h4>
-
-                <div className="formGrid">
-                  <div className="formRow formRowFull">
-                    <span className="formLabel">
-                      Selecciona si necesitas otra prenda o accesorio{" "}
-                      <span className="req">*</span>
-                    </span>
-                    <div className="checkGrid">
-                      {(
-                        [
-                          "BUSO_CERRADO",
-                          "CHAQUETA_ABIERTA",
-                          "TULA",
-                          "GORRA",
-                          "CANGURO",
-                          "NINGUNA",
-                        ] as const
-                      ).map((item) => (
-                        <label key={item} className="checkRow">
-                          <input
-                            type="checkbox"
-                            checked={merchItems.includes(item)}
-                            onChange={() => handleToggleMerch(item)}
-                          />
-                          <span>{item.replaceAll("_", " ")}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="formRow">
-                    <label className="formLabel" htmlFor="merchSize">
-                      Talla {merchNeedsSize && <span className="req">*</span>}
-                    </label>
-                    <select
-                      id="merchSize"
-                      className="formSelect"
-                      value={merchSize}
-                      onChange={(e) =>
-                        setMerchSize(e.target.value as ShirtSize)
-                      }
-                      required={merchNeedsSize}
-                    >
-                      <option value=""></option>
-                      <option value="S">S</option>
-                      <option value="M">M</option>
-                      <option value="L">L</option>
-                      <option value="OTRO">Otro</option>
-                    </select>
-                  </div>
-
-                  {merchSize === "OTRO" && (
-                    <div className="formRow">
-                      <label className="formLabel" htmlFor="merchSizeOther">
-                        ¿Cuál? <span className="req">*</span>
-                      </label>
-                      <input
-                        id="merchSizeOther"
-                        className="formInput"
-                        value={merchSizeOther}
-                        onChange={(e) => setMerchSizeOther(e.target.value)}
-                        maxLength={15}
-                        required
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
+              {/* El merch ya no se pide aquí: se crean órdenes desde el perfil. */}
+              <p className="formHintInline formMerchNote">
+                👕 ¿Quieres camiseta, buso u otra prenda? Pídela después desde tu perfil, en <strong>Merch</strong>:
+                ahí creas tu orden y ves si está pagada.
+              </p>
 
               {/* ===================== EMERGENCIA ===================== */}
               <div className="formSection">

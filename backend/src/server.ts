@@ -4,6 +4,7 @@ import { assertEnv, env } from "./config/env.js";
 import { compactRegistrationNumbers } from "./modules/users/registrationNumbers.js";
 import { Soldado } from "./modules/users/soldados/soldado.model.js";
 import { Servidor } from "./modules/users/servidores/servidor.model.js";
+import { migrateLegacyMerchOrders } from "./modules/orders/order.service.js";
 
 const server = async () => {
   assertEnv();
@@ -11,6 +12,8 @@ const server = async () => {
   // Corrige huecos que hayan quedado en el # de registro (p. ej. eliminaciones anteriores).
   await compactRegistrationNumbers(Soldado);
   await compactRegistrationNumbers(Servidor);
+  // Una sola vez: el merch que estaba en el registro de cada servidor pasa a órdenes numeradas.
+  await migrateLegacyMerchOrders().catch((err) => console.error("No se pudieron migrar los pedidos de merch:", err));
 
   const app = createApp();
 

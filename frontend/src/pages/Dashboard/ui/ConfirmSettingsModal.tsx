@@ -10,9 +10,11 @@ type Props = {
   isSaving: boolean;
   onCancel: () => void;
   onConfirm: () => void;
+  /** Texto de advertencia (por defecto, el de los ajustes del retiro). */
+  message?: string;
 };
 
-const ConfirmSettingsModal: React.FC<Props> = ({ changes, isSaving, onCancel, onConfirm }) => {
+const ConfirmSettingsModal: React.FC<Props> = ({ changes, isSaving, onCancel, onConfirm, message }) => {
   return (
     <div className="modalOverlay" role="dialog" aria-modal="true">
       <div className="modalCard">
@@ -24,7 +26,7 @@ const ConfirmSettingsModal: React.FC<Props> = ({ changes, isSaving, onCancel, on
         </div>
         <div className="modalBody" style={{ whiteSpace: "normal" }}>
           <p className="settingsWarning">
-            Esta información cambiará en toda la página (formulario de inscripción, inicio y dashboard).
+            {message ?? "Esta información cambiará en toda la página (formulario de inscripción, inicio y dashboard)."}{" "}
             ¿Estás seguro de cambiar:
           </p>
           <ul className="pendingChangesList">

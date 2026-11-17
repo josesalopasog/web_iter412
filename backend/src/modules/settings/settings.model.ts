@@ -21,6 +21,12 @@ const SettingsSchema = new Schema(
     // Si los servidores pueden cambiar su disponibilidad ("Activo para servir") desde el perfil.
     // Se apaga al finalizar un retiro y se vuelve a encender cuando abre el siguiente.
     serviceSignupOpen: { type: Boolean, required: true, default: true },
+    // Si los servidores pueden crear órdenes de merch desde su perfil.
+    merchOrdersOpen: { type: Boolean, default: true },
+    // Si la página del retiro (/inscribirme: información e inscripción de soldados) está abierta.
+    retreatInfoOpen: { type: Boolean, default: true },
+    // Los pedidos de merch que estaban en el registro de cada servidor ya se pasaron a órdenes.
+    merchOrdersMigrated: { type: Boolean, default: false },
 
     shirtPrice: { type: Number, required: true, default: 27000, min: 0 },
     busoChaquetaPrice: { type: Number, required: true, default: 52000, min: 0 },

@@ -268,3 +268,9 @@ html[data-theme="dark"] .footerPreviewCard {
 html[data-theme="dark"] .adminShell {
   --iter-cumple: #ff9a4d;
 }
+
+/* Cuerpo de los pop ups: sin el fondo blanco translúcido del estilo general */
+html[data-theme="dark"] .modalBody {
+  background: #222229;
+  border-color: #2c2c35;
+}
